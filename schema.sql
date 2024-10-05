@@ -1,8 +1,8 @@
 -- USERS AND RELATED
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(32),
-    email VARCHAR(32),
+    name VARCHAR(32) UNIQUE,
+    email VARCHAR(32) UNIQUE,
     password VARCHAR(32), 
     profile_pic TEXT,  -- cdn url
     register_date DATE,

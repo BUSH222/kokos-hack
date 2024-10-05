@@ -3,6 +3,28 @@ from psycopg2 import sql
 import logging
 
 
+def connect_to_db(db_name='kokos', postgres_pwd='12345678', host='localhost', port='5432'):
+    """
+    Creates a connection to a postgres database and returns the connection and cursor objects
+    Args:
+        db_name (str): name of the created database
+        postgres_pwd (str): password of the user "postgres"
+        host (str): host of the postgres server
+        port (str): port of the postgres server
+    Returns:
+        conn (psycopg2.extensions.connection): connection object to the postgres server
+        cursor (psycopg2.extensions.cursor): cursor object to the postgres server
+    """
+    conn = psycopg2.connect(database=db_name,
+                            user='postgres',
+                            host=host,
+                            password=postgres_pwd,
+                            port=port)
+    cursor = conn.cursor()
+    logging.info('Connected to {db_name}')
+    return conn, cursor
+
+
 def create_db(db_name='kokos', postgres_pwd='12345678', host='localhost', port='5432') -> None:
     """Creates an empty database inside the postgres server.
     Args:
@@ -17,16 +39,9 @@ def create_db(db_name='kokos', postgres_pwd='12345678', host='localhost', port='
     """
     logging.info('Database creation operation started')
     logging.info('Connecting to the PostgreSQL server')
-    conn = psycopg2.connect(
-        dbname='postgres',  # estabilish a connection to the default postgres db
-        user='postgres',
-        password=postgres_pwd,
-        host=host,
-        port=port,
-    )
-    conn.autocommit = True  # Enable autocommit mode
-    cursor = conn.cursor()
-
+    # estabilishing a connection to the default postgres db
+    conn, cursor = connect_to_db(db_name='postgres', postgres_pwd=postgres_pwd, host=host, port=port)
+    conn.autocommit = True
     logging.info('Checking if the database exists')
     cursor.execute('SELECT 1 FROM pg_database WHERE datname = %s', (db_name,))
     exists = cursor.fetchone()
@@ -60,12 +75,7 @@ def create_tables(populate=False, db_name='kokos', postgres_pwd='12345678', host
     """
     logging.info('Table creation operation started')
     logging.info('Connecting to the PostgreSQL server')
-    conn = psycopg2.connect(database=db_name,
-                            user='postgres',
-                            host=host,
-                            password=postgres_pwd,
-                            port=port)
-    cursor = conn.cursor()
+    conn, cursor = connect_to_db(db_name=db_name, postgres_pwd=postgres_pwd, host=host, port=port)
     logging.info('Creating tables')
     with open('schema.sql', 'r') as schema_obj:
         schema = schema_obj.read()
