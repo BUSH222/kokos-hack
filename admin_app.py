@@ -1,6 +1,7 @@
-from flask import Flask, render_template, redirect, request, url_for, abort
-from flask_login import login_user, LoginManager, current_user, login_required, UserMixin
+from flask import Flask, render_template, redirect, request, url_for
+from flask_login import login_user, LoginManager, login_required, UserMixin
 from dbloader import connect_to_db
+import requests
 
 
 app = Flask(__name__)
@@ -9,6 +10,7 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
 conn, cur = connect_to_db()
+
 
 class User(UserMixin):
     def __init__(self, id, username, password) -> None:
@@ -21,11 +23,9 @@ class User(UserMixin):
 def load_user(user_id):
     cur.execute("SELECT id, name, password FROM users WHERE id = %s AND role LIKE %s", (user_id, '%5%'))
     user_data = cur.fetchone()
-    print(user_data)
     if user_data:
         return User(*user_data)
     return None
-
 
 
 @app.route('/admin_panel')
@@ -164,7 +164,7 @@ def admin_panel_community_view_activity_points():
     points = cur.fetchone()
     if not points:
         return False
-    return int(points[0])
+    return str(points[0])
 
 
 @app.route('/admin_panel/community/set_activity_points')
@@ -189,6 +189,33 @@ def admin_panel_community_set_activity_points():
     return True
 
 
+@app.route('/admin_panel/update_pages')
+@login_required
+def admin_panel_update_pages():
+    return render_template('admin_panel_update_pages.html')
+
+
+@app.route('/admin_panel/update_pages/update_image', methods=['POST'])
+@login_required
+def admin_panel_update_pages_update_image():
+    image_name = request.form.get('image_name')
+    file = request.files.get('img')
+    if file:
+        # Define the URL of the other microservice
+        upload_url = 'http://127.0.0.1:5001/upload_assets'
+
+        # Prepare the files dictionary for the POST request
+        files = {'file': (file.name, file.stream, file.mimetype)}
+
+        # Send the POST request to the other microservice
+        data = {'img_name': image_name}
+        response = requests.post(upload_url, files=files, data=data)
+        print(response.status_code)
+        if response.status_code == 200:
+            return redirect(url_for('admin_panel'))
+        else:
+            return 'Failed to upload image', 500
+    return 'No file uploaded', 400
 
 
 if __name__ == "__main__":

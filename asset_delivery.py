@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, send_from_directory
+from flask import Flask, render_template_string, send_from_directory, request, jsonify
 import os
 import logging
 
@@ -51,6 +51,31 @@ def serve_asset(subpath=''):
     else:
         logging.info(f'served asset {subpath}')
         return send_from_directory('assets', subpath)
+
+
+@app.route('/upload_assets', methods=['POST'])
+def upload_image():
+    """
+    Upload an image from other microservices, specifically admin_app to this server
+
+    Args:
+        request.files['file']
+    Returns:
+        json: {"msg": "Unauthorised"} when accessing from an unauthorised ip
+        json: {"msg": "File uploaded Successfully"} when accessing from an unauthorised ip
+    """
+    allowed_ips = ['127.0.0.1']
+    print(request.remote_addr)
+    if request.remote_addr not in allowed_ips:
+        return jsonify({"msg": "Unauthorized"}), 403
+
+    file = request.files['file']
+    name = request.form.get('img_name')
+    print(request.form)
+    print(request.files)
+    # Save the file to the /assets/ directory
+    file.save(os.path.join(app.root_path, 'assets', name))
+    return jsonify({"msg": "File uploaded successfully"}), 200
 
 
 if __name__ == '__main__':
