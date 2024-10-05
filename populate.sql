@@ -3,8 +3,8 @@ INSERT INTO users (name, email, password, profile_pic, register_date, points, ro
 VALUES
 ('John Doe', 'john@example.com', 'password123', 'https://cdn.example.com/john.jpg', '2024-01-01', 100, '0', 'Player A', 'I love football!', '@john_doe', 'john_vk'),
 ('Jane Smith', 'jane@example.com', 'password456', 'https://cdn.example.com/jane.jpg', '2024-02-01', 200, '1', 'Player B', 'Football is life!', '@jane_smith', 'jane_vk'),
-('Alice Johnson', 'alice@example.com', 'password789', 'https://cdn.example.com/alice.jpg', '2024-03-01', 150, '2', 'Player C', 'Go team!', '@alice_johnson', 'alice_vk'),
-('Bob Brown', 'bob@example.com', 'password321', 'https://cdn.example.com/bob.jpg', '2024-04-01', 250, '3', 'Player D', 'Football fanatic!', '@bob_brown', 'bob_vk'),
+('Alice Johnson', 'alice@example.com', 'password789', 'https://cdn.example.com/alice.jpg', '2024-03-01', 150, '', 'Player C', 'Go team!', '@alice_johnson', 'alice_vk'),
+('Bob Brown', 'bob@example.com', 'password321', 'https://cdn.example.com/bob.jpg', '2024-04-01', 250, '34', 'Player D', 'Football fanatic!', '@bob_brown', 'bob_vk'),
 ('Charlie Davis', 'charlie@example.com', 'password654', 'https://cdn.example.com/charlie.jpg', '2024-05-01', 300, '4', 'Player E', 'Live for the game!', '@charlie_davis', 'charlie_vk'),
 ('admin', 'admin@admin.com', 'admin', 'https://cdn.example.com/charlie.jpg', '2024-10-5', 0, '5', NULL, NULL, NULL, NULL);
 

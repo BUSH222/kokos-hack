@@ -1,7 +1,6 @@
 from flask import Flask, render_template, redirect, request, url_for, abort
 from flask_login import login_user, LoginManager, current_user, login_required, UserMixin
 from dbloader import connect_to_db
-import logging
 
 
 app = Flask(__name__)
@@ -32,12 +31,30 @@ def load_user(user_id):
 @app.route('/admin_panel')
 @login_required
 def admin_panel():
-    print(current_user.is_authenticated)
+    """
+    Render the admin panel page.
+
+    Returns:
+        str: The rendered HTML template for the admin panel.
+    """
     return render_template('admin_panel.html')
 
 
 @app.route('/admin_panel/login', methods=['GET', 'POST'])
 def login():
+    """
+    Handle the login process for the admin panel.
+
+    GET:
+        Render the login page.
+
+    POST:
+        Authenticate the user and redirect to the admin panel if successful.
+
+    Returns:
+        str: The rendered HTML template for the login page or a redirect to the admin panel.
+        str: An error message if authentication fails.
+    """
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -59,12 +76,27 @@ def login():
 @app.route('/admin_panel/community')
 @login_required
 def admin_panel_community():
+    """
+    Render the community management page within the admin panel.
+
+    Returns:
+        str: The rendered HTML template for the community management page.
+    """
     return render_template('admin_panel_community.html')
 
 
 @app.route('/admin_panel/community/delete_account')
 @login_required
 def admin_panel_community_delete_account():
+    """
+    Delete a user account based on the user name.
+
+    Args:
+        user (str): The username of the account to delete.
+
+    Returns:
+        bool: True if the account was successfully deleted, False otherwise.
+    """
     user = request.args.get('user')
     cur.execute('DELETE FROM users WHERE name = %s', (user, ))
     if cur.rowcount == 0:
@@ -72,17 +104,90 @@ def admin_panel_community_delete_account():
     conn.commit()
     return True
 
-@app.route('/admin_panel/community/add_role')
+
+@app.route('/admin_panel/community/view_roles')
 @login_required
-def admin_panel_community_add_role():
+def admin_panel_community_view_roles():
+    """
+    View the roles of a user based on the name.
+
+    Args:
+        user (str): The username of the account to view roles for.
+
+    Returns:
+        str: The roles of the user.
+        bool: False if the user does not exist.
+    """
     user = request.args.get('user')
-    role = request.args.get('role')
     cur.execute('SELECT role FROM users WHERE name = %s', (user, ))
-    roles = list(cur.fetchone()[0])
+    roles_raw = cur.fetchone()
+    if not roles_raw:
+        return False
+    return roles_raw[0]
+
+
+@app.route('/admin_panel/community/set_roles')
+@login_required
+def admin_panel_community_set_roles():
+    """
+    Set the roles for a user based on the name.
+
+    Args:
+        user (str): The username of the account to set roles for.
+        roles (str): The roles to assign to the user.
+
+    Returns:
+        bool: True if the roles were successfully set, False otherwise.
+    """
+    user = request.args.get('user')
+    roles = request.args.get('roles')
+    cur.execute('UPDATE users SET role = %s WHERE name = %s', (roles, user))
+    conn.commit()
+    return True
+
+
+@app.route('/admin_panel/community/view_activity_points')
+@login_required
+def admin_panel_community_view_activity_points():
+    """
+    View the activity points of a user.
+
+    Args:
+        user (str): The username of the account to view activity points for.
+
+    Returns:
+        int: The activity points of the user.
+        bool: False if the user does not exist.
+    """
+    user = request.args.get('user')
+    cur.execute('SELECT points FROM users WHERE name = %s', (user, ))
+    points = cur.fetchone()
+    if not points:
+        return False
+    return int(points[0])
+
+
+@app.route('/admin_panel/community/set_activity_points')
+@login_required
+def admin_panel_community_set_activity_points():
+    """
+    Set the activity points for a user in the community.
+
+    Args:
+        user (str): The username of the account to set activity points for.
+        points (int): The activity points to assign to the user.
+
+    Returns:
+        bool: True if the activity points were successfully set, False otherwise.
+    """
+    user = request.args.get('user')
+    points = request.args.get('user')
+    cur.execute('UPDATE users SET points = %s WHERE name = %s', (int(points), user))
     if cur.rowcount == 0:
         return False
     conn.commit()
     return True
+
 
 
 
