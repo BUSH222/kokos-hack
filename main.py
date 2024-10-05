@@ -26,8 +26,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-
-    cur.execute("SELECT id, name, password FROM users WHERE id = %s AND role LIKE %s", (user_id, '%5%'))
+    cur.execute("SELECT id, name, password FROM users WHERE id = %s AND role", (user_id, '%5%'))
     user_data = cur.fetchone()
     print(user_data)
     if user_data:
@@ -43,11 +42,13 @@ def index():
 @app.route('/login_password', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        if True:   # usr_input["btn_type"] == "use_password"
+        usr_input = request.json
+        if usr_input["btn_type"] == "use_password":
             username = request.form['username']
             password = request.form['password']
-            user_data = list(get_all_user_data_by_name(username))
-            print(user_data)
+            cur.execute("SELECT id, name, password FROM users WHERE id = %s AND role", (username))
+            user_data = cur.fetchone()
+
             if user_data:
                 if user_data[2] == password and len(password) < 32:
                     user = User(*user_data)
@@ -56,7 +57,10 @@ def login():
                 else:
                     return "Invalid username or password"
             else:
-                new_user_data = create_user(username, password)
+                cur.execute('INSERT INTO users(name, password) VALUES (%s, %s) RETURNING (id, name, password, email)',
+                            (username, password))
+                conn.commit()
+                new_user_data = cur.fetchone()[0]
                 new_user = User(*new_user_data)
                 login_user(new_user)
                 return redirect(url_for('dashboard'))
@@ -136,3 +140,10 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+
+@app.route("/")
+def main_page():
+    top_three_posts = cur.execute("SELECT TOP 3 * FROM forum").fetchone()
+    top_three_selling_posts = cur.execute("SELECT * FROM forum ORDER BY sales DESC")
+    closest_game = cur.execute("SELECT your_timestamp FROM your_table ORDER BY ABS(TIMESTAMPDIFF(SECOND, your_timestamp, NOW())) ASC LIMIT 1;").fetchone()
+    return render_template("main_page.html",posts=top_three_posts,products= top_three_selling_posts,closest_game=closest_game)
