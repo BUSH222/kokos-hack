@@ -1,20 +1,34 @@
-from flask import Flask, redirect, render_template, request, url_for, abort, Response
+import os
+
+from flask import Flask, redirect, flash,render_template, request, url_for, abort, Response
 from flask_login import login_user, LoginManager, current_user, login_required, UserMixin, logout_user
 from oauthlib.oauth2 import WebApplicationClient
 from helper import (GOOGLE_CLIENT_ID,
                     GOOGLE_CLIENT_SECRET,
                     GOOGLE_DISCOVERY_URL)
 import requests
+from werkzeug.utils import secure_filename
 import json
 from dbloader import connect_to_db
 conn,cur = connect_to_db()
+
+UPLOAD_FOLDER = os.path.abspath('DATA2')
+
+ALLOWED_EXTENSIONS = {'png','jpeg','jpg'}
+
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+config = []
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 app.config['SECRET_KEY'] = 'bruh'
 
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 class User(UserMixin):
     def __init__(self, id, username, password, email):
@@ -147,3 +161,30 @@ def main_page():
     top_three_selling_posts = cur.execute("SELECT * FROM forum ORDER BY sales DESC")
     closest_game = cur.execute("SELECT your_timestamp FROM your_table ORDER BY ABS(TIMESTAMPDIFF(SECOND, your_timestamp, NOW())) ASC LIMIT 1;").fetchone()
     return render_template("main_page.html",posts=top_three_posts,products= top_three_selling_posts,closest_game=closest_game)
+@app.route("/forum/new-post")
+def forum_new_post():
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file = request.files['file']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        #передача картинки на микросервис.
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+@app.route("/news/new-story")
+@login_required
+def forum_new_post():
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file = request.files['file']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        #передача картинки на микросервис.
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))

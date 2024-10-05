@@ -1,0 +1,10 @@
+{
+        "sqlalchemy_username": "postgres",
+        "sqlalchemy_password": "postgres",
+        "sqlalchemy_hostname": "localhost",
+        "sqlalchemy_portnumber": "5432",
+        "sqlalchemy_databasename": "postgres",
+        "errors_log_file_path" : "logs.txt",
+        "debug_log_file_path" : "logs.txt"
+
+}
