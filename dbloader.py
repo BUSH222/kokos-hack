@@ -58,23 +58,28 @@ def create_tables(populate=False, db_name='kokos', postgres_pwd='12345678', host
     Returns:
         None
     """
+    logging.info('Table creation operation started')
+    logging.info('Connecting to the PostgreSQL server')
     conn = psycopg2.connect(database=db_name,
                             user='postgres',
                             host=host,
                             password=postgres_pwd,
                             port=port)
     cursor = conn.cursor()
+    logging.info('Creating tables')
     with open('schema.sql', 'r') as schema_obj:
         schema = schema_obj.read()
         cursor.execute(schema)
     conn.commit()
     if populate:
+        logging.info('Populating tables')
         with open('populate.sql', 'r') as populate_obj:
             populate_query = populate_obj.read()
             cursor.execute(populate_query)
     conn.commit()
     cursor.close()
     conn.close()
+    logging.info('Table creation operation completed')
 
 
 if __name__ == '__main__':
