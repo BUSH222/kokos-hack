@@ -3,6 +3,7 @@ import os
 import logging
 import psutil
 from settings_loader import get_processor_settings
+from logger import log_event
 app = Flask(__name__)
 
 settings = get_processor_settings()
@@ -52,7 +53,7 @@ def serve_asset(subpath=''):
             </ul>
         ''')
     else:
-        logging.info(f'served asset {subpath}')
+        log_event(f"served asset {subpath}",10)
         return send_from_directory('assets', subpath)
 
 
@@ -78,6 +79,7 @@ def upload_image():
     print(request.files)
     # Save the file to the /assets/ directory
     file.save(os.path.join(app.root_path, 'assets', name))
+    log_event("file uploaded successfully",10)
     return jsonify({"msg": "File uploaded successfully"}), 200
 
 
