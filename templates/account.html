@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='account.css') }}">
+    <script>
+        function redirectToHome() {
+            window.location.href = "{{ url_for('index') }}";
+        }
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <img src="{{ url_for('static', filename='assets/account/kokos_group_logo.png') }}" alt="Club Logo" class="logo" onclick="redirectToHome()">
+        <div class="nav-buttons">
+            <a href="news.html" class="nav-button">Новости</a>
+            <a href="games.html" class="nav-button">Игры</a>
+            <a href="shop.html" class="nav-button">Магазин</a>
+            <a href="about.html" class="nav-button">О клубе</a>
+            <a href="forum.html" class="nav-button">Форум</a>
+        </div>
+        <a href="{{ url_for('account') }}">
+            <img src="{{ url_for('static', filename=user_profile_pic) }}" alt="User Profile Picture" class="navbar-user-pfp">
+        </a>
+    </nav>    
+
+    <div class="account-container">
+        <div class="account-info">
+            <img src="{{ url_for('static', filename=user_profile_pic) }}" alt="User Profile Picture" class="user-pfp">
+            <h2 class="nickname">{{ user_nickname }}</h2>
+            <div class="about-section">
+                <p>{{ user_about }}</p>
+            </div>
+            <div class="social-info">
+                <div class="social-item">
+                    <img src="{{ url_for('static', filename='assets/account/telegram_icon.png') }}" alt="Telegram Icon" class="social-icon">
+                    <span>{{ user_telegram }}</span>
+                </div>
+                <div class="social-item">
+                    <img src="{{ url_for('static', filename='assets/account/vk_icon.png') }}" alt="Vkontakte Icon" class="social-icon">
+                    <span>{{ user_vk }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="favorite-player">
+            <img src="{{ url_for('static', filename=user_favorite_player_pic) }}" alt="Favorite Player" class="player-pic">
+            <h3 class="player-name">{{ user_favorite_player_name }}</h3>
+        </div>
+    </div>
+</body>
+</html>
