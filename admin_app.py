@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request, url_for, jsonify
-from flask_login import login_user, LoginManager, login_required, UserMixin
+from flask_login import login_user, logout_user, LoginManager, login_required, UserMixin
 from dbloader import connect_to_db
 import requests
 import requests.exceptions
@@ -15,6 +15,7 @@ conn, cur = connect_to_db()
 
 
 class User(UserMixin):
+    """Basic flask_login user class."""
     def __init__(self, id, username, password) -> None:
         self.id = id
         self.username = username
@@ -23,6 +24,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
+    """Basic flask_login user loader function."""
     cur.execute("SELECT id, name, password FROM users WHERE id = %s AND role LIKE %s", (user_id, '%5%'))
     user_data = cur.fetchone()
     if user_data:
@@ -75,6 +77,44 @@ def login():
         return render_template('admin_panel/admin_panel_login.html')
 
 
+@app.route('/admin_panel/logout', methods=['GET'])
+@login_required
+def logout():
+    """
+    Handle the logout process for the admin panel.
+    """
+    logout_user()
+    return redirect(url_for('login'))
+
+
+@app.route('/admin_panel/logs')
+@login_required
+def admin_panel_logs():
+    """
+    Render the admin panel server logs page.
+
+    Returns:
+        str: The rendered HTML template for the admin panel.
+    """
+    return render_template('admin_panel/admin_panel_logs.html')
+
+
+@app.route('/admin_panel/logs/get_logs')
+@login_required
+def admin_panel_get_top100_logs():
+    """
+    Return top 100 latest server logs
+
+    Returns:
+        str: organised list of logs.
+    """
+    cur.execute("""SELECT CONCAT(id, '. [', TO_CHAR(log_time, 'YYYY-MM-DD HH24:MI:SS'), ']:  ', log_text)
+                FROM logs
+                ORDER BY id DESC
+                LIMIT 100""")
+    return jsonify(cur.fetchall())
+
+
 @app.route('/admin_panel/community')
 @login_required
 def admin_panel_community():
@@ -102,9 +142,9 @@ def admin_panel_community_delete_account():
     user = request.args.get('user')
     cur.execute('DELETE FROM users WHERE name = %s', (user, ))
     if cur.rowcount == 0:
-        return False
+        return 'Something went wrong.'
     conn.commit()
-    return True
+    return 'Success'
 
 
 @app.route('/admin_panel/community/view_roles')
@@ -124,7 +164,7 @@ def admin_panel_community_view_roles():
     cur.execute('SELECT role FROM users WHERE name = %s', (user, ))
     roles_raw = cur.fetchone()
     if not roles_raw:
-        return False
+        return 'Something went wrong.'
     return roles_raw[0]
 
 
@@ -145,7 +185,7 @@ def admin_panel_community_set_roles():
     roles = request.args.get('roles')
     cur.execute('UPDATE users SET role = %s WHERE name = %s', (roles, user))
     conn.commit()
-    return True
+    return 'Success'
 
 
 @app.route('/admin_panel/community/view_activity_points')
@@ -165,7 +205,7 @@ def admin_panel_community_view_activity_points():
     cur.execute('SELECT points FROM users WHERE name = %s', (user, ))
     points = cur.fetchone()
     if not points:
-        return False
+        return 'Something went wrong.'
     return str(points[0])
 
 
@@ -183,12 +223,12 @@ def admin_panel_community_set_activity_points():
         bool: True if the activity points were successfully set, False otherwise.
     """
     user = request.args.get('user')
-    points = request.args.get('user')
-    cur.execute('UPDATE users SET points = %s WHERE name = %s', (int(points), user))
+    points = request.args.get('points')
+    cur.execute('UPDATE users SET points = %s WHERE name = %s', (points, user))
     if cur.rowcount == 0:
-        return False
+        return 'Something went wrong.'
     conn.commit()
-    return True
+    return 'Success'
 
 
 @app.route('/admin_panel/update_pages')
