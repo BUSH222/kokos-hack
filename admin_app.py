@@ -15,6 +15,7 @@ conn, cur = connect_to_db()
 
 
 class User(UserMixin):
+    """Basic flask_login user class."""
     def __init__(self, id, username, password) -> None:
         self.id = id
         self.username = username
@@ -23,6 +24,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
+    """Basic flask_login user loader function."""
     cur.execute("SELECT id, name, password FROM users WHERE id = %s AND role LIKE %s", (user_id, '%5%'))
     user_data = cur.fetchone()
     if user_data:

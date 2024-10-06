@@ -6,8 +6,8 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: #121212;
+    color: #FFFFFF;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -15,9 +15,9 @@ body {
 
 .admin-navbar {
     width: 100%;
-    background-color: #EAEAEA;
+    background-color: #1e1e1e;
     padding: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .admin-navbar ul {
@@ -26,6 +26,7 @@ body {
     margin: 0;
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .admin-navbar li {
@@ -34,12 +35,13 @@ body {
 
 .admin-navbar a {
     text-decoration: none;
-    color: #333;
+    color: #FFFFFF;
     font-weight: bold;
+    transition: color 0.3s;
 }
 
 .admin-navbar a:hover {
-    color: #E60000;
+    color: #ff4c4c;
 }
 
 .container {
@@ -53,9 +55,9 @@ body {
 
 .chart-container {
     margin: 20px;
-    background-color: #fff;
+    background-color: #1e1e1e;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     padding: 20px;
     width: 100%;
     max-width: 600px;
@@ -63,4 +65,42 @@ body {
 
 h1 {
     margin-bottom: 20px;
+}
+
+h2 {
+    color: #ff4c4c;
+}
+
+/* responsive layout */
+@media (max-width: 768px) {
+    .admin-navbar ul {
+        flex-direction: column;
+    }
+
+    .admin-navbar li {
+        margin: 10px 0;
+    }
+
+    .chart-container {
+        margin: 10px 0;
+        width: 90%;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 20px;
+    }
+
+    h2 {
+        font-size: 16px;
+    }
 }
