@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request, url_for, jsonify
-from flask_login import login_user, LoginManager, login_required, UserMixin
+from flask_login import login_user, logout_user, LoginManager, login_required, UserMixin
 from dbloader import connect_to_db
 import requests
 import requests.exceptions
@@ -73,6 +73,41 @@ def login():
             return "Registration not allowed or user is not admin"
     else:
         return render_template('admin_panel/admin_panel_login.html')
+
+
+@app.route('/admin_panel/logout', methods=['GET'])
+@login_required
+def logout():
+    """
+    Handle the logout process for the admin panel.
+    """
+    logout_user()
+    return redirect(url_for('login'))
+
+
+@app.route('/admin_panel/logs')
+@login_required
+def admin_panel_logs():
+    """
+    Render the admin panel server logs page.
+
+    Returns:
+        str: The rendered HTML template for the admin panel.
+    """
+    return render_template('admin_panel/admin_panel_logs.html')
+
+
+@app.route('/admin_panel/logs/get_logs')
+@login_required
+def admin_panel_get_top100_logs():
+    """
+    Return top 100 latest server logs
+
+    Returns:
+        str: organised list of logs.
+    """
+    cur.execute("SELECT CONCAT(id, ' - ', log_time, ':  ', log_text) FROM logs ORDER BY id DESC LIMIT 100")
+    return jsonify(cur.fetchall())
 
 
 @app.route('/admin_panel/community')

@@ -1,0 +1,128 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #121212; /* Set a solid dark background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: #1e1e1e;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    max-width: 600px;
+    width: 100%;
+    border: 1px solid #ff4c4c;
+}
+
+.login-form h2 {
+    text-align: center;
+    color: #FFFFFF;
+    margin-bottom: 1.5rem;
+}
+
+.log-group {
+    margin-bottom: 1.5rem;
+}
+
+.log-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #ff4c4c;
+}
+
+.log-group textarea {
+    width: 100%;
+    height: 300px;
+    padding: 1rem;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #2e2e2e;
+    color: #FFFFFF;
+    resize: none;
+}
+
+.log-group textarea[readonly] {
+    cursor: not-allowed;
+}
+
+.button-container {
+    text-align: center;
+}
+
+.login-btn {
+    background-color: #ff4c4c;
+    color: #FFFFFF;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+    background-color: #b30000;
+}
+
+.login-form h2:after {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 2px;
+    background-color: #ff4c4c;
+    margin: 0.5rem auto 1.5rem;
+}
+
+.admin-navbar {
+    width: 100%;
+    background-color: #1e1e1e;
+    padding: 10px;
+    border-bottom: 1px solid #ff4c4c;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    position: fixed;
+    top: 0;
+}
+
+.admin-navbar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.admin-navbar li {
+    margin: 0 15px;
+}
+
+.admin-navbar a {
+    text-decoration: none;
+    color: #FFFFFF;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.admin-navbar a:hover {
+    color: #ff4c4c;
+}
+
+@media (max-width: 768px) {
+    .logs-container {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .logs-container {
+        max-width: 95%;
+    }
+}
