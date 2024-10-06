@@ -6,6 +6,8 @@ from settings_loader import get_processor_settings
 app = Flask(__name__)
 
 settings = get_processor_settings()
+
+
 @app.route('/assets/')
 @app.route('/assets/<path:subpath>')
 def serve_asset(subpath=''):
@@ -85,7 +87,7 @@ def asset_delivery_server_status():
     Shows the current RAM and CPU usage of the server, can only be accessed by localhost ips
     Returns:
         abort(403): accessed from the wrong ip
-        json: {'ram': , 'cpu': ) ram and cpu usage percent with a comment
+        json: {'ram': , 'cpu': } ram and cpu usage percent with a comment
     """
     allowed_ips = settings["allowed_ips"]
     if request.remote_addr not in allowed_ips:

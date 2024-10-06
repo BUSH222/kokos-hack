@@ -235,12 +235,15 @@ def full_server_status():
         json: json of ram and cpu usage of every server in the format {"server_status": {"ram": number, "cpu": number}}
     """
     try:
-        main_status = requests.get('http://172.0.0.1:5000/main_server_status', timeout=0.1).json()
-    except requests.exceptions.Timeout:
+        main_status_response = requests.get('http://127.0.0.1:5000/main_server_status', timeout=1)
+        main_status = main_status_response.json()
+    except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError):
         main_status = {'ram': 0, 'cpu': 0}
+
     try:
-        asset_delivery_status = requests.get('http://172.0.0.1:5001/asset_delivery_server_status', timeout=0.1).json()
-    except requests.exceptions.Timeout:
+        asset_delivery_status_response = requests.get('http://127.0.0.1:5001/asset_delivery_server_status', timeout=1)
+        asset_delivery_status = asset_delivery_status_response.json()
+    except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError):
         asset_delivery_status = {'ram': 0, 'cpu': 0}
     admin_panel_status = {'ram': psutil.virtual_memory().percent, 'cpu': psutil.cpu_percent()}
 
