@@ -2,10 +2,10 @@ from flask import Flask, render_template_string, send_from_directory, request, j
 import os
 import logging
 import psutil
-
+from settings_loader import get_processor_settings
 app = Flask(__name__)
 
-
+settings = get_processor_settings()
 @app.route('/assets/')
 @app.route('/assets/<path:subpath>')
 def serve_asset(subpath=''):
@@ -65,7 +65,7 @@ def upload_image():
         json: {"msg": "Unauthorised"} when accessing from an unauthorised ip
         json: {"msg": "File uploaded Successfully"} when accessing from an unauthorised ip
     """
-    allowed_ips = ['127.0.0.1']
+    allowed_ips = settings["allowed_ips"]
     print(request.remote_addr)
     if request.remote_addr not in allowed_ips:
         return jsonify({"msg": "Unauthorized"}), 403
@@ -87,7 +87,7 @@ def asset_delivery_server_status():
         abort(403): accessed from the wrong ip
         json: {'ram': , 'cpu': ) ram and cpu usage percent with a comment
     """
-    allowed_ips = ['127.0.0.1']
+    allowed_ips = settings["allowed_ips"]
     if request.remote_addr not in allowed_ips:
         return abort(403)
     return jsonify({'ram': psutil.virtual_memory().percent, 'cpu': psutil.cpu_percent()})
