@@ -5,6 +5,8 @@
         "sqlalchemy_portnumber": "5432",
         "sqlalchemy_databasename": "postgres",
         "errors_log_file_path" : "logs.txt",
-        "debug_log_file_path" : "logs.txt"
+        "debug_log_file_path" : "logs.txt",
+        "asset_delivery_ip": "http://127.0.0.1:5001/upload_assets",
+        "allowed_ips": "127.0.0.1"
 
 }

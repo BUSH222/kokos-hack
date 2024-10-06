@@ -1,6 +1,7 @@
 from settings_loader import settings
 import logging
-
+from dbloader import connect_to_db
+cur = connect_to_db()
 '''
 Debug (10): самый низкий уровень логирования, предназначенный для отладочных сообщений, для вывода диагностической информации о приложении.
 
@@ -46,7 +47,9 @@ custom_logger = setup_custom_logger('combined')
 
 
 def log_event(event_description: str, log_level=logging.DEBUG, **kwargs) -> None:
+    cur = connect_to_db()
     full_event_description = event_description if not kwargs else event_description + '\n' + str(kwargs)
+    cur.execte(f"INSERT INTO logs (log_time, log_text) VALUES (NOW(), {event_description});")
     # print(full_event_description)
     custom_logger.log(log_level, full_event_description)
     # errors_logger.log(log_level, full_event_description)

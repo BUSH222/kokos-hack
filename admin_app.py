@@ -1,7 +1,9 @@
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, request, url_for, jsonify
 from flask_login import login_user, LoginManager, login_required, UserMixin
 from dbloader import connect_to_db
 import requests
+import requests.exceptions
+import psutil
 
 
 app = Flask(__name__)
@@ -37,7 +39,7 @@ def admin_panel():
     Returns:
         str: The rendered HTML template for the admin panel.
     """
-    return render_template('admin_panel.html')
+    return render_template('admin_panel/admin_panel.html')
 
 
 @app.route('/admin_panel/login', methods=['GET', 'POST'])
@@ -70,7 +72,7 @@ def login():
         else:
             return "Registration not allowed or user is not admin"
     else:
-        return render_template('admin_panel_login.html')
+        return render_template('admin_panel/admin_panel_login.html')
 
 
 @app.route('/admin_panel/community')
@@ -82,7 +84,7 @@ def admin_panel_community():
     Returns:
         str: The rendered HTML template for the community management page.
     """
-    return render_template('admin_panel_community.html')
+    return render_template('admin_panel/admin_panel_community.html')
 
 
 @app.route('/admin_panel/community/delete_account')
@@ -198,7 +200,7 @@ def admin_panel_update_pages():
     Returns:
         str: The rendered HTML template for the update pages page.
     """
-    return render_template('admin_panel_update_pages.html')
+    return render_template('admin_panel/admin_panel_update_pages.html')
 
 
 @app.route('/admin_panel/update_pages/update_image', methods=['POST'])
@@ -222,6 +224,32 @@ def admin_panel_update_pages_update_image():
         else:
             return 'Failed to upload image', 500
     return 'No file uploaded', 400
+
+
+@app.route('/admin_panel/full_server_status', methods=['GET'])
+@login_required
+def full_server_status():
+    """Returns the server statuses for all microservices running except postgres database.
+
+    Returns:
+        json: json of ram and cpu usage of every server in the format {"server_status": {"ram": number, "cpu": number}}
+    """
+    try:
+        main_status_response = requests.get('http://127.0.0.1:5000/main_server_status', timeout=1)
+        main_status = main_status_response.json()
+    except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError, requests.exceptions.ConnectionError):
+        main_status = {'ram': 0, 'cpu': 0}
+
+    try:
+        asset_delivery_status_response = requests.get('http://127.0.0.1:5001/asset_delivery_server_status', timeout=1)
+        asset_delivery_status = asset_delivery_status_response.json()
+    except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError, requests.exceptions.ConnectionError):
+        asset_delivery_status = {'ram': 0, 'cpu': 0}
+    admin_panel_status = {'ram': psutil.virtual_memory().percent, 'cpu': psutil.cpu_percent()}
+
+    return jsonify({"Main server": main_status,
+                    "Asset delivery": asset_delivery_status,
+                    "Admin panel": admin_panel_status})
 
 
 if __name__ == "__main__":

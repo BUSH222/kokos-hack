@@ -2,8 +2,11 @@ from flask import Flask, render_template_string, send_from_directory, request, j
 import os
 import logging
 import psutil
-
+from settings_loader import get_processor_settings
+from logger import log_event
 app = Flask(__name__)
+
+settings = get_processor_settings()
 
 
 @app.route('/assets/')
@@ -50,7 +53,7 @@ def serve_asset(subpath=''):
             </ul>
         ''')
     else:
-        logging.info(f'served asset {subpath}')
+        log_event(f"served asset {subpath}",10)
         return send_from_directory('assets', subpath)
 
 
@@ -65,7 +68,7 @@ def upload_image():
         json: {"msg": "Unauthorised"} when accessing from an unauthorised ip
         json: {"msg": "File uploaded Successfully"} when accessing from an unauthorised ip
     """
-    allowed_ips = ['127.0.0.1']
+    allowed_ips = settings["allowed_ips"]
     print(request.remote_addr)
     if request.remote_addr not in allowed_ips:
         return jsonify({"msg": "Unauthorized"}), 403
@@ -76,6 +79,7 @@ def upload_image():
     print(request.files)
     # Save the file to the /assets/ directory
     file.save(os.path.join(app.root_path, 'assets', name))
+    log_event("file uploaded successfully",10)
     return jsonify({"msg": "File uploaded successfully"}), 200
 
 
@@ -85,12 +89,12 @@ def asset_delivery_server_status():
     Shows the current RAM and CPU usage of the server, can only be accessed by localhost ips
     Returns:
         abort(403): accessed from the wrong ip
-        string: cpu and ram usage with a comment
+        json: {'ram': , 'cpu': } ram and cpu usage percent with a comment
     """
-    allowed_ips = ['127.0.0.1']
+    allowed_ips = settings["allowed_ips"]
     if request.remote_addr not in allowed_ips:
         return abort(403)
-    return f'Asset delivery RAM and CPU usage: RAM: {psutil.virtual_memory().percent}% CPU: {psutil.cpu_percent()}%'
+    return jsonify({'ram': psutil.virtual_memory().percent, 'cpu': psutil.cpu_percent()})
 
 
 if __name__ == '__main__':
