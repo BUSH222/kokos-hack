@@ -60,6 +60,8 @@ body {
     width: 100%;
     max-width: 400px;
     padding: 1rem;
+    border: 2px solid #ff4c4c;
+    border-radius: 8px;
 }
 
 h1 {

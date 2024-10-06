@@ -142,9 +142,9 @@ def admin_panel_community_delete_account():
     user = request.args.get('user')
     cur.execute('DELETE FROM users WHERE name = %s', (user, ))
     if cur.rowcount == 0:
-        return False
+        return 'Something went wrong.'
     conn.commit()
-    return True
+    return 'Success'
 
 
 @app.route('/admin_panel/community/view_roles')
@@ -164,7 +164,7 @@ def admin_panel_community_view_roles():
     cur.execute('SELECT role FROM users WHERE name = %s', (user, ))
     roles_raw = cur.fetchone()
     if not roles_raw:
-        return False
+        return 'Something went wrong.'
     return roles_raw[0]
 
 
@@ -185,7 +185,7 @@ def admin_panel_community_set_roles():
     roles = request.args.get('roles')
     cur.execute('UPDATE users SET role = %s WHERE name = %s', (roles, user))
     conn.commit()
-    return True
+    return 'Success'
 
 
 @app.route('/admin_panel/community/view_activity_points')
@@ -205,7 +205,7 @@ def admin_panel_community_view_activity_points():
     cur.execute('SELECT points FROM users WHERE name = %s', (user, ))
     points = cur.fetchone()
     if not points:
-        return False
+        return 'Something went wrong.'
     return str(points[0])
 
 
@@ -223,12 +223,12 @@ def admin_panel_community_set_activity_points():
         bool: True if the activity points were successfully set, False otherwise.
     """
     user = request.args.get('user')
-    points = request.args.get('user')
-    cur.execute('UPDATE users SET points = %s WHERE name = %s', (int(points), user))
+    points = request.args.get('points')
+    cur.execute('UPDATE users SET points = %s WHERE name = %s', (points, user))
     if cur.rowcount == 0:
-        return False
+        return 'Something went wrong.'
     conn.commit()
-    return True
+    return 'Success'
 
 
 @app.route('/admin_panel/update_pages')
