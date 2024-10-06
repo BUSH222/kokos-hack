@@ -1,10 +1,10 @@
-from flask import Flask, redirect, render_template, request, url_for, abort, Response
+from flask import Flask, redirect, render_template, request, url_for, abort, Response, session
 from flask_login import login_user, LoginManager, current_user, login_required, UserMixin, logout_user
 from dbloader import connect_to_db
 from oauthlib.oauth2 import WebApplicationClient
 from helper import (GOOGLE_CLIENT_ID,
                     GOOGLE_CLIENT_SECRET,
-                    GOOGLE_DISCOVERY_URL)
+                    GOOGLE_DISCOVERY_URL, YANDEX_CLIENT_ID, YANDEX_CLIENT_SECRET, YANDEX_DISCOVERY_URL, YANDEX_REDIRECT_URI)
 import requests
 import json
 
@@ -14,6 +14,7 @@ app = Flask(__name__)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
+# yandex_provider_cfg = requests.get(YANDEX_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 app.config['SECRET_KEY'] = 'bruh'
 
@@ -62,9 +63,55 @@ def login():
             new_user_data = cur.fetchone()[0]
             new_user = User(*new_user_data)
             login_user(new_user)
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('account'))
     return render_template('login_password.html')
 
+@app.route('/login_yandex', methods=['GET', 'POST'])
+def login_yandex():
+    # # Find out what URL to hit for Google login
+    # authorization_endpoint = yandex_provider_cfg["authorization_endpoint"]
+
+    # # Use library to construct the request for Google login and provide
+    # # scopes that let you retrieve user's profile from Google
+    # request_uri = client.prepare_request_uri(
+    #     authorization_endpoint,
+    #     redirect_uri=request.base_url + "/callback",
+    #     scope=["openid", "email", "profile"],)
+    yandex_auth_url = (
+        'https://oauth.yandex.ru/authorize?response_type=code'
+        f'&client_id={YANDEX_CLIENT_ID}&redirect_uri={YANDEX_REDIRECT_URI}'
+    )
+    return redirect(yandex_auth_url)
+
+@app.route('/login_yandex/yandex_callback')
+def yandex_callback():
+    code = request.args.get('code')
+    token_url = YANDEX_DISCOVERY_URL
+    data = {
+        'grant_type': 'authorization_code',
+        'code': code,
+        'client_id': YANDEX_CLIENT_ID,
+        'client_secret': YANDEX_CLIENT_SECRET,
+        'redirect_uri': YANDEX_REDIRECT_URI
+    }
+    response = requests.get(token_url, data=data)
+    access_token = request.args.get('access_token')
+    # response = session.post(token_url, data=data)
+    # token_info = response.json()
+    # access_token = token_info['access_token']
+
+    # user_info_url = 'https://login.yandex.ru/info'
+    # headers = {'Authorization': f'OAuth {access_token}'}
+    # user_info_response = requests.post(user_info_url, headers=headers)
+    # user_info = user_info_response.json()
+    real_name = request.args.get('real_name')
+    print(f"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA{real_name}")
+    # session['user'] = {
+    #     'fio': user_info.get('real_name'),
+    #     'avatar': user_info.get('default_avatar_id')
+    # }
+
+    return redirect(url_for('dashboard'))
 
 @app.route('/login_gmail', methods=['GET', 'POST'])
 def login_gmail():
@@ -78,7 +125,6 @@ def login_gmail():
         redirect_uri=request.base_url + "/callback",
         scope=["openid", "email", "profile"],)
     return redirect(request_uri)
-
 
 @app.route("/login_gmail/callback")
 def callback():
@@ -108,19 +154,34 @@ def callback():
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
-        users_name = userinfo_response.json()["given_name"]
+        picture = userinfo_response.json()["picture"]
+        username = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
+    
+    # user = User(username=username, password=unique_id, email=users_email)
+    cur.execute("SELECT id, name, password, email FROM users WHERE name = %s", (username,))
+    user_data = cur.fetchone()
+    if user_data:
+        # if not User.get(unique_id):
+        # User.create(unique_id, users_name, users_email)
+        user = User(*user_data)
+        login_user(user)
+    else:
+        cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) RETURNING id, name, password, email', 
+                (username, unique_id, users_email))
+        conn.commit()
+        new_user_data = cur.fetchone()
+        new_user = User(*new_user_data)
+        login_user(new_user)
+    return redirect(url_for('account'))
 
-    # if not users_email.endswith('@edu.misis.ru'):
-    #     abort(403)
-
-    user = User(id_=unique_id, name=users_name, email=users_email)
-    if not User.get(unique_id):
-        User.create(unique_id, users_name, users_email)
-    login_user(user)
-    return redirect(url_for("index"))
-
+@app.route('/profile')
+def profile():
+    user = session.get('user')
+    if not user:
+        return redirect(url_for('login'))
+    return f"Привет, {user['fio']}! <img src='https://avatars.yandex.net/get-yapic/{user['avatar']}/islands-200' alt='avatar'>"
 
 @app.route('/logout')
 @login_required
@@ -129,12 +190,12 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/dashboard', methods=['GET', 'POST'])
+@app.route('/account', methods=['GET', 'POST'])
 @login_required
-def dashboard():
+def account():
     return "негры"
 
 
 if __name__ == '__main__':
     # preload_db() # его нет
-    app.run(host='0.0.0.0', port=5000)  # , ssl_context='adhoc')
+    app.run(host='0.0.0.0', port=5000, ssl_context=('certificate.pem', 'private_key.pem'))  # , ssl_context='adhoc')
