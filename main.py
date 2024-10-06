@@ -1,8 +1,9 @@
 import os
 
-from flask import Flask, redirect, flash,render_template, request, url_for, abort, Response
-from flask_login import login_user, LoginManager, current_user, login_required, UserMixin, logout_user
+from flask import Flask, render_template, request, url_for, flash, redirect, abort
+from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user
 from oauthlib.oauth2 import WebApplicationClient
+import psutil
 from helper import (GOOGLE_CLIENT_ID,
                     GOOGLE_CLIENT_SECRET,
                     GOOGLE_DISCOVERY_URL)
@@ -10,11 +11,11 @@ import requests
 from werkzeug.utils import secure_filename
 import json
 from dbloader import connect_to_db
-conn,cur = connect_to_db()
+conn, cur = connect_to_db()
 
 UPLOAD_FOLDER = os.path.abspath('DATA2')
 
-ALLOWED_EXTENSIONS = {'png','jpeg','jpg'}
+ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -26,9 +27,11 @@ google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 app.config['SECRET_KEY'] = 'bruh'
 
+
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 class User(UserMixin):
     def __init__(self, id, username, password, email):
@@ -160,7 +163,9 @@ def main_page():
     top_three_posts = cur.execute("SELECT TOP 3 * FROM forum").fetchone()
     top_three_selling_posts = cur.execute("SELECT * FROM forum ORDER BY sales DESC")
     closest_game = cur.execute("SELECT your_timestamp FROM your_table ORDER BY ABS(TIMESTAMPDIFF(SECOND, your_timestamp, NOW())) ASC LIMIT 1;").fetchone()
-    return render_template("main_page.html",posts=top_three_posts,products= top_three_selling_posts,closest_game=closest_game)
+    return render_template("main_page.html", posts=top_three_posts, products=top_three_selling_posts, closest_game=closest_game)
+
+
 @app.route("/forum/new-post")
 def forum_new_post():
     if 'file' not in request.files:
@@ -172,11 +177,13 @@ def forum_new_post():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        #передача картинки на микросервис.
+        # передача картинки на микросервис.
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+
 @app.route("/news/new-story")
 @login_required
-def forum_new_post():
+def story_new_post():
     if 'file' not in request.files:
         flash('No file part')
         return redirect(request.url)
@@ -186,5 +193,25 @@ def forum_new_post():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        #передача картинки на микросервис.
+        # передача картинки на микросервис.
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+
+@app.route('/main_server_status', methods=['GET'])
+def main_server_status():
+    """
+    Shows the current RAM and CPU usage of the server, can only be accessed by localhost ips
+    Returns:
+        abort(403): accessed from the wrong ip
+        string: cpu and ram usage with a comment
+    """
+    allowed_ips = ['127.0.0.1']
+    if request.remote_addr not in allowed_ips:
+        return abort(403)
+    return f'Main server RAM and CPU usage: RAM: {psutil.virtual_memory().percent}% CPU: {psutil.cpu_percent()}%'
+
+
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)
+    cur.close()
+    conn.close()

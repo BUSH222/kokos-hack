@@ -1,6 +1,7 @@
-from flask import Flask, render_template_string, send_from_directory, request, jsonify
+from flask import Flask, render_template_string, send_from_directory, request, jsonify, abort
 import os
 import logging
+import psutil
 
 app = Flask(__name__)
 
@@ -76,6 +77,20 @@ def upload_image():
     # Save the file to the /assets/ directory
     file.save(os.path.join(app.root_path, 'assets', name))
     return jsonify({"msg": "File uploaded successfully"}), 200
+
+
+@app.route('/asset_delivery_server_status', methods=['GET'])
+def asset_delivery_server_status():
+    """
+    Shows the current RAM and CPU usage of the server, can only be accessed by localhost ips
+    Returns:
+        abort(403): accessed from the wrong ip
+        string: cpu and ram usage with a comment
+    """
+    allowed_ips = ['127.0.0.1']
+    if request.remote_addr not in allowed_ips:
+        return abort(403)
+    return f'Asset delivery RAM and CPU usage: RAM: {psutil.virtual_memory().percent}% CPU: {psutil.cpu_percent()}%'
 
 
 if __name__ == '__main__':
