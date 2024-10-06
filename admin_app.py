@@ -238,7 +238,7 @@ def full_server_status():
         main_status_response = requests.get('http://127.0.0.1:5000/main_server_status', timeout=1)
         main_status = main_status_response.json()
     except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError, requests.exceptions.ConnectionError):
-        main_status = {'ram': 100, 'cpu': 80}
+        main_status = {'ram': 0, 'cpu': 0}
 
     try:
         asset_delivery_status_response = requests.get('http://127.0.0.1:5001/asset_delivery_server_status', timeout=1)

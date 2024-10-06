@@ -1,9 +1,8 @@
-const cpuLoadData = [];
-const ramUsageData = [];
+const cpuLoadData = {};
+const ramUsageData = {};
 const serverNames = [];
 
-// Color palette for the bars
-const colors = ['#E60000', '#32CD32', '#0000FF']; // Red, Orange, Green
+const colors = ['#E60000', '#32CD32', '#0000FF']
 
 // Function to fetch server data
 function fetchServerData() {
@@ -17,55 +16,98 @@ function fetchServerData() {
 
 // Function to update charts with fetched data
 function updateCharts(data) {
-    // Clear existing data
-    cpuLoadData.length = 0;
-    ramUsageData.length = 0;
+    // Update server names
     serverNames.length = 0;
-
-    // Assuming the JSON object has server names as keys
     for (const server in data) {
         if (data.hasOwnProperty(server)) {
             serverNames.push(server);
-            cpuLoadData.push(data[server].cpu);
-            ramUsageData.push(data[server].ram);
+            if (!cpuLoadData[server]) {
+                cpuLoadData[server] = [];
+                ramUsageData[server] = [];
+            }
+            cpuLoadData[server].push(data[server].cpu);
+            ramUsageData[server].push(data[server].ram);
+
+            // Limit to 10 data points
+            if (cpuLoadData[server].length > 10) cpuLoadData[server].shift();
+            if (ramUsageData[server].length > 10) ramUsageData[server].shift();
         }
     }
 
     // Redraw the charts with new data
-    drawChart('cpuLoadChart', cpuLoadData, 'Нагрузка ЦП');
-    drawChart('ramUsageChart', ramUsageData, 'Оперативная память');
+    drawChart(cpuLoadChart, cpuLoadData, 'Нагрузка ЦП, %');
+    drawChart(ramUsageChart, ramUsageData, 'Оперативная память, %');
 }
 
 // Function to draw the chart
-function drawChart(canvasId, data, label) {
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-    const barWidth = (width / data.length) - 10;
+function drawChart(chart, data, label) {
+    const datasets = serverNames.map((server, index) => ({
+        label: server,
+        data: data[server],
+        borderColor: colors[index % colors.length],
+        fill: false
+    }));
 
-    ctx.clearRect(0, 0, width, height); // Clear the canvas
-
-    // Draw the label at the top
-    ctx.fillStyle = '#333';
-    ctx.font = '18px Arial';
-    ctx.fillText(label, width / 2 - ctx.measureText(label).width / 2, 20);
-
-    // Draw the bars
-    data.forEach((value, index) => {
-        const barHeight = (height / 100) * value; // Calculate height based on value
-        ctx.fillStyle = colors[index % colors.length]; // Cycle through colors
-        ctx.fillRect(index * (barWidth + 10), height - barHeight, barWidth, barHeight);
-
-        // Add value labels
-        ctx.fillStyle = '#333';
-        ctx.font = '14px Arial';
-        ctx.fillText(serverNames[index] + ' ' + value + '%', index * (barWidth + 10) + 5, height - barHeight - 5);
-        
-        // Add server name labels
-        //ctx.fillText(serverNames[index], index * (barWidth + 10) + 5, height - 20);
-    });
+    chart.data.labels = Array.from({ length: 10 }, (_, i) => i + 1);
+    chart.data.datasets = datasets;
+    chart.update();
 }
+
+// Create the charts
+const cpuLoadChart = new Chart(document.getElementById('cpuLoadChart').getContext('2d'), {
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: []
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top'
+            },
+            title: {
+                display: true,
+                text: 'Нагрузка ЦП, %'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100
+            }
+        },
+        animation: false
+    }
+});
+
+const ramUsageChart = new Chart(document.getElementById('ramUsageChart').getContext('2d'), {
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: []
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top'
+            },
+            title: {
+                display: true,
+                text: 'Оперативная память, %'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100
+            }
+        },
+        animation: false
+    }
+});
+
 
 // Fetch server data every 5 seconds
 setInterval(fetchServerData, 5000);
