@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, render_template, request, url_for, flash, redirect, abort, jsonify
-from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user
+from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user,current_user
 from oauthlib.oauth2 import WebApplicationClient
 import psutil
 from helper import (GOOGLE_CLIENT_ID,
@@ -53,14 +53,12 @@ def load_user(user_id):
     return None
 
 
-@app.route('/')
-def index():
-    return render_template("login_with.html")
 
 
-@app.route('/login_password', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        change = ''
         usr_input = request.json
         if usr_input["btn_type"] == "use_password":
             username = request.form['username']
@@ -72,9 +70,9 @@ def login():
                 if user_data[2] == password and len(password) < 32:
                     user = User(*user_data)
                     login_user(user)
-                    return redirect(url_for('dashboard'))
+                    return redirect(url_for('account'))
                 else:
-                    return "Invalid username or password"
+                    change = "Invalid username or password"
             else:
                 cur.execute('INSERT INTO users(name, password) VALUES (%s, %s) RETURNING (id, name, password, email)',
                             (username, password))
@@ -82,11 +80,10 @@ def login():
                 new_user_data = cur.fetchone()[0]
                 new_user = User(*new_user_data)
                 login_user(new_user)
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('account'))
         elif usr_input["btn_type"] == "use_google":
             # Find out what URL to hit for Google login
             authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-
             # Use library to construct the request for Google login and provide
             # scopes that let you retrieve user's profile from Google
             request_uri = client.prepare_request_uri(
@@ -94,25 +91,13 @@ def login():
                 redirect_uri=request.base_url + "/callback",
                 scope=["openid", "email", "profile"], )
             return redirect(request_uri)
-    return render_template('login_password.html')
 
+    return render_template('login.html',change=change)
 
-@app.route('/login_gmail', methods=['GET', 'POST'])
-def login_gmail():
-    # Find out what URL to hit for Google login
-    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-
-    # Use library to construct the request for Google login and provide
-    # scopes that let you retrieve user's profile from Google
-    request_uri = client.prepare_request_uri(
-        authorization_endpoint,
-        redirect_uri=request.base_url + "/callback",
-        scope=["openid", "email", "profile"],)
-    return redirect(request_uri)
 
 
 @app.route("/login_gmail/callback")
-def callback():
+def g_callback():
     """Get authorization code Google sent back to you"""
     code = request.args.get("code")
     google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
@@ -176,6 +161,44 @@ def main_page():
     return render_template("main_page.html", posts=top_three_posts, products=top_three_selling_posts, closest_game=closest_game)
 
 
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
+def account():
+    profile_pic, name, fav_player, about_me,vk_acc, telegram_acc=''*5
+    if request.method == 'GET':
+        usr_id = current_user.id
+        profile_pic,name,fav_player,about_me,vk_acc,telegram_acc = cur.execute(f"SELECT profile_pic,name,fav_player,about_me,vk_acc FROM user WHERE id = {usr_id}").fetchall()
+
+        if vk_acc == None: vk_acc = "Не привязан"
+        if telegram_acc == None: telegram_acc = "Не привязан"
+    if request.method == 'POST':
+        usr_input = request.json
+        if usr_input["btn_type"] == "change_user_data":
+            return redirect(url_for('change_user_data'))
+    return render_template('account.html',profile_pic=profile_pic,name=name,fav_player=fav_player,about_me=about_me,telegram_acc=telegram_acc,vk_acc=vk_acc)
+
+@app.route('/account/change_account_data', methods=['POST'])
+@login_required
+def change_user_data():
+    profile_pic, name, fav_player, about_me, vk_acc, telegram_acc,error = '' * 6
+    #Короче сначала в окошках будет высвечиваться уже имеющаяся инфа о юзере,которую можно убрать или поменять, поэтому переменные никогда не будут
+    #Пустыми
+    if request.method == 'GET':
+        usr_id = current_user.id
+        profile_pic,name,fav_player,about_me,vk_acc,telegram_acc = cur.execute(f"SELECT profile_pic,name,fav_player,about_me,vk_acc,telegram_acc FROM user WHERE id = {usr_id}").fetchall()
+        if vk_acc == None: vk_acc = "Не привязан"
+        if telegram_acc == None: telegram_acc = "Не привязан"
+    if request.method == 'POST':
+        usr_id = current_user.id
+        usr_input = request.json
+        if usr_input["btn_type"] == "submit":
+            for key in usr_input.keys():
+                cur.execute(f'UPDATE user SET {key} = {usr_input[key]} where id = {usr_id}')
+        try:
+            cur.commit()
+        except Exception:
+            error="Не удалось загрузить изменения"
+    return render_template("change_user_data", profile_pic=profile_pic, name=name, fav_player=fav_player, about_me=about_me,vk_acc=vk_acc,telegram_acc=telegram_acc,error=error)
 @app.route("/forum/new-post")
 def forum_new_post():
     if 'file' not in request.files:
@@ -238,7 +261,7 @@ def main_server_status():
         abort(403): accessed from the wrong ip
         json: {'ram': , 'cpu': ) ram and cpu usage percent with a comment
     """
-    allowed_ips = ['127.0.0.1']
+    allowed_ips = settings['allowed_ips']
     if request.remote_addr not in allowed_ips:
         return abort(403)
     return jsonify({'ram': psutil.virtual_memory().percent, 'cpu': psutil.cpu_percent()})
