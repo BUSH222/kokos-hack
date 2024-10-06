@@ -83,7 +83,7 @@ def login():
                 new_user = User(*new_user_data)
                 login_user(new_user)
                 return redirect(url_for('dashboard'))
-        else:
+        elif usr_input["btn_type"] == "use_google":
             # Find out what URL to hit for Google login
             authorization_endpoint = google_provider_cfg["authorization_endpoint"]
 
@@ -92,7 +92,7 @@ def login():
             request_uri = client.prepare_request_uri(
                 authorization_endpoint,
                 redirect_uri=request.base_url + "/callback",
-                scope=["openid", "email", "profile"],)
+                scope=["openid", "email", "profile"], )
             return redirect(request_uri)
     return render_template('login_password.html')
 
@@ -111,7 +111,7 @@ def login_gmail():
     return redirect(request_uri)
 
 
-@app.route("/login/callback")
+@app.route("/login_gmail/callback")
 def callback():
     """Get authorization code Google sent back to you"""
     code = request.args.get("code")
@@ -139,19 +139,27 @@ def callback():
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
-        users_name = userinfo_response.json()["given_name"]
+        picture = userinfo_response.json()["picture"]
+        username = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
 
-    # if not users_email.endswith('@edu.misis.ru'):
-    #     abort(403)
-
-    user = User(id_=unique_id, name=users_name, email=users_email)
-    if not User.get(unique_id):
-        User.create(unique_id, users_name, users_email)
-    login_user(user)
-    return redirect(url_for("index"))
-
+    # user = User(username=username, password=unique_id, email=users_email)
+    cur.execute("SELECT id, name, password, email FROM users WHERE name = %s", (username,))
+    user_data = cur.fetchone()
+    if user_data:
+        # if not User.get(unique_id):
+        # User.create(unique_id, users_name, users_email)
+        user = User(*user_data)
+        login_user(user)
+    else:
+        cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) RETURNING id, name, password, email',
+                    (username, unique_id, users_email))
+        conn.commit()
+        new_user_data = cur.fetchone()
+        new_user = User(*new_user_data)
+        login_user(new_user)
+    return redirect(url_for('account'))
 
 @app.route('/logout')
 @login_required
