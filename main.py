@@ -177,7 +177,7 @@ def account():
             return redirect(url_for('change_user_data'))
     return render_template('account.html',profile_pic=profile_pic,name=name,fav_player=fav_player,about_me=about_me,telegram_acc=telegram_acc,vk_acc=vk_acc)
 
-@app.route('/account/change_account_data', methods=['POST'])
+@app.route('/account/change_account_data', methods=['POST','GET'])
 @login_required
 def change_user_data():
     profile_pic, name, fav_player, about_me, vk_acc, telegram_acc,error = '' * 6
