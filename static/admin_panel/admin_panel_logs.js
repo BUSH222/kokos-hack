@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const logsTextarea = document.getElementById('logs');
+    const logsDiv = document.getElementById('logs');
 
     function updateLogs() {
         fetch('/admin_panel/logs/get_logs')
             .then(response => response.json())
             .then(data => {
-                logsTextarea.value = data.map(log => log[0]).join('\n');
+                logsDiv.innerHTML = data.map(log => log[0]).join('\n');
             })
             .catch(error => console.error('Error fetching logs:', error));
     }

@@ -106,7 +106,10 @@ def admin_panel_get_top100_logs():
     Returns:
         str: organised list of logs.
     """
-    cur.execute("SELECT CONCAT(id, ' - ', log_time, ':  ', log_text) FROM logs ORDER BY id DESC LIMIT 100")
+    cur.execute("""SELECT CONCAT(id, '. [', TO_CHAR(log_time, 'YYYY-MM-DD HH24:MI:SS'), ']:  ', log_text)
+                FROM logs
+                ORDER BY id DESC
+                LIMIT 100""")
     return jsonify(cur.fetchall())
 
 
