@@ -39,7 +39,7 @@ def admin_panel():
     Returns:
         str: The rendered HTML template for the admin panel.
     """
-    return render_template('admin_panel.html')
+    return render_template('admin_panel/admin_panel.html')
 
 
 @app.route('/admin_panel/login', methods=['GET', 'POST'])
@@ -72,7 +72,7 @@ def login():
         else:
             return "Registration not allowed or user is not admin"
     else:
-        return render_template('admin_panel_login.html')
+        return render_template('admin_panel/admin_panel_login.html')
 
 
 @app.route('/admin_panel/community')
@@ -84,7 +84,7 @@ def admin_panel_community():
     Returns:
         str: The rendered HTML template for the community management page.
     """
-    return render_template('admin_panel_community.html')
+    return render_template('admin_panel/admin_panel_community.html')
 
 
 @app.route('/admin_panel/community/delete_account')
@@ -200,7 +200,7 @@ def admin_panel_update_pages():
     Returns:
         str: The rendered HTML template for the update pages page.
     """
-    return render_template('admin_panel_update_pages.html')
+    return render_template('admin_panel/admin_panel_update_pages.html')
 
 
 @app.route('/admin_panel/update_pages/update_image', methods=['POST'])
@@ -226,7 +226,7 @@ def admin_panel_update_pages_update_image():
     return 'No file uploaded', 400
 
 
-@app.route('/admin_panel/full_server_status')
+@app.route('/admin_panel/full_server_status', methods=['GET'])
 @login_required
 def full_server_status():
     """Returns the server statuses for all microservices running except postgres database.
@@ -237,19 +237,19 @@ def full_server_status():
     try:
         main_status_response = requests.get('http://127.0.0.1:5000/main_server_status', timeout=1)
         main_status = main_status_response.json()
-    except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError):
-        main_status = {'ram': 0, 'cpu': 0}
+    except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError, requests.exceptions.ConnectionError):
+        main_status = {'ram': 100, 'cpu': 80}
 
     try:
         asset_delivery_status_response = requests.get('http://127.0.0.1:5001/asset_delivery_server_status', timeout=1)
         asset_delivery_status = asset_delivery_status_response.json()
-    except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError):
+    except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError, requests.exceptions.ConnectionError):
         asset_delivery_status = {'ram': 0, 'cpu': 0}
     admin_panel_status = {'ram': psutil.virtual_memory().percent, 'cpu': psutil.cpu_percent()}
 
-    return jsonify({"main_status": main_status,
-                    "asset_delivery_status": asset_delivery_status,
-                    "admin_panel_status": admin_panel_status})
+    return jsonify({"Main server": main_status,
+                    "Asset delivery": asset_delivery_status,
+                    "Admin panel": admin_panel_status})
 
 
 if __name__ == "__main__":

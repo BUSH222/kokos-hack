@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="static/admin_panel/admin_panel.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Server Performance</h1>
+        <div class="chart-container">
+            <canvas id="cpuLoadChart" width="400" height="200"></canvas>
+            <h2>Нагрузка ЦП</h2>
+        </div>
+        <div class="chart-container">
+            <canvas id="ramUsageChart" width="400" height="200"></canvas>
+            <h2>Оперативная память</h2>
+        </div>
+    </div>
+
+    <script src="static/admin_panel/admin_panel.js"></script>
+</body>
+</html>
