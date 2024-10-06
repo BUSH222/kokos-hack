@@ -4,6 +4,8 @@ const serverNames = [];
 
 const colors = ['#E60000', '#32CD32', '#0000FF']
 
+const timeLabels = Array(10).fill('');
+
 // Function to fetch server data
 function fetchServerData() {
     fetch('/admin_panel/full_server_status')
@@ -18,12 +20,19 @@ function fetchServerData() {
 function updateCharts(data) {
     // Update server names
     serverNames.length = 0;
+    const currentTime = new Date().toLocaleTimeString('en-GB', { hour12: false });
+
+    if (timeLabels.length >= 10) {
+        timeLabels.shift();
+    }
+    timeLabels.push(currentTime);
+
     for (const server in data) {
         if (data.hasOwnProperty(server)) {
             serverNames.push(server);
             if (!cpuLoadData[server]) {
-                cpuLoadData[server] = [];
-                ramUsageData[server] = [];
+                cpuLoadData[server] = Array(10).fill(null); // Initialize with 10 null values
+                ramUsageData[server] = Array(10).fill(null); // Initialize with 10 null values
             }
             cpuLoadData[server].push(data[server].cpu);
             ramUsageData[server].push(data[server].ram);
@@ -35,8 +44,8 @@ function updateCharts(data) {
     }
 
     // Redraw the charts with new data
-    drawChart(cpuLoadChart, cpuLoadData, 'Нагрузка ЦП, %');
-    drawChart(ramUsageChart, ramUsageData, 'Оперативная память, %');
+    drawChart(cpuLoadChart, cpuLoadData, 'Нагрузка ЦП');
+    drawChart(ramUsageChart, ramUsageData, 'Оперативная память');
 }
 
 // Function to draw the chart
@@ -48,7 +57,7 @@ function drawChart(chart, data, label) {
         fill: false
     }));
 
-    chart.data.labels = Array.from({ length: 10 }, (_, i) => i + 1);
+    chart.data.labels = timeLabels;
     chart.data.datasets = datasets;
     chart.update();
 }
@@ -57,7 +66,7 @@ function drawChart(chart, data, label) {
 const cpuLoadChart = new Chart(document.getElementById('cpuLoadChart').getContext('2d'), {
     type: 'line',
     data: {
-        labels: [],
+        labels: timeLabels,
         datasets: []
     },
     options: {
@@ -68,13 +77,20 @@ const cpuLoadChart = new Chart(document.getElementById('cpuLoadChart').getContex
             },
             title: {
                 display: true,
-                text: 'Нагрузка ЦП, %'
+                text: 'Нагрузка ЦП'
             }
         },
         scales: {
             y: {
                 beginAtZero: true,
                 max: 100
+            },
+            x: {
+                ticks: {
+                    font: {
+                        size: 8
+                    }
+                }
             }
         },
         animation: false
@@ -84,7 +100,7 @@ const cpuLoadChart = new Chart(document.getElementById('cpuLoadChart').getContex
 const ramUsageChart = new Chart(document.getElementById('ramUsageChart').getContext('2d'), {
     type: 'line',
     data: {
-        labels: [],
+        labels: timeLabels,
         datasets: []
     },
     options: {
@@ -95,19 +111,25 @@ const ramUsageChart = new Chart(document.getElementById('ramUsageChart').getCont
             },
             title: {
                 display: true,
-                text: 'Оперативная память, %'
+                text: 'Оперативная память'
             }
         },
         scales: {
             y: {
                 beginAtZero: true,
                 max: 100
+            },
+            x: {
+                ticks: {
+                    font: {
+                        size: 8
+                    }
+                }
             }
         },
         animation: false
     }
 });
-
 
 // Fetch server data every 5 seconds
 setInterval(fetchServerData, 5000);
