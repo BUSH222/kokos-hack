@@ -1,7 +1,9 @@
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, request, url_for, jsonify
 from flask_login import login_user, LoginManager, login_required, UserMixin
 from dbloader import connect_to_db
 import requests
+import requests.exceptions
+import psutil
 
 
 app = Flask(__name__)
@@ -222,6 +224,29 @@ def admin_panel_update_pages_update_image():
         else:
             return 'Failed to upload image', 500
     return 'No file uploaded', 400
+
+
+@app.route('/admin_panel/full_server_status')
+@login_required
+def full_server_status():
+    """Returns the server statuses for all microservices running except postgres database.
+
+    Returns:
+        json: json of ram and cpu usage of every server in the format {"server_status": {"ram": number, "cpu": number}}
+    """
+    try:
+        main_status = requests.get('http://172.0.0.1:5000/main_server_status', timeout=0.1).json()
+    except requests.exceptions.Timeout:
+        main_status = {'ram': 0, 'cpu': 0}
+    try:
+        asset_delivery_status = requests.get('http://172.0.0.1:5001/asset_delivery_server_status', timeout=0.1).json()
+    except requests.exceptions.Timeout:
+        asset_delivery_status = {'ram': 0, 'cpu': 0}
+    admin_panel_status = {'ram': psutil.virtual_memory().percent, 'cpu': psutil.cpu_percent()}
+
+    return jsonify({"main_status": main_status,
+                    "asset_delivery_status": asset_delivery_status,
+                    "admin_panel_status": admin_panel_status})
 
 
 if __name__ == "__main__":

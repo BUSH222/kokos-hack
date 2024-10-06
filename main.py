@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, url_for, flash, redirect, abort
+from flask import Flask, render_template, request, url_for, flash, redirect, abort, jsonify
 from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user
 from oauthlib.oauth2 import WebApplicationClient
 import psutil
@@ -203,12 +203,12 @@ def main_server_status():
     Shows the current RAM and CPU usage of the server, can only be accessed by localhost ips
     Returns:
         abort(403): accessed from the wrong ip
-        string: cpu and ram usage with a comment
+        json: {'ram': , 'cpu': ) ram and cpu usage percent with a comment
     """
     allowed_ips = ['127.0.0.1']
     if request.remote_addr not in allowed_ips:
         return abort(403)
-    return f'Main server RAM and CPU usage: RAM: {psutil.virtual_memory().percent}% CPU: {psutil.cpu_percent()}%'
+    return jsonify({'ram': psutil.virtual_memory().percent, 'cpu': psutil.cpu_percent()})
 
 
 if __name__ == "__main__":
