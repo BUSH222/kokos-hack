@@ -192,6 +192,12 @@ def admin_panel_community_set_activity_points():
 @app.route('/admin_panel/update_pages')
 @login_required
 def admin_panel_update_pages():
+    """
+    Render the update pages page of the admin panel.
+
+    Returns:
+        str: The rendered HTML template for the update pages page.
+    """
     return render_template('admin_panel_update_pages.html')
 
 
@@ -212,7 +218,7 @@ def admin_panel_update_pages_update_image():
         response = requests.post(upload_url, files=files, data=data)
         print(response.status_code)
         if response.status_code == 200:
-            return redirect(url_for('admin_panel'))
+            return 'Success', 200
         else:
             return 'Failed to upload image', 500
     return 'No file uploaded', 400
