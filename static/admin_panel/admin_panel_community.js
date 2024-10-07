@@ -66,3 +66,17 @@ async function deleteUser() {
         alert('Error deleting user');
     }
 }
+
+
+async function pruneUser() {
+    const uid = document.getElementById('user-id').value;
+
+    try {
+        const response = await fetch(`/admin_panel/community/prune_account?id=${uid}`);
+        const result = await response.text();
+        alert(result)
+    } catch (error) {
+        console.error('Error pruning user', error);
+        alert('Error pruning user');
+    }
+}
