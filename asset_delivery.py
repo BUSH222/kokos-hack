@@ -1,6 +1,5 @@
 from flask import Flask, render_template_string, send_from_directory, request, jsonify, abort
 import os
-import logging
 import psutil
 from settings_loader import get_processor_settings
 from logger import log_event
@@ -53,7 +52,7 @@ def serve_asset(subpath=''):
             </ul>
         ''')
     else:
-        log_event(f"served asset {subpath}",10)
+        log_event(f"served asset {subpath}", 10)
         return send_from_directory('assets', subpath)
 
 
@@ -79,7 +78,7 @@ def upload_image():
     print(request.files)
     # Save the file to the /assets/ directory
     file.save(os.path.join(app.root_path, 'assets', name))
-    log_event("file uploaded successfully",10)
+    log_event("file uploaded successfully", 10)
     return jsonify({"msg": "File uploaded successfully"}), 200
 
 

@@ -4,19 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
-    <link rel="stylesheet" href="static/admin_panel/admin_panel.css">
+    <link rel="stylesheet" href="/static/admin_panel/admin_panel.css">
 </head>
 <body>
+    <!-- admin navigation bar -->
+    <nav class="admin-navbar">
+        <ul>
+            <li><a href="/admin_panel">Home</a></li>
+            <li><a href="/admin_panel/logs">Logs</a></li>
+            <li><a href="/admin_panel/community">Community</a></li>
+            <li><a href="/admin_panel/update_pages">Update Pages</a></li>
+            <li><a href="/admin_panel/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- container for content -->
     <div class="container">
-        <h1>Производительность сервера</h1>
+        <h1>Server Performance</h1>
         <div class="chart-container">
+            <h2>Нагрузка ЦП</h2>
             <canvas id="cpuLoadChart" width="400" height="200"></canvas>
         </div>
         <div class="chart-container">
+            <h2>Оперативная память</h2>
             <canvas id="ramUsageChart" width="400" height="200"></canvas>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="static/admin_panel/admin_panel.js"></script>
+    <script src="/static/admin_panel/admin_panel.js"></script>
 </body>
 </html>

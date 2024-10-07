@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Management</title>
+    <link rel="stylesheet" href="/static/admin_panel/admin_panel_community.css">
+</head>
+<body>
+    <!-- admin navigation bar -->
+    <nav class="admin-navbar">
+        <ul>
+            <li><a href="/admin_panel">Home</a></li>
+            <li><a href="/admin_panel/logs">Logs</a></li>
+            <li><a href="/admin_panel/community">Community</a></li>
+            <li><a href="/admin_panel/update_pages">Update Pages</a></li>
+            <li><a href="/admin_panel/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Community Management</h1>
+        <div class="form-group">
+            <label for="username">User:</label>
+            <input type="text" id="username" name="username">
+        </div>
+        <div class="form-group">
+            <label for="roles">Roles (comma-separated):</label>
+            <input type="text" id="roles" name="roles">
+        </div>
+        <div class="form-group">
+            <label for="points">Activity Points:</label>
+            <input type="number" id="points" name="points">
+        </div>
+        <button onclick="deleteAccount()">Delete Account</button>
+        <button onclick="setRoles()">Set Roles</button>
+        <button onclick="viewRoles()">View Roles</button>
+        <button onclick="viewActivityPoints()">View Activity Points</button>
+        <button onclick="setActivityPoints()">Set Activity Points</button>
+        <div id="result"></div>
+    </div>
+
+    <script src="/static/admin_panel/admin_panel_community.js"></script>
+</body>
+</html>

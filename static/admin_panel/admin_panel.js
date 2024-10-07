@@ -76,8 +76,7 @@ const cpuLoadChart = new Chart(document.getElementById('cpuLoadChart').getContex
                 position: 'top'
             },
             title: {
-                display: true,
-                text: 'Нагрузка ЦП'
+                display: false,
             }
         },
         scales: {
@@ -88,7 +87,7 @@ const cpuLoadChart = new Chart(document.getElementById('cpuLoadChart').getContex
             x: {
                 ticks: {
                     font: {
-                        size: 8
+                        size: 10
                     }
                 }
             }
@@ -110,8 +109,7 @@ const ramUsageChart = new Chart(document.getElementById('ramUsageChart').getCont
                 position: 'top'
             },
             title: {
-                display: true,
-                text: 'Оперативная память'
+                display: false,
             }
         },
         scales: {
@@ -122,7 +120,7 @@ const ramUsageChart = new Chart(document.getElementById('ramUsageChart').getCont
             x: {
                 ticks: {
                     font: {
-                        size: 8
+                        size: 10
                     }
                 }
             }
