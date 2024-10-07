@@ -1,6 +1,7 @@
 from flask import Flask, redirect, render_template, request, url_for, abort, Response, session
 from flask_login import login_user, LoginManager, current_user, login_required, UserMixin, logout_user
 from dbloader import connect_to_db
+from authlib.integrations.flask_client import OAuth
 from oauthlib.oauth2 import WebApplicationClient
 from helper import (GOOGLE_CLIENT_ID,
                     GOOGLE_CLIENT_SECRET,
@@ -14,9 +15,18 @@ app = Flask(__name__)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
-# yandex_provider_cfg = requests.get(YANDEX_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 app.config['SECRET_KEY'] = 'bruh'
+oauth = OAuth(app)
+clientYan = WebApplicationClient(YANDEX_CLIENT_ID)
+yandex = oauth.register(
+    name='yandex',
+    client_id=YANDEX_CLIENT_ID,
+    client_secret=YANDEX_CLIENT_SECRET,
+    access_token_url='https://oauth.yandex.ru/token',
+    authorize_url='https://oauth.yandex.ru/authorize',
+
+)
 
 
 class User(UserMixin):
@@ -68,15 +78,6 @@ def login():
 
 @app.route('/login_yandex', methods=['GET', 'POST'])
 def login_yandex():
-    # # Find out what URL to hit for Google login
-    # authorization_endpoint = yandex_provider_cfg["authorization_endpoint"]
-
-    # # Use library to construct the request for Google login and provide
-    # # scopes that let you retrieve user's profile from Google
-    # request_uri = client.prepare_request_uri(
-    #     authorization_endpoint,
-    #     redirect_uri=request.base_url + "/callback",
-    #     scope=["openid", "email", "profile"],)
     yandex_auth_url = (
         'https://oauth.yandex.ru/authorize?response_type=code'
         f'&client_id={YANDEX_CLIENT_ID}&redirect_uri={YANDEX_REDIRECT_URI}'
@@ -86,32 +87,76 @@ def login_yandex():
 @app.route('/login_yandex/yandex_callback')
 def yandex_callback():
     code = request.args.get('code')
-    token_url = YANDEX_DISCOVERY_URL
-    data = {
-        'grant_type': 'authorization_code',
-        'code': code,
-        'client_id': YANDEX_CLIENT_ID,
-        'client_secret': YANDEX_CLIENT_SECRET,
-        'redirect_uri': YANDEX_REDIRECT_URI
-    }
-    response = requests.get(token_url, data=data)
-    access_token = request.args.get('access_token')
-    # response = session.post(token_url, data=data)
-    # token_info = response.json()
-    # access_token = token_info['access_token']
+    token_response = requests.post(
+        'https://oauth.yandex.ru/token',
+        data={
+            'grant_type': 'authorization_code',
+            'code': code,
+            'client_id': YANDEX_CLIENT_ID,
+            'client_secret': YANDEX_CLIENT_SECRET,
+            'redirect_uri': YANDEX_REDIRECT_URI
+        }
+    )
+    token = token_response.json().get('access_token')
+    user_info_response = requests.get(
+        'https://login.yandex.ru/info',
+        headers={'Authorization': f'OAuth {token}'}
+    )
+    user_info = user_info_response.json()
+    user_name = user_info.get('real_name', 'Имя пользователя не найдено')
 
-    # user_info_url = 'https://login.yandex.ru/info'
-    # headers = {'Authorization': f'OAuth {access_token}'}
-    # user_info_response = requests.post(user_info_url, headers=headers)
-    # user_info = user_info_response.json()
-    real_name = request.args.get('real_name')
-    print(f"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA{real_name}")
-    # session['user'] = {
-    #     'fio': user_info.get('real_name'),
-    #     'avatar': user_info.get('default_avatar_id')
-    # }
+    return f'Ваш токен: {token}<br>Ваше имя: {user_name}'
 
-    return redirect(url_for('dashboard'))
+
+    response = requests.get("http://www.example.com/token")
+    response.status_code
+    print(f"DDDDDDDDDDDDDDDDDDDDD{response}")
+    # token = yandex.authorize_access_token()
+    # user_info = yandex.get('https://login.yandex.ru/info', token=token)
+    # user = user_info.json()
+    # print(user)
+    return redirect(url_for('account'))
+    # response = yandex.authorized_response()
+    # if response is None or response.get('access_token') is None:
+    #     return 'Access denied: reason={} error={}'.format(
+    #         request.args['error_reason'],
+    #         request.args['error_description']
+    #     )
+    # session['yandex_token'] = (response['access_token'], '')
+    # user_info = yandex.get('https://login.yandex.ru/info')
+    # return 'Logged in as: ' + user_info.data['login']
+# def yandex_callback():
+#     code = request.args.get('code')
+#     token_url = YANDEX_DISCOVERY_URL
+#     data = {
+#         'grant_type': 'authorization_code',
+#         'code': code,
+#         'client_id': YANDEX_CLIENT_ID,
+#         'client_secret': YANDEX_CLIENT_SECRET,
+#         'redirect_uri': YANDEX_REDIRECT_URI
+#     }
+#     # response = requests.get(token_url) # ,data=data
+#     # response.status_code
+#     # print(f"DDDDDDDDDDDDDDDDDDDDD{response}")
+#     # access_token = request.args.get('access_token')
+#     # response = session.post(token_url, data=data)
+#     # token_info = response.json()
+#     # access_token = token_info['access_token']
+
+#     # user_info_url = 'https://login.yandex.ru/info'
+#     # headers = {'Authorization': f'OAuth {access_token}'}
+#     # user_info_response = requests.post(user_info_url, headers=headers)
+#     # user_info = user_info_response.json()
+#     google_provider_cfg = requests.get("https://api.webmaster.yandex.net/v4/user").json()
+#     print(google_provider_cfg)
+#     real_name = request.args.get('real_name')
+#     print(f"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA{real_name}")
+#     # session['user'] = {
+#     #     'fio': user_info.get('real_name'),
+#     #     'avatar': user_info.get('default_avatar_id')
+#     # }
+
+#     return redirect(url_for('account'))
 
 @app.route('/login_gmail', methods=['GET', 'POST'])
 def login_gmail():
