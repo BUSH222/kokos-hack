@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, render_template, request, url_for, flash, redirect, abort, jsonify
-from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user,current_user
+from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user, current_user
 from oauthlib.oauth2 import WebApplicationClient
 import psutil
 from helper import (GOOGLE_CLIENT_ID,
@@ -13,6 +13,7 @@ import json
 from dbloader import connect_to_db
 from settings_loader import get_processor_settings
 from logger import log_event
+
 conn, cur = connect_to_db()
 
 UPLOAD_FOLDER = os.path.abspath('DATA2')
@@ -53,8 +54,6 @@ def load_user(user_id):
     return None
 
 
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -92,8 +91,7 @@ def login():
                 scope=["openid", "email", "profile"], )
             return redirect(request_uri)
 
-    return render_template('login.html',change=change)
-
+    return render_template('login.html', change=change)
 
 
 @app.route("/login_gmail/callback")
@@ -146,6 +144,7 @@ def g_callback():
         login_user(new_user)
     return redirect(url_for('account'))
 
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -157,21 +156,23 @@ def logout():
 def main_page():
     top_three_posts = cur.execute("SELECT TOP 3 * FROM forum").fetchone()
     top_three_selling_posts = cur.execute("SELECT * FROM forum ORDER BY sales DESC")
-    closest_game = cur.execute("SELECT your_timestamp FROM your_table ORDER BY ABS(TIMESTAMPDIFF(SECOND, your_timestamp, NOW())) ASC LIMIT 1;").fetchone()
-    return render_template("main_page.html", posts=top_three_posts, products=top_three_selling_posts, closest_game=closest_game)
+    closest_game = cur.execute(
+        "SELECT your_timestamp FROM your_table ORDER BY ABS(TIMESTAMPDIFF(SECOND, your_timestamp, NOW())) ASC LIMIT 1;").fetchone()
+    return render_template("main_page.html", posts=top_three_posts, products=top_three_selling_posts,
+                           closest_game=closest_game)
 
 
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
-
 def account():
     """
     An endpoint with all of a user data.
     """
-    profile_pic, name, fav_player, about_me,vk_acc, telegram_acc=''*5
+    profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = '' * 5
     if request.method == 'GET':
         usr_id = current_user.id
-        profile_pic,name,fav_player,about_me,vk_acc,telegram_acc = cur.execute(f"SELECT profile_pic,name,fav_player,about_me,vk_acc FROM user WHERE id = %s",(usr_id,)).fetchall()
+        profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.execute(
+            f"SELECT profile_pic,name,fav_player,about_me,vk_acc FROM user WHERE id = %s", (usr_id,)).fetchall()
 
         if vk_acc == None: vk_acc = "Не привязан"
         if telegram_acc == None: telegram_acc = "Не привязан"
@@ -179,31 +180,43 @@ def account():
         usr_input = request.json
         if usr_input["btn_type"] == "change_user_data":
             return redirect(url_for('change_user_data'))
-    return render_template('account.html',profile_pic=profile_pic,name=name,fav_player=fav_player,about_me=about_me,telegram_acc=telegram_acc,vk_acc=vk_acc)
+    return render_template('account.html', profile_pic=profile_pic, name=name, fav_player=fav_player, about_me=about_me,
+                           telegram_acc=telegram_acc, vk_acc=vk_acc)
 
-@app.route('/account/change_account_data', methods=['POST','GET'])
+
+@app.route('/account/change_account_data', methods=['POST', 'GET'])
 @login_required
 def change_user_data():
     """
     An endpoint parses user info from db than puts it inside text windows for editing.
     """
-    profile_pic, name, fav_player, about_me, vk_acc, telegram_acc,error = '' * 6
+    allowed_keys = ['profile_pic', 'name', 'fav_player', 'about_me', 'vk_acc', 'telegram_acc']
+    profile_pic, name, fav_player, about_me, vk_acc, telegram_acc, error = '' * 6
     if request.method == 'GET':
         usr_id = current_user.id
-        profile_pic,name,fav_player,about_me,vk_acc,telegram_acc = cur.execute(f"SELECT profile_pic,name,fav_player,about_me,vk_acc,telegram_acc FROM user WHERE id = %s",(usr_id,)).fetchall()
+        profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.execute(
+            f"SELECT profile_pic,name,fav_player,about_me,vk_acc,telegram_acc FROM user WHERE id = %s",
+            (usr_id,)).fetchall()
         if vk_acc == None: vk_acc = "Не привязан"
         if telegram_acc == None: telegram_acc = "Не привязан"
     if request.method == 'POST':
         usr_id = current_user.id
         usr_input = request.json
+        usr_input["telegram_acc"] = usr_input["telegram_acc"].replace(' ', '')
+        if "@" not in usr_input["telegram_acc"]: usr_input["telegram_acc"] = "@" + usr_input["telegram_acc"]
+        '''input name length control'''
         if usr_input["btn_type"] == "submit":
             for key in usr_input.keys():
-                cur.execute(f'UPDATE user SET %s = %s where id = %s',(key,usr_input[key],usr_id,))
+                if key in allowed_keys: cur.execute(f'UPDATE user SET %s = %s where id = %s',
+                                                    (key, usr_input[key], usr_id,))
         try:
             cur.commit()
         except Exception:
-            error="Не удалось загрузить изменения"
-    return render_template("change_user_data", profile_pic=profile_pic, name=name, fav_player=fav_player, about_me=about_me,vk_acc=vk_acc,telegram_acc=telegram_acc,error=error)
+            error = "Не удалось загрузить изменения"
+    return render_template("change_user_data", profile_pic=profile_pic, name=name, fav_player=fav_player,
+                           about_me=about_me, vk_acc=vk_acc, telegram_acc=telegram_acc, error=error)
+
+
 @app.route("/forum/new-post")
 def forum_new_post():
     if 'file' not in request.files:
@@ -212,7 +225,7 @@ def forum_new_post():
         return redirect(request.url)
     file = request.files['file']
     if file.filename == '':
-        log_event('No selected file',20)
+        log_event('No selected file', 20)
         flash('No selected file')
         return redirect(request.url)
     if file and allowed_file(file.filename):
@@ -226,11 +239,13 @@ def forum_new_post():
         response = requests.post(upload_url, files=files, data=data)
         print(response.status_code)
         if response.status_code == 200:
-            log_event("image upload success",10)
+            log_event("image upload success", 10)
             return 'Success', 200
         else:
-            log_event("image upload error", 30,data=data,files=files)
+            log_event("image upload error", 30, data=data, files=files)
             return 'Failed to upload image', 500
+
+
 @app.route("/news/new-story")
 @login_required
 def story_new_post():
