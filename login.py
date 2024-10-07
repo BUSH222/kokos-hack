@@ -1,11 +1,9 @@
 from flask import Flask, redirect, render_template, request, url_for, session
 from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user
 from dbloader import connect_to_db
-from authlib.integrations.flask_client import OAuth
 from oauthlib.oauth2 import WebApplicationClient
 from helper import (GOOGLE_CLIENT_ID,
                     GOOGLE_CLIENT_SECRET,
-                    GOOGLE_DISCOVERY_URL,
                     YANDEX_CLIENT_ID,
                     YANDEX_CLIENT_SECRET,
                     YANDEX_REDIRECT_URI)
@@ -13,23 +11,13 @@ import requests
 import json
 
 conn, cur = connect_to_db()
-
+GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 app = Flask(__name__)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 app.config['SECRET_KEY'] = 'bruh'
-oauth = OAuth(app)
-clientYan = WebApplicationClient(YANDEX_CLIENT_ID)
-yandex = oauth.register(
-    name='yandex',
-    client_id=YANDEX_CLIENT_ID,
-    client_secret=YANDEX_CLIENT_SECRET,
-    access_token_url='https://oauth.yandex.ru/token',
-    authorize_url='https://oauth.yandex.ru/authorize',
-
-)
 
 
 class User(UserMixin):
@@ -60,21 +48,22 @@ def login():
         username = request.form['username']
         password = request.form['password']
         cur.execute("SELECT id, name, password, email FROM users WHERE name = %s", (username,))
-        user_data = list(cur.fetchone())
+        user_data = cur.fetchone()
         print(user_data)
         if user_data:
+            user_data = list(user_data)
             if user_data[2] == password and len(password) < 32:
                 user = User(*user_data)
                 login_user(user)
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('account'))
             else:
                 return "Invalid username or password"
         else:
             cur.execute('INSERT INTO users(name, password) VALUES (%s, %s) \
-                        RETURNING (id, name, password, email)',
+                        RETURNING id, name, password, email',
                         (username, password))
             conn.commit()
-            new_user_data = cur.fetchone()[0]
+            new_user_data = cur.fetchone()
             new_user = User(*new_user_data)
             login_user(new_user)
             return redirect(url_for('account'))
