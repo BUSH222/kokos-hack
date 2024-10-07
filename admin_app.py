@@ -60,15 +60,15 @@ def login():
         str: An error message if authentication fails.
     """
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.json['username']
+        password = request.json['password']
         cur.execute('SELECT id, name, password FROM users WHERE name = %s AND role LIKE %s', (username, '%5%'))
         user_data = cur.fetchone()
         if user_data:
             if user_data[2] == password and len(password) < 32:
                 user = User(*user_data)
                 login_user(user)
-                return redirect(url_for('admin_panel'))
+                return "OK"
             else:
                 return "Invalid username or password"
         else:
