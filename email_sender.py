@@ -10,6 +10,12 @@ NAMESPACE = settings["APINAMESPACE"]
 
 
 def send_email_message_via_smtp(dest_email, message):
+    """
+    :param dest_email is a email where you send a mail:
+    :param message eerrrm what else to say...:
+    :return nothing, sends email:
+
+    """
     smtpObj = smtplib.SMTP('smtp.yandex.ru', 587)
     smtpObj.starttls()
     smtpObj.login(settings['admin_mail'], settings['admin_mail_password'])

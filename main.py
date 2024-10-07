@@ -163,11 +163,15 @@ def main_page():
 
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
+
 def account():
+    """
+    An endpoint with all of a user data.
+    """
     profile_pic, name, fav_player, about_me,vk_acc, telegram_acc=''*5
     if request.method == 'GET':
         usr_id = current_user.id
-        profile_pic,name,fav_player,about_me,vk_acc,telegram_acc = cur.execute(f"SELECT profile_pic,name,fav_player,about_me,vk_acc FROM user WHERE id = {usr_id}").fetchall()
+        profile_pic,name,fav_player,about_me,vk_acc,telegram_acc = cur.execute(f"SELECT profile_pic,name,fav_player,about_me,vk_acc FROM user WHERE id = %s",(usr_id,)).fetchall()
 
         if vk_acc == None: vk_acc = "Не привязан"
         if telegram_acc == None: telegram_acc = "Не привязан"
@@ -180,12 +184,13 @@ def account():
 @app.route('/account/change_account_data', methods=['POST','GET'])
 @login_required
 def change_user_data():
+    """
+    An endpoint parses user info from db than puts it inside text windows for editing.
+    """
     profile_pic, name, fav_player, about_me, vk_acc, telegram_acc,error = '' * 6
-    #Короче сначала в окошках будет высвечиваться уже имеющаяся инфа о юзере,которую можно убрать или поменять, поэтому переменные никогда не будут
-    #Пустыми
     if request.method == 'GET':
         usr_id = current_user.id
-        profile_pic,name,fav_player,about_me,vk_acc,telegram_acc = cur.execute(f"SELECT profile_pic,name,fav_player,about_me,vk_acc,telegram_acc FROM user WHERE id = {usr_id}").fetchall()
+        profile_pic,name,fav_player,about_me,vk_acc,telegram_acc = cur.execute(f"SELECT profile_pic,name,fav_player,about_me,vk_acc,telegram_acc FROM user WHERE id = %s",(usr_id,)).fetchall()
         if vk_acc == None: vk_acc = "Не привязан"
         if telegram_acc == None: telegram_acc = "Не привязан"
     if request.method == 'POST':
@@ -193,7 +198,7 @@ def change_user_data():
         usr_input = request.json
         if usr_input["btn_type"] == "submit":
             for key in usr_input.keys():
-                cur.execute(f'UPDATE user SET {key} = {usr_input[key]} where id = {usr_id}')
+                cur.execute(f'UPDATE user SET %s = %s where id = %s',(key,usr_input[key],usr_id,))
         try:
             cur.commit()
         except Exception:
