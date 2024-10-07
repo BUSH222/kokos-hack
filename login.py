@@ -1,11 +1,14 @@
-from flask import Flask, redirect, render_template, request, url_for, abort, Response, session
-from flask_login import login_user, LoginManager, current_user, login_required, UserMixin, logout_user
+from flask import Flask, redirect, render_template, request, url_for, session
+from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user
 from dbloader import connect_to_db
 from authlib.integrations.flask_client import OAuth
 from oauthlib.oauth2 import WebApplicationClient
 from helper import (GOOGLE_CLIENT_ID,
                     GOOGLE_CLIENT_SECRET,
-                    GOOGLE_DISCOVERY_URL, YANDEX_CLIENT_ID, YANDEX_CLIENT_SECRET, YANDEX_DISCOVERY_URL, YANDEX_REDIRECT_URI)
+                    GOOGLE_DISCOVERY_URL,
+                    YANDEX_CLIENT_ID,
+                    YANDEX_CLIENT_SECRET,
+                    YANDEX_REDIRECT_URI)
 import requests
 import json
 
@@ -67,7 +70,8 @@ def login():
             else:
                 return "Invalid username or password"
         else:
-            cur.execute('INSERT INTO users(name, password) VALUES (%s, %s) RETURNING (id, name, password, email)', 
+            cur.execute('INSERT INTO users(name, password) VALUES (%s, %s) \
+                        RETURNING (id, name, password, email)',
                         (username, password))
             conn.commit()
             new_user_data = cur.fetchone()[0]
@@ -76,6 +80,7 @@ def login():
             return redirect(url_for('account'))
     return render_template('login_password.html')
 
+
 @app.route('/login_yandex', methods=['GET', 'POST'])
 def login_yandex():
     yandex_auth_url = (
@@ -83,6 +88,7 @@ def login_yandex():
         f'&client_id={YANDEX_CLIENT_ID}&redirect_uri={YANDEX_REDIRECT_URI}'
     )
     return redirect(yandex_auth_url)
+
 
 @app.route('/login_yandex/yandex_callback')
 def yandex_callback():
@@ -113,13 +119,14 @@ def yandex_callback():
         user = User(*user_data)
         login_user(user)
     else:
-        cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) RETURNING id, name, password, email', 
-                (user_name, unique_id, user_email))
+        cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) \
+                    RETURNING id, name, password, email', (user_name, unique_id, user_email))
         conn.commit()
         new_user_data = cur.fetchone()
         new_user = User(*new_user_data)
         login_user(new_user)
     return redirect(url_for('account'))
+
 
 @app.route('/login_gmail', methods=['GET', 'POST'])
 def login_gmail():
@@ -133,6 +140,7 @@ def login_gmail():
         redirect_uri=request.base_url + "/callback",
         scope=["openid", "email", "profile"],)
     return redirect(request_uri)
+
 
 @app.route("/login_gmail/callback")
 def callback():
@@ -166,27 +174,30 @@ def callback():
         username = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
-    
+
     cur.execute("SELECT id, name, password, email FROM users WHERE name = %s", (username,))
     user_data = cur.fetchone()
     if user_data:
         user = User(*user_data)
         login_user(user)
     else:
-        cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) RETURNING id, name, password, email', 
-                (username, unique_id, user_email))
+        cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) \
+                    RETURNING id, name, password, email', (username, unique_id, user_email))
         conn.commit()
         new_user_data = cur.fetchone()
         new_user = User(*new_user_data)
         login_user(new_user)
     return redirect(url_for('account'))
 
+
 @app.route('/profile')
 def profile():
     user = session.get('user')
     if not user:
         return redirect(url_for('login'))
-    return f"Привет, {user['fio']}! <img src='https://avatars.yandex.net/get-yapic/{user['avatar']}/islands-200' alt='avatar'>"
+    return f"Привет, {user['fio']}! <img src='https://avatars.yandex.net/get-yapic/{user['avatar']} \
+        /islands-200' alt='avatar'>"
+
 
 @app.route('/logout')
 @login_required
