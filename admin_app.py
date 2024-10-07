@@ -147,87 +147,70 @@ def admin_panel_community_delete_account():
     return 'Success'
 
 
-@app.route('/admin_panel/community/view_roles')
+@app.route('/admin_panel/community/view_account_info')
 @login_required
-def admin_panel_community_view_roles():
+def admin_panel_community_view_account_info():
     """
-    View the roles of a user based on the name.
+    View the account info based on the user name.
 
     Args:
         user (str): The username of the account to view roles for.
 
     Returns:
-        str: The roles of the user.
-        bool: False if the user does not exist.
+        json array:
+            id (int): User's id.
+            name (str): User's name.
+            email (str): User's email.
+            password (str): User's password
+            points (int): User's activity points.
+            role (str): User's roles.
+                Organised as a sorted string of values 0-5, each of them being a unique role identifier.
+
+        str: 'No results' if the search for the user returned nothing
+             'Error: {error desciption}' if something went wrong.
     """
     user = request.args.get('user')
-    cur.execute('SELECT role FROM users WHERE name = %s', (user, ))
-    roles_raw = cur.fetchone()
-    if not roles_raw:
-        return 'Something went wrong.'
-    return roles_raw[0]
+    try:
+        cur.execute('SELECT id, name, email, password, points, role FROM users WHERE name = %s', (user, ))
+        roles_raw = cur.fetchone()
+        if not roles_raw:
+            return jsonify('No results')
+        return jsonify(roles_raw)
+    except Exception as e:
+        return f'Error: {e}'
 
 
-@app.route('/admin_panel/community/set_roles')
+@app.route('/admin_panel/community/set_account_info')
 @login_required
-def admin_panel_community_set_roles():
+def admin_panel_community_set_account_info():
     """
-    Set the roles for a user based on the name.
+    Set account info for a user based on the user id.
 
     Args:
-        user (str): The username of the account to set roles for.
-        roles (str): The roles to assign to the user.
+        id (int): User's id.
+        name (str): User's name.
+        email (str): User's email.
+        password (str): User's password
+        points (int): User's activity points.
+        role (str): User's roles.
+            Organised as a sorted string of values 0-5, each of them being a unique role identifier.
 
     Returns:
-        bool: True if the roles were successfully set, False otherwise.
+        str: 'Success!' if everything went ok.
+             'Error: {error desciption}' if something went wrong.
     """
-    user = request.args.get('user')
-    roles = request.args.get('roles')
-    cur.execute('UPDATE users SET role = %s WHERE name = %s', (roles, user))
-    conn.commit()
-    return 'Success'
-
-
-@app.route('/admin_panel/community/view_activity_points')
-@login_required
-def admin_panel_community_view_activity_points():
-    """
-    View the activity points of a user.
-
-    Args:
-        user (str): The username of the account to view activity points for.
-
-    Returns:
-        int: The activity points of the user.
-        bool: False if the user does not exist.
-    """
-    user = request.args.get('user')
-    cur.execute('SELECT points FROM users WHERE name = %s', (user, ))
-    points = cur.fetchone()
-    if not points:
-        return 'Something went wrong.'
-    return str(points[0])
-
-
-@app.route('/admin_panel/community/set_activity_points')
-@login_required
-def admin_panel_community_set_activity_points():
-    """
-    Set the activity points for a user in the community.
-
-    Args:
-        user (str): The username of the account to set activity points for.
-        points (int): The activity points to assign to the user.
-
-    Returns:
-        bool: True if the activity points were successfully set, False otherwise.
-    """
-    user = request.args.get('user')
+    uid = request.args.get('user')
+    name = request.args.get('name')
+    email = request.args.get('email')
+    password = request.args.get('password')
     points = request.args.get('points')
-    cur.execute('UPDATE users SET points = %s WHERE name = %s', (points, user))
-    if cur.rowcount == 0:
-        return 'Something went wrong.'
-    conn.commit()
+    role = request.args.get('role')
+    try:
+        cur.execute('UPDATE users SET name = %s, email = %s, password = %s, points = %s, role = %s WHERE id = %s',
+                    (name, email, password, points, role, uid))
+        conn.commit()
+    except Exception as e:
+        return f'Error: {e}'
     return 'Success'
 
 

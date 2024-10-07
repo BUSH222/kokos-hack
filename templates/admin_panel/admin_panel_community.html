@@ -21,25 +21,71 @@
     <div class="container">
         <h1>Community Management</h1>
         <div class="form-group">
-            <label for="username">User:</label>
-            <input type="text" id="username" name="username">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <button onclick="findUserData()">Find User Data</button>
         </div>
-        <div class="form-group">
-            <label for="roles">Roles (comma-separated):</label>
-            <input type="text" id="roles" name="roles">
+
+        <div id="user-data-section" style="display: none;">
+            <div class="form-group">
+                <label for="user-id">ID:</label>
+                <input type="text" id="user-id" name="user-id" readonly>
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="text" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="points">Activity Points:</label>
+                <input type="number" id="points" name="points" required>
+            </div>
+
+            <!-- roles -->
+            <div class="form-group">
+                <label for="role">Role:</label>
+                <div class="roles-container">
+                    <div class="role-item">
+                        <input type="checkbox" id="role-0" name="role" value="0">
+                        <label for="role-0">user</label>
+                    </div>
+                    <div class="role-item">
+                        <input type="checkbox" id="role-1" name="role" value="1">
+                        <label for="role-1">super fan</label>
+                    </div>
+                    <div class="role-item">
+                        <input type="checkbox" id="role-2" name="role" value="2">
+                        <label for="role-2">moderator</label>
+                    </div>
+                    <div class="role-item">
+                        <input type="checkbox" id="role-3" name="role" value="3">
+                        <label for="role-3">kokos staff</label>
+                    </div>
+                    <div class="role-item">
+                        <input type="checkbox" id="role-4" name="role" value="4">
+                        <label for="role-4">player</label>
+                    </div>
+                    <div class="role-item">
+                        <input type="checkbox" id="role-5" name="role" value="5">
+                        <label for="role-5">admin</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="updateUserData()">Update User Data</button>
+            <button onclick="deleteUser()">Delete User</button>
+            <button onclick="pruneUser()">Prune User</button>
         </div>
-        <div class="form-group">
-            <label for="points">Activity Points:</label>
-            <input type="number" id="points" name="points">
-        </div>
-        <button onclick="deleteAccount()">Delete Account</button>
-        <button onclick="setRoles()">Set Roles</button>
-        <button onclick="viewRoles()">View Roles</button>
-        <button onclick="viewActivityPoints()">View Activity Points</button>
-        <button onclick="setActivityPoints()">Set Activity Points</button>
+        
         <div id="result"></div>
     </div>
-
     <script src="/static/admin_panel/admin_panel_community.js"></script>
 </body>
 </html>
