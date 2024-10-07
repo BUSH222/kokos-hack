@@ -9,7 +9,7 @@ async function findUserData() {
     try {
         const response = await fetch(`/admin_panel/community/view_account_info?user=${username}`);
         const data = await response.json();
-        
+
         if (data === 'No results') {
             alert('No user found with that username.');
             return;
@@ -51,5 +51,18 @@ async function updateUserData() {
     } catch (error) {
         console.error('Error updating user data:', error);
         alert('Error updating user data.');
+    }
+}
+
+async function deleteUser() {
+    const uid = document.getElementById('user-id').value;
+
+    try {
+        const response = await fetch(`/admin_panel/community/delete_account?id=${uid}`);
+        const result = await response.text();
+        alert(result)
+    } catch (error) {
+        console.error('Error deleting user', error);
+        alert('Error deleting user');
     }
 }

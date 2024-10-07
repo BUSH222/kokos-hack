@@ -33,20 +33,21 @@
             </div>
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" required oninput="limitInputLength(this, 32)">
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" required oninput="limitInputLength(this, 32)">
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="text" id="password" name="password" required>
+                <input type="text" id="password" name="password" required oninput="limitInputLength(this, 32)">
             </div>
             <div class="form-group">
                 <label for="points">Activity Points:</label>
                 <input type="number" id="points" name="points" required>
             </div>
+
 
             <!-- roles -->
             <div class="form-group">
@@ -86,6 +87,15 @@
         
         <div id="result"></div>
     </div>
+
+    <script>
+        function limitInputLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.value = input.value.substring(0, maxLength);
+            }
+        }
+        </script>        
+    
     <script src="/static/admin_panel/admin_panel_community.js"></script>
 </body>
 </html>

@@ -18,6 +18,7 @@ body {
     background-color: #1e1e1e;
     padding: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid #ff4c4c;
 }
 
 .admin-navbar ul {

@@ -131,20 +131,60 @@ def admin_panel_community():
 @login_required
 def admin_panel_community_delete_account():
     """
-    Delete a user account based on the user name.
+    Delete a user account based on the user id.
 
     Args:
-        user (str): The username of the account to delete.
+        id (int): The id of the account to delete.
 
     Returns:
         bool: True if the account was successfully deleted, False otherwise.
     """
-    user = request.args.get('user')
-    cur.execute('DELETE FROM users WHERE name = %s', (user, ))
-    if cur.rowcount == 0:
-        return 'Something went wrong.'
-    conn.commit()
-    return 'Success'
+    user_id = request.args.get('id')
+    try:
+        cur.execute('DELETE FROM users WHERE id = %s', (user_id, ))
+        conn.commit()
+        if cur.rowcount == 0:
+            return 'Something went wrong.'
+        return 'Success!'
+    except Exception as e:
+        conn.rollback()
+        return f'Error: {e}'
+
+
+@app.route('/admin_panel/community/prune_account')
+@login_required
+def admin_panel_community_prune_account():
+    """
+    Prunes a user account based on the user id.
+
+    Args:
+        id (int): The id of the account to delete.
+
+    Returns:
+        bool: True if the account was successfully deleted, False otherwise.
+    """
+    user_id = request.args.get('id')
+    try:
+        cur.execute("SELECT id FROM forum WHERE author = %s;", (user_id,))
+        forum_posts = cur.fetchall()
+        for post in forum_posts:
+            post_id = post[0]
+            cur.execute("DELETE FROM forum_comments WHERE post_id = %s;", (post_id,))
+            cur.execute("DELETE FROM forum_likes WHERE post_id = %s;", (post_id,))
+        cur.execute("DELETE FROM news_comments WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM news_likes WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM forum WHERE author = %s;", (user_id,))
+        cur.execute("DELETE FROM forum_comments WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM forum_likes WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM game_comments WHERE user_id = %s;", (user_id,))
+        cur.execute("DELETE FROM tickets WHERE user_id = %s;", (user_id,))
+        conn.commit()
+        if cur.rowcount == 0:
+            return 'Something went wrong.'
+        return 'Success!'
+    except Exception as e:
+        conn.rollback()
+        return f'Error: {e}'
 
 
 @app.route('/admin_panel/community/view_account_info')
@@ -177,6 +217,7 @@ def admin_panel_community_view_account_info():
             return jsonify('No results')
         return jsonify(roles_raw)
     except Exception as e:
+        conn.rollback()
         return f'Error: {e}'
 
 
@@ -210,6 +251,7 @@ def admin_panel_community_set_account_info():
                     (name, email, password, points, role, uid))
         conn.commit()
     except Exception as e:
+        conn.rollback()
         return f'Error: {e}'
     return 'Success'
 
