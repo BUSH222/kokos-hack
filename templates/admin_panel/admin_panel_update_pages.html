@@ -20,21 +20,22 @@
     
     <div class="login-container">
         <div class="form-wrapper">
-            <form action="/admin_panel/update_pages/update_image" method="post" enctype="multipart/form-data" class="login-form">
-                <h1>Upload file:</h1>
-                <div class="input-group">
-                    <label for="image_name">Entry:</label>
-                    <input placeholder="e.g. uni.png" type="text" id="image_name" name="image_name" required>
-                </div>
-                <div class="input-group">
-                    <label for="img">Choose File:</label>
-                    <input type="file" id="img" name="img" accept="image/*" required>
-                </div>
-                <div class="button-container">
-                    <button type="submit" class="submit">Update Image</button>
-                </div>
-            </form>
+            <h1>Upload file:</h1>
+            <div class="input-group">
+                <label for="image_name">File name and path:</label>
+                <input placeholder="e.g. test/uni.png" type="text" id="image_name" name="image_name" required>
+            </div>
+            <div class="input-group">
+                <label for="img">Choose File:</label>
+                <input type="file" id="img" name="img" accept="image/*" required>
+            </div>
+            <div class="button-container">
+                <button onclick="submitForm()" class="submit">Update Image</button>
+            </div>
         </div>
     </div>
+    
+    <script src="/static/admin_panel/admin_panel_update_pages.js"></script>
+    
 </body>
 </html>

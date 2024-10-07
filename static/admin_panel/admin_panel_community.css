@@ -82,7 +82,7 @@ button {
     margin-right: 10px;
     margin-top: 10px;
     padding: 10px 20px;
-    background-color: #1e1e1e;
+    background-color: #ff4c4c;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -91,7 +91,7 @@ button {
 }
 
 button:hover {
-    background-color: #ff4c4c;
+    background-color: #b30000;
 }
 
 .roles-container {
