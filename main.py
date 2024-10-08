@@ -34,6 +34,7 @@ google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 app.config['SECRET_KEY'] = 'bruh'
 
+
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -98,6 +99,7 @@ def login():
 
     return render_template('login.html', change=change)
 
+
 @app.route("/login_gmail/callback")
 def callback():
     """Get authorization code Google sent back to you
@@ -146,6 +148,7 @@ def callback():
         login_user(new_user)
     return redirect(url_for('account'))
 
+
 @app.route('/login_yandex', methods=['GET', 'POST'])
 def login_yandex():
     """Get authorization code Yandex sent back to you"""
@@ -158,7 +161,11 @@ def login_yandex():
 
 @app.route('/login_yandex/yandex_callback')
 def yandex_callback():
-    """Enters user information from Yandex into the db"""
+    """Enters user information from Yandex into the db
+    name,
+    email,
+    unicq_id instead password,
+    profile_pic"""
     code = request.args.get('code')
     token_response = requests.post(
         'https://oauth.yandex.ru/token',
@@ -193,8 +200,6 @@ def yandex_callback():
         new_user = User(*new_user_data)
         login_user(new_user)
     return redirect(url_for('account'))
-
-
 
 
 @app.route('/logout')
