@@ -7,6 +7,8 @@ from logger import log_event
 import requests
 import requests.exceptions
 import psutil
+import random
+import string
 
 
 app = Flask(__name__)
@@ -22,6 +24,13 @@ limiter = Limiter(
 )
 
 conn, cur = connect_to_db()
+
+
+def generate_random_string():
+    """Generates a random filler string when deleting accounts"""
+    length = 32
+    characters = string.ascii_letters + string.digits + '_' + ',' + '.'
+    return ''.join(random.choices(characters, k=length))
 
 
 class User(UserMixin):
@@ -145,6 +154,7 @@ def admin_panel_community():
 def admin_panel_community_delete_account():
     """
     Delete a user account based on the user id.
+    Deleting the account changes its username to deleted_account[id], makes its password and email random
 
     Args:
         id (int): The id of the account to delete.
@@ -154,7 +164,8 @@ def admin_panel_community_delete_account():
     """
     user_id = request.args.get('id')
     try:
-        cur.execute('DELETE FROM users WHERE id = %s', (user_id, ))
+        cur.execute("UPDATE users SET name = %s, password = %s, email = %s, role = '' WHERE id = %s",
+                    (f'deleted_user_{user_id}', generate_random_string(), generate_random_string(), user_id))
         conn.commit()
         if cur.rowcount == 0:
             return 'Something went wrong.'
@@ -292,8 +303,15 @@ def admin_panel_update_pages():
 @app.route('/admin_panel/update_pages/update_image', methods=['POST'])
 @login_required
 def admin_panel_update_pages_update_image():
+    """Update image API endpoint for the update pages page, passes the given image onto the asset delivery server.
+
+    Args:
+        request.form['image_name'] (str): file save destination on the asset delivery server
+        request.files['img'] (werkzeug.datastructures.file_storage.FileStorage): The contents of the image
+    """
     image_name = request.form.get('image_name')
     file = request.files.get('img')
+    print(type(file))
     if file:
         # Define the URL of the other microservice
         upload_url = 'http://127.0.0.1:5001/upload_assets'
