@@ -72,6 +72,7 @@ def login():
 
 @app.route('/login_yandex', methods=['GET', 'POST'])
 def login_yandex():
+    """Get authorization code Yandex sent back to you"""
     yandex_auth_url = (
         'https://oauth.yandex.ru/authorize?response_type=code'
         f'&client_id={YANDEX_CLIENT_ID}&redirect_uri={YANDEX_REDIRECT_URI}'
@@ -81,6 +82,7 @@ def login_yandex():
 
 @app.route('/login_yandex/yandex_callback')
 def yandex_callback():
+    """Enters user information from Yandex into the db"""
     code = request.args.get('code')
     token_response = requests.post(
         'https://oauth.yandex.ru/token',

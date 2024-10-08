@@ -59,6 +59,8 @@ def load_user(user_id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """Choosing an entry method and logging in
+        Redirects to account or google sign in"""
     if request.method == 'POST':
         change = ''
         usr_input = request.json
@@ -98,7 +100,8 @@ def login():
 
 @app.route("/login_gmail/callback")
 def callback():
-    """Get authorization code Google sent back to you"""
+    """Get authorization code Google sent back to you
+        Redirects to account"""
     code = request.args.get("code")
     google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
     token_endpoint = google_provider_cfg["token_endpoint"]
@@ -145,6 +148,7 @@ def callback():
 
 @app.route('/login_yandex', methods=['GET', 'POST'])
 def login_yandex():
+    """Get authorization code Yandex sent back to you"""
     yandex_auth_url = (
         'https://oauth.yandex.ru/authorize?response_type=code'
         f'&client_id={YANDEX_CLIENT_ID}&redirect_uri={YANDEX_REDIRECT_URI}'
@@ -154,6 +158,7 @@ def login_yandex():
 
 @app.route('/login_yandex/yandex_callback')
 def yandex_callback():
+    """Enters user information from Yandex into the db"""
     code = request.args.get('code')
     token_response = requests.post(
         'https://oauth.yandex.ru/token',
