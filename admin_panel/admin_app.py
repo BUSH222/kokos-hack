@@ -360,13 +360,43 @@ def full_server_status():
 @app.route('/admin_panel/event_manager')
 @login_required
 def event_manager():
-    pass
+    return render_template('admin_panel_event_manager.html')
+
+
+@app.route('/admin_panel/event_manager/new_event')
+def event_manager_new_event():
+    game_name = request.args.get('game_name')
+    game_start_time = request.args.get('game_start_time')
+    game_end_time = request.args.get('game_end_time')
+    team1_name = request.args.get('team1_name')
+    team2_name = request.args.get('team2_name')
+    team1_score = request.args.get('team1_score')
+    team2_score = request.args.get('team2_score')
+    livestream_link = request.args.get('livestream_link')
+    video_link = request.args.get('video_link')
+    game_description = request.args.get('game_description')
+    match_statistic_external_link = request.args.get('match_statistic_external_link')
+
+
+@app.route('/admin_panel/event_manager/edit_event')
+def event_manager_edit_event():
+    game_name = request.args.get('game_name')
+    game_start_time = request.args.get('game_start_time')
+    game_end_time = request.args.get('game_end_time')
+    team1_name = request.args.get('team1_name')
+    team2_name = request.args.get('team2_name')
+    team1_score = request.args.get('team1_score')
+    team2_score = request.args.get('team2_score')
+    livestream_link = request.args.get('livestream_link')
+    video_link = request.args.get('video_link')
+    game_description = request.args.get('game_description')
+    match_statistic_external_link = request.args.get('match_statistic_external_link')
 
 
 @app.route('/admin_panel/product_manager')
 @login_required
 def product_manager():
-    pass
+    return render_template('admin_panel_event_manager.html')
 
 
 if __name__ == "__main__":
