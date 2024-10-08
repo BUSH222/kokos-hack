@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for, session
+from flask import Flask, redirect, render_template, request, url_for, session, Blueprint
 from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user
 from dbloader import connect_to_db
 from oauthlib.oauth2 import WebApplicationClient
@@ -10,6 +10,7 @@ from helper import (GOOGLE_CLIENT_ID,
 import requests
 import json
 
+app_file1 = Blueprint('app_file1', __name__)
 conn, cur = connect_to_db()
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 app = Flask(__name__)

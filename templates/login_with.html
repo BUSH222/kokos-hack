@@ -8,6 +8,18 @@
   <script src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js"></script>
 </head>
 <body>
+  <div id="yandex-login"></div>
+  <script>
+      YaAuthSuggest.init({
+          client_id: '34fab00605fb4a229592e0c85250df15',
+          response_type: 'token',
+          redirect_uri: 'https://localhost:5000/login_yandex/yandex_callback',
+          parent_id: 'yandex-login',
+          button_view: 'main',
+          button_theme: 'light',
+          button_size: 'm'
+      });
+  </script>
   <div class="login-container">
     <!-- Change this button to include an onclick event to navigate to login_password -->
     <button class="button login-password" onclick="location.href='/login_password'">log in with password</button>
