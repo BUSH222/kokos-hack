@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="/static/register.css">
+</head>
+<body class="no-scroll">
+    <div class="registration-container">
+        <div class="registration-box">
+            <h2 class="registration-title">Регистрация</h2>
+            
+            <div class="input-group">
+                <label for="username">Имя пользователя</label>
+                <input type="text" id="username" name="username">
+            </div>
+    
+            <div class="input-group">
+                <label for="password">Пароль</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password')">
+                        👁️
+                    </button>
+                </div>
+            </div>
+    
+            <div class="input-group">
+                <label for="confirm_password">Подтвердите пароль</label>
+                <div class="password-container">
+                    <input type="password" id="confirm_password" name="confirm_password">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirm_password')">
+                        👁️
+                    </button>
+                </div>
+            </div>
+    
+            <button type="submit" class="registration-btn">Зарегистрироваться</button>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility(id) {
+            var input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+            } else {
+                input.type = "password";
+            }
+        }
+    </script>
+</body>
+</html>

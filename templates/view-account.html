@@ -51,7 +51,6 @@
                 <a href="{{ user.telegram_url }}"><img src="{{ url_for('static', filename='telegram_icon.png') }}" alt="Telegram">@{{ user.telegram_handle }}</a>
                 <a href="{{ user.vk_url }}"><img src="{{ url_for('static', filename='vk_icon.png') }}" alt="VK">@{{ user.vk_handle }}</a>
             </div>
-            <button class="edit-profile-btn">Редактировать профиль</button>
         </div>
         
         <div class="right-side">
@@ -63,9 +62,7 @@
                     <div class="fav-player-placeholder">Выберите любимого игрока</div>
                 {% endif %}
             </div>
-            
-            <!-- select fav player button -->
-            <button class="fav-player-btn">Любимый игрок</button>
+
         </div>
         
     </div>
