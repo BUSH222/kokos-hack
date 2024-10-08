@@ -357,6 +357,18 @@ def full_server_status():
                     "Admin panel": admin_panel_status})
 
 
+@app.route('/admin_panel/event_manager')
+@login_required
+def event_manager():
+    pass
+
+
+@app.route('/admin_panel/product_manager')
+@login_required
+def product_manager():
+    pass
+
+
 if __name__ == "__main__":
     app.run(port=5002, debug=True)
     cur.close()

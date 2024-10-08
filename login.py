@@ -17,7 +17,7 @@ login_manager = LoginManager(app_login)
 login_manager.login_view = 'login'
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
-app_login.config['SECRET_KEY'] = 'bruh'
+
 
 
 class User(UserMixin):
@@ -42,32 +42,46 @@ def index():
     return render_template("login_with.html")
 
 
-@app_login.route('/login_password', methods=['GET', 'POST'])
+@app_login.route('/login', methods=['GET', 'POST'])
 def login():
+    """Choosing an entry method and logging in
+        Redirects to account or google sign in"""
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        cur.execute("SELECT id, name, password, email FROM users WHERE name = %s", (username,))
-        user_data = cur.fetchone()
-        print(user_data)
-        if user_data:
-            user_data = list(user_data)
-            if user_data[2] == password and len(password) < 32:
-                user = User(*user_data)
-                login_user(user)
-                return redirect(url_for('account'))
+        change = ''
+        usr_input = request.json
+        if usr_input["btn_type"] == "use_password":
+            username = request.form['username']
+            password = request.form['password']
+            cur.execute("SELECT id, name, password FROM users WHERE id = %s AND role", (username))
+            user_data = cur.fetchone()
+
+            if user_data:
+                if user_data[2] == password and len(password) < 32:
+                    user = User(*user_data)
+                    login_user(user)
+                    return redirect(url_for('account'))
+                else:
+                    change = "Invalid username or password"
             else:
-                return "Invalid username or password"
-        else:
-            cur.execute('INSERT INTO users(name, password) VALUES (%s, %s) \
-                        RETURNING id, name, password, email',
-                        (username, password))
-            conn.commit()
-            new_user_data = cur.fetchone()
-            new_user = User(*new_user_data)
-            login_user(new_user)
-            return redirect(url_for('account'))
-    return render_template('login_password.html')
+                cur.execute('INSERT INTO users(name, password) VALUES (%s, %s) RETURNING (id, name, password, email)',
+                            (username, password))
+                conn.commit()
+                new_user_data = cur.fetchone()[0]
+                new_user = User(*new_user_data)
+                login_user(new_user)
+                return redirect(url_for('account'))
+        elif usr_input["btn_type"] == "use_google":
+            # Find out what URL to hit for Google login
+            authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+            # Use library to construct the request for Google login and provide
+            # scopes that let you retrieve user's profile from Google
+            request_uri = client.prepare_request_uri(
+                authorization_endpoint,
+                redirect_uri=request.base_url + "/callback",
+                scope=["openid", "email", "profile"], )
+            return redirect(request_uri)
+
+    return render_template('login.html', change=change)
 
 
 @app_login.route('/login_yandex', methods=['GET', 'POST'])
@@ -190,17 +204,17 @@ def profile():
         /islands-200' alt='avatar'>"
 
 
-@app_login.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
+# @app_login.route('/logout')
+# @login_required
+# def logout():
+#     logout_user()
+#     return redirect(url_for('login'))
 
 
-@app_login.route('/account', methods=['GET', 'POST'])
-@login_required
-def account():
-    return "негры"
+# @app_login.route('/account', methods=['GET', 'POST'])
+# @login_required
+# def account():
+#     return "негры"
 
 
 if __name__ == '__main__':
