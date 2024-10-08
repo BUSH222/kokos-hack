@@ -10,15 +10,14 @@ from helper import (GOOGLE_CLIENT_ID,
 import requests
 import json
 
-app_file1 = Blueprint('app_file1', __name__)
+app_login = Blueprint('app_login', __name__)
 conn, cur = connect_to_db()
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
-app = Flask(__name__)
-login_manager = LoginManager(app)
+login_manager = LoginManager(app_login)
 login_manager.login_view = 'login'
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
-app.config['SECRET_KEY'] = 'bruh'
+app_login.config['SECRET_KEY'] = 'bruh'
 
 
 class User(UserMixin):
@@ -38,12 +37,12 @@ def load_user(user_id):
     return None
 
 
-@app.route('/')
+@app_login.route('/')
 def index():
     return render_template("login_with.html")
 
 
-@app.route('/login_password', methods=['GET', 'POST'])
+@app_login.route('/login_password', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -71,7 +70,7 @@ def login():
     return render_template('login_password.html')
 
 
-@app.route('/login_yandex', methods=['GET', 'POST'])
+@app_login.route('/login_yandex', methods=['GET', 'POST'])
 def login_yandex():
     """Get authorization code Yandex sent back to you"""
     yandex_auth_url = (
@@ -81,7 +80,7 @@ def login_yandex():
     return redirect(yandex_auth_url)
 
 
-@app.route('/login_yandex/yandex_callback')
+@app_login.route('/login_yandex/yandex_callback')
 def yandex_callback():
     """Enters user information from Yandex into the db"""
     code = request.args.get('code')
@@ -120,7 +119,7 @@ def yandex_callback():
     return redirect(url_for('account'))
 
 
-@app.route('/login_gmail', methods=['GET', 'POST'])
+@app_login.route('/login_gmail', methods=['GET', 'POST'])
 def login_gmail():
     # Find out what URL to hit for Google login
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
@@ -134,7 +133,7 @@ def login_gmail():
     return redirect(request_uri)
 
 
-@app.route("/login_gmail/callback")
+@app_login.route("/login_gmail/callback")
 def callback():
     """Get authorization code Google sent back to you"""
     code = request.args.get("code")
@@ -182,7 +181,7 @@ def callback():
     return redirect(url_for('account'))
 
 
-@app.route('/profile')
+@app_login.route('/profile')
 def profile():
     user = session.get('user')
     if not user:
@@ -191,14 +190,14 @@ def profile():
         /islands-200' alt='avatar'>"
 
 
-@app.route('/logout')
+@app_login.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
 
-@app.route('/account', methods=['GET', 'POST'])
+@app_login.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
     return "негры"
@@ -206,4 +205,4 @@ def account():
 
 if __name__ == '__main__':
     # preload_db() # его нет
-    app.run(host='0.0.0.0', port=5000, ssl_context=('certificate.pem', 'private_key.pem'))  # , ssl_context='adhoc')
+    app_login.run(host='0.0.0.0', port=5000, ssl_context=('certificate.pem', 'private_key.pem'))  # , ssl_context='adhoc')
