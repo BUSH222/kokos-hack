@@ -85,7 +85,7 @@ def account():
     if request.method == 'GET':
         usr_id = current_user.id
         cur.execute("SELECT profile_pic,name,fav_player,about_me,vk_acc FROM user WHERE id = %s", (usr_id,))
-        profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.fetchall()
+        profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.fetchone()
 
         if vk_acc is None:
             vk_acc = "Не привязан"
@@ -94,7 +94,7 @@ def account():
     if request.method == 'POST':
         usr_input = request.json
         if usr_input["btn_type"] == "change_user_data":
-            return redirect(url_for('change_user_data'))
+            return {'re':'/account/change_account_data'}
     return render_template('account.html', profile_pic=profile_pic, name=name, fav_player=fav_player,
                            about_me=about_me, telegram_acc=telegram_acc, vk_acc=vk_acc)
 
@@ -112,7 +112,7 @@ def change_user_data():
         cur.execute("""SELECT profile_pic, name, fav_player, about_me, vk_acc, telegram_acc
                     FROM user
                     WHERE id = %s""", (usr_id,))
-        profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.fetchall()
+        profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.fetchone()
         if vk_acc is None:
             vk_acc = "Не привязан"
         if telegram_acc is None:
@@ -135,6 +135,36 @@ def change_user_data():
     return render_template("change_user_data", profile_pic=profile_pic, name=name, fav_player=fav_player,
                            about_me=about_me, vk_acc=vk_acc, telegram_acc=telegram_acc, error=error)
 
+
+
+@app.route('/shop',methods=['GET','POST'])
+def shop():
+    """
+    GET:contains all shop items, but only names and photos so they can be placed in slides
+    parses info from db and places it back via jinja
+    POST:expects {"search":"string"} and makes new db request that is placed back in html form via jinja
+    or redirects to itself with id and returns page of a certain item, when clicked
+    So, lets get to it folks
+    :return shop.html:
+    """
+    if request.method == "GET":
+        items = cur.execute("SELECT id,picture,product_name FROM shop").fetchall()
+        if request.args.get('id'):
+            cur.execute("SELECT picture,product_name,"
+                        "description,price FROM shop WHERE "
+                        "product_name = %s", (request.args.get('id'),))
+            items = cur.fetchall()
+            return render_template("item.html",items)
+    if request.method == "POST":
+        usr_input = request.json
+        if "search" in usr_input.keys():
+             cur.execute("SELECT picture,product_name,"
+                         "FROM shop WHERE "
+                         "product_name = %s",(usr_input["search"],))
+             items = cur.fetchall()
+        if "id" in usr_input.keys():
+            return {'re':f'shop?id={usr_input["id"]}'}
+    return render_template("shop.html",items)
 
 
 
