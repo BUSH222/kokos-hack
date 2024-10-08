@@ -1,5 +1,5 @@
 import os
-
+from login import app_file1
 from flask import Flask, render_template, request, url_for, flash, redirect, abort, jsonify, session
 from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user, current_user
 from oauthlib.oauth2 import WebApplicationClient
@@ -23,6 +23,7 @@ settings = get_processor_settings()
 ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg'}
 
 app = Flask(__name__)
+app.register_blueprint(app_file1)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 config = []
