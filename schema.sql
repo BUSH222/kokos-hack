@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS forum_likes (
 CREATE TABLE IF NOT EXISTS shop (
     id SERIAL PRIMARY KEY,
     product_name VARCHAR(32),
+    price INTEGER,
     sales INTEGER,
     description TEXT,
     picture TEXT -- cdn url
