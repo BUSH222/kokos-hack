@@ -1,18 +1,20 @@
 import os
 
-from flask import Flask, render_template, request, url_for, flash, redirect, abort, jsonify
+from flask import Flask, render_template, request, url_for, flash, redirect, abort, jsonify, session
 from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user, current_user
 from oauthlib.oauth2 import WebApplicationClient
 import psutil
-from helper import (GOOGLE_CLIENT_ID,
-                    GOOGLE_CLIENT_SECRET,
-                    GOOGLE_DISCOVERY_URL)
 import requests
 from werkzeug.utils import secure_filename
 import json
 from dbloader import connect_to_db
 from settings_loader import get_processor_settings
 from logger import log_event
+from helper import (GOOGLE_CLIENT_ID,
+                    GOOGLE_CLIENT_SECRET,
+                    YANDEX_CLIENT_ID,
+                    YANDEX_CLIENT_SECRET,
+                    YANDEX_REDIRECT_URI)
 
 conn, cur = connect_to_db()
 
@@ -26,10 +28,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 config = []
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+conn, cur = connect_to_db()
+GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 app.config['SECRET_KEY'] = 'bruh'
-
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -93,9 +96,8 @@ def login():
 
     return render_template('login.html', change=change)
 
-
 @app.route("/login_gmail/callback")
-def g_callback():
+def callback():
     """Get authorization code Google sent back to you"""
     code = request.args.get("code")
     google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
@@ -121,28 +123,73 @@ def g_callback():
 
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
-        users_email = userinfo_response.json()["email"]
+        user_email = userinfo_response.json()["email"]
         picture = userinfo_response.json()["picture"]
         username = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
 
-    # user = User(username=username, password=unique_id, email=users_email)
     cur.execute("SELECT id, name, password, email FROM users WHERE name = %s", (username,))
     user_data = cur.fetchone()
     if user_data:
-        # if not User.get(unique_id):
-        # User.create(unique_id, users_name, users_email)
         user = User(*user_data)
         login_user(user)
     else:
-        cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) RETURNING id, name, password, email',
-                    (username, unique_id, users_email))
+        cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) \
+                    RETURNING id, name, password, email', (username, unique_id, user_email))
         conn.commit()
         new_user_data = cur.fetchone()
         new_user = User(*new_user_data)
         login_user(new_user)
     return redirect(url_for('account'))
+
+@app.route('/login_yandex', methods=['GET', 'POST'])
+def login_yandex():
+    yandex_auth_url = (
+        'https://oauth.yandex.ru/authorize?response_type=code'
+        f'&client_id={YANDEX_CLIENT_ID}&redirect_uri={YANDEX_REDIRECT_URI}'
+    )
+    return redirect(yandex_auth_url)
+
+
+@app.route('/login_yandex/yandex_callback')
+def yandex_callback():
+    code = request.args.get('code')
+    token_response = requests.post(
+        'https://oauth.yandex.ru/token',
+        data={
+            'grant_type': 'authorization_code',
+            'code': code,
+            'client_id': YANDEX_CLIENT_ID,
+            'client_secret': YANDEX_CLIENT_SECRET,
+            'redirect_uri': YANDEX_REDIRECT_URI
+        }
+    )
+    token = token_response.json().get('access_token')
+    user_info_response = requests.get(
+        'https://login.yandex.ru/info',
+        headers={'Authorization': f'OAuth {token}'}
+    )
+    user_info = user_info_response.json()
+    user_name = user_info.get('display_name', 'absent')
+    unique_id = user_info.get('id', 'absent')
+    user_email = user_info.get('default_email', 'absent')
+
+    cur.execute("SELECT id, name, password, email FROM users WHERE name = %s", (user_name,))
+    user_data = cur.fetchone()
+    if user_data:
+        user = User(*user_data)
+        login_user(user)
+    else:
+        cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) \
+                    RETURNING id, name, password, email', (user_name, unique_id, user_email))
+        conn.commit()
+        new_user_data = cur.fetchone()
+        new_user = User(*new_user_data)
+        login_user(new_user)
+    return redirect(url_for('account'))
+
+
 
 
 @app.route('/logout')
@@ -297,6 +344,6 @@ def main_server_status():
 
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    app.run(port=5000, debug=True, ssl_context=('certificate.pem', 'private_key.pem'))
     cur.close()
     conn.close()
