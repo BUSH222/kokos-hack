@@ -156,8 +156,11 @@ def logout():
 def main_page():
     top_three_posts = cur.execute("SELECT TOP 3 * FROM forum").fetchone()
     top_three_selling_posts = cur.execute("SELECT * FROM forum ORDER BY sales DESC")
-    closest_game = cur.execute(
-        "SELECT your_timestamp FROM your_table ORDER BY ABS(TIMESTAMPDIFF(SECOND, your_timestamp, NOW())) ASC LIMIT 1;").fetchone()
+    cur.execute("""SELECT your_timestamp
+                FROM your_table
+                ORDER BY ABS(TIMESTAMPDIFF(SECOND, your_timestamp, NOW())) ASC
+                LIMIT 1;""")
+    closest_game = cur.fetchone()
     return render_template("main_page.html", posts=top_three_posts, products=top_three_selling_posts,
                            closest_game=closest_game)
 
@@ -171,17 +174,19 @@ def account():
     profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = '' * 5
     if request.method == 'GET':
         usr_id = current_user.id
-        profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.execute(
-            f"SELECT profile_pic,name,fav_player,about_me,vk_acc FROM user WHERE id = %s", (usr_id,)).fetchall()
+        cur.execute("SELECT profile_pic,name,fav_player,about_me,vk_acc FROM user WHERE id = %s", (usr_id,))
+        profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.fetchall()
 
-        if vk_acc == None: vk_acc = "Не привязан"
-        if telegram_acc == None: telegram_acc = "Не привязан"
+        if vk_acc is None:
+            vk_acc = "Не привязан"
+        if telegram_acc is None:
+            telegram_acc = "Не привязан"
     if request.method == 'POST':
         usr_input = request.json
         if usr_input["btn_type"] == "change_user_data":
             return redirect(url_for('change_user_data'))
-    return render_template('account.html', profile_pic=profile_pic, name=name, fav_player=fav_player, about_me=about_me,
-                           telegram_acc=telegram_acc, vk_acc=vk_acc)
+    return render_template('account.html', profile_pic=profile_pic, name=name, fav_player=fav_player,
+                           about_me=about_me, telegram_acc=telegram_acc, vk_acc=vk_acc)
 
 
 @app.route('/account/change_account_data', methods=['POST', 'GET'])
@@ -194,21 +199,25 @@ def change_user_data():
     profile_pic, name, fav_player, about_me, vk_acc, telegram_acc, error = '' * 6
     if request.method == 'GET':
         usr_id = current_user.id
-        profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.execute(
-            f"SELECT profile_pic,name,fav_player,about_me,vk_acc,telegram_acc FROM user WHERE id = %s",
-            (usr_id,)).fetchall()
-        if vk_acc == None: vk_acc = "Не привязан"
-        if telegram_acc == None: telegram_acc = "Не привязан"
+        cur.execute("""SELECT profile_pic, name, fav_player, about_me, vk_acc, telegram_acc
+                    FROM user
+                    WHERE id = %s""", (usr_id,))
+        profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.fetchall()
+        if vk_acc is None:
+            vk_acc = "Не привязан"
+        if telegram_acc is None:
+            telegram_acc = "Не привязан"
     if request.method == 'POST':
         usr_id = current_user.id
         usr_input = request.json
         usr_input["telegram_acc"] = usr_input["telegram_acc"].replace(' ', '')
-        if "@" not in usr_input["telegram_acc"]: usr_input["telegram_acc"] = "@" + usr_input["telegram_acc"]
+        if "@" not in usr_input["telegram_acc"]:
+            usr_input["telegram_acc"] = "@" + usr_input["telegram_acc"]
         '''input name length control'''
         if usr_input["btn_type"] == "submit":
             for key in usr_input.keys():
-                if key in allowed_keys: cur.execute(f'UPDATE user SET %s = %s where id = %s',
-                                                    (key, usr_input[key], usr_id,))
+                if key in allowed_keys:
+                    cur.execute('UPDATE user SET %s = %s where id = %s', (key, usr_input[key], usr_id,))
         try:
             cur.commit()
         except Exception:

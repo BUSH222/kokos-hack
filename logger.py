@@ -1,7 +1,3 @@
-from settings_loader import settings
-import logging
-from dbloader import connect_to_db
-cur = connect_to_db()
 '''
 - Debug (10): самый низкий уровень логирования, предназначенный для отладочных сообщений, для вывода диагностической
 информации о приложении.
@@ -20,6 +16,11 @@ cur = connect_to_db()
 приложение прекратит работу.
 '''
 
+import logging
+from dbloader import connect_to_db
+
+conn, cur = connect_to_db()
+
 
 def setup_custom_logger(name):
     debug_format_string = '%(asctime)s - %(levelname)s \n' \
@@ -27,25 +28,13 @@ def setup_custom_logger(name):
 
     debug_formatter = logging.Formatter(debug_format_string)
 
-    debug_file_handler = logging.FileHandler(settings['debug_log_file_path'], encoding='utf-8')
-    debug_file_handler.setLevel(logging.DEBUG)
-    debug_file_handler.setFormatter(debug_formatter)
-
-    errors_file_handler = logging.FileHandler(settings['errors_log_file_path'], encoding='utf-8')
-    errors_file_handler.setLevel(logging.ERROR)
-    errors_file_handler.setFormatter(debug_formatter)
-
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.DEBUG)
     console_handler.setFormatter(debug_formatter)
 
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
-
-    logger.addHandler(debug_file_handler)
-    logger.addHandler(errors_file_handler)
     logger.addHandler(console_handler)
-
     return logger
 
 
@@ -53,10 +42,11 @@ custom_logger = setup_custom_logger('combined')
 
 
 def log_event(event_description: str, log_level=logging.DEBUG, **kwargs) -> None:
-    conn, cur = connect_to_db()
     full_event_description = event_description if not kwargs else event_description + '\n' + str(kwargs)
-    cur.execute("INSERT INTO logs (log_time, log_text) VALUES (NOW(), %s);", (event_description, ))
-    conn.commit()
-    # print(full_event_description)
-    custom_logger.log(log_level, full_event_description)
-    # errors_logger.log(log_level, full_event_description)
+    try:
+        cur.execute("INSERT INTO logs (log_time, log_text) VALUES (NOW(), %s);", (event_description, ))
+        conn.commit()
+        custom_logger.log(log_level, full_event_description)
+    except Exception as e:
+        conn.rollback()
+        print(f"ERROR CREATING LOG, full error: {e}")

@@ -1,6 +1,9 @@
 from flask import Flask, render_template, redirect, request, url_for, jsonify
 from flask_login import login_user, logout_user, LoginManager, login_required, UserMixin
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from dbloader import connect_to_db
+from logger import log_event
 import requests
 import requests.exceptions
 import psutil
@@ -10,6 +13,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'CHANGE_ME_AS_SOON_AS_POSSIBLE'  # CHANGE THIS
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app,
+    default_limits=["1 per second"],
+    storage_uri="memory://",
+)
 
 conn, cur = connect_to_db()
 
@@ -68,6 +78,9 @@ def login():
             if user_data[2] == password and len(password) < 32:
                 user = User(*user_data)
                 login_user(user)
+                user_ip = request.remote_addr
+                user_ua = request.user_agent
+                log_event("Successful admin login detected, ", user_ip, user_ua)
                 return "OK"
             else:
                 return "Invalid username or password"
@@ -145,9 +158,11 @@ def admin_panel_community_delete_account():
         conn.commit()
         if cur.rowcount == 0:
             return 'Something went wrong.'
+        log_event("Deleted user account, id:", log_level=20, kwargs=user_id)
         return 'Success!'
     except Exception as e:
         conn.rollback()
+        log_event("Error deleting account:", log_level=30, kwargs=e)
         return f'Error: {e}'
 
 
@@ -181,9 +196,11 @@ def admin_panel_community_prune_account():
         conn.commit()
         if cur.rowcount == 0:
             return 'Something went wrong.'
+        log_event("Pruned user account, id:", log_level=20, kwargs=user_id)
         return 'Success!'
     except Exception as e:
         conn.rollback()
+        log_event("Error pruning account:", log_level=30, kwargs=e)
         return f'Error: {e}'
 
 
@@ -215,9 +232,11 @@ def admin_panel_community_view_account_info():
         roles_raw = cur.fetchone()
         if not roles_raw:
             return jsonify('No results')
+        log_event("User account info viewed, name:", log_level=10, kwargs=user)
         return jsonify(roles_raw)
     except Exception as e:
         conn.rollback()
+        log_event("Error viewing account info:", log_level=30, kwargs=e)
         return f'Error: {e}'
 
 
@@ -250,8 +269,10 @@ def admin_panel_community_set_account_info():
         cur.execute('UPDATE users SET name = %s, email = %s, password = %s, points = %s, role = %s WHERE id = %s',
                     (name, email, password, points, role, uid))
         conn.commit()
+        log_event("Updated user account, id:", log_level=20, kwargs=uid)
     except Exception as e:
         conn.rollback()
+        log_event("Error setting account info:", log_level=30, kwargs=e)
         return f'Error: {e}'
     return 'Success'
 
