@@ -19,7 +19,11 @@
 import logging
 from dbloader import connect_to_db
 
-conn, cur = connect_to_db()
+try:
+    conn, cur = connect_to_db()
+except Exception as e:
+    print(f'Error connecting to the database, it might not be initialised yet. {e}')
+    conn, cur = None, None
 
 
 def setup_custom_logger(name):

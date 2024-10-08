@@ -79,8 +79,8 @@ def login():
                 user = User(*user_data)
                 login_user(user)
                 user_ip = request.remote_addr
-                user_ua = request.user_agent
-                log_event("Successful admin login detected, ", user_ip, user_ua)
+                user_ua = request.user_agent.string
+                log_event("Successful admin login detected, ", log_level=20, kwargs=(user_ip, user_ua))
                 return "OK"
             else:
                 return "Invalid username or password"

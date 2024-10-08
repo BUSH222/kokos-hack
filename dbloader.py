@@ -2,11 +2,13 @@
 Library for managing the server's database connection.
 Run this file to create the database, and fill it with data;
 Import connect_to_db to receive connection and cursor objects.
+
+Here logging is used instead of logger due to circular import issues.
 """
 
 import psycopg2
 from psycopg2 import sql
-import logger
+import logging
 
 
 def connect_to_db(db_name='kokos', postgres_pwd='12345678', host='localhost', port='5432'):
@@ -27,7 +29,7 @@ def connect_to_db(db_name='kokos', postgres_pwd='12345678', host='localhost', po
                             password=postgres_pwd,
                             port=port)
     cursor = conn.cursor()
-    logger.log_event('Connected to {db_name}')
+    logging.info('Connected to {db_name}')
     return conn, cursor
 
 
@@ -43,29 +45,29 @@ def create_db(db_name='kokos', postgres_pwd='12345678', host='localhost', port='
     Raises:
         None
     """
-    logger.log_event('Database creation operation started')
-    logger.log_event('Connecting to the PostgreSQL server')
+    logging.info('Database creation operation started')
+    logging.info('Connecting to the PostgreSQL server')
     # estabilishing a connection to the default postgres db
     conn, cursor = connect_to_db(db_name='postgres', postgres_pwd=postgres_pwd, host=host, port=port)
     conn.autocommit = True
-    logger.log_event('Checking if the database exists')
+    logging.info('Checking if the database exists')
     cursor.execute('SELECT 1 FROM pg_database WHERE datname = %s', (db_name,))
     exists = cursor.fetchone()
 
     if not exists:
-        logger.log_event('Database doesn\'t exist, creating a new one')
+        logging.info('Database doesn\'t exist, creating a new one')
         cursor.execute(sql.SQL(
             'CREATE DATABASE {} WITH OWNER = %s ENCODING = %s LOCALE_PROVIDER = %s CONNECTION LIMIT = %s'
         ).format(sql.Identifier(db_name)),
             ('postgres', 'UTF8', 'libc', -1)
         )
-        logger.log_event(f"Database '{db_name}' created successfully.")
+        logging.info(f"Database '{db_name}' created successfully.")
     else:
-        logger.log_event(f"Database '{db_name}' already exists.")
+        logging.info(f"Database '{db_name}' already exists.")
 
     cursor.close()
     conn.close()
-    logger.log_event('Database creation operation completed')
+    logging.info('Database creation operation completed')
 
 
 def create_tables(populate=False, db_name='kokos', postgres_pwd='12345678', host='localhost', port='5432') -> None:
@@ -79,23 +81,23 @@ def create_tables(populate=False, db_name='kokos', postgres_pwd='12345678', host
     Returns:
         None
     """
-    logger.log_event('Table creation operation started')
-    logger.log_event('Connecting to the PostgreSQL server')
+    logging.info('Table creation operation started')
+    logging.info('Connecting to the PostgreSQL server')
     conn, cursor = connect_to_db(db_name=db_name, postgres_pwd=postgres_pwd, host=host, port=port)
-    logger.log_event('Creating tables')
+    logging.info('Creating tables')
     with open('schema.sql', 'r') as schema_obj:
         schema = schema_obj.read()
         cursor.execute(schema)
     conn.commit()
     if populate:
-        logger.log_event('Populating tables')
+        logging.info('Populating tables')
         with open('populate.sql', 'r') as populate_obj:
             populate_query = populate_obj.read()
             cursor.execute(populate_query)
     conn.commit()
     cursor.close()
     conn.close()
-    logger.log_event('Table creation operation completed')
+    logging.info('Table creation operation completed')
 
 
 if __name__ == '__main__':
