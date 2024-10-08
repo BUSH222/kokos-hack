@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, url_for, jsonify
+from flask import Flask, render_template, redirect, request, url_for, jsonify, Blueprint
 from flask_login import login_user, logout_user, LoginManager, login_required, UserMixin
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -12,14 +12,14 @@ import random
 import string
 
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = token_urlsafe(16)
-login_manager = LoginManager(app)
+app_admin = Blueprint('app_admin', __name__)
+app_admin.config['SECRET_KEY'] = token_urlsafe(16)
+login_manager = LoginManager(app_admin)
 login_manager.login_view = 'login'
 
 limiter = Limiter(
     key_func=get_remote_address,
-    app=app,
+    app_admin=app_admin,
     default_limits=["1 per second"],
     storage_uri="memory://",
 )
@@ -52,7 +52,7 @@ def load_user(user_id):
     return None
 
 
-@app.route('/admin_panel')
+@app_admin.route('/admin_panel')
 @login_required
 def admin_panel():
     """
@@ -64,7 +64,7 @@ def admin_panel():
     return render_template('admin_panel.html')
 
 
-@app.route('/admin_panel/login', methods=['GET', 'POST'])
+@app_admin.route('/admin_panel/login', methods=['GET', 'POST'])
 def login():
     """
     Handle the login process for the admin panel.
@@ -100,7 +100,7 @@ def login():
         return render_template('admin_panel_login.html')
 
 
-@app.route('/admin_panel/logout', methods=['GET'])
+@app_admin.route('/admin_panel/logout', methods=['GET'])
 @login_required
 def logout():
     """
@@ -110,7 +110,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/admin_panel/logs')
+@app_admin.route('/admin_panel/logs')
 @login_required
 def admin_panel_logs():
     """
@@ -122,7 +122,7 @@ def admin_panel_logs():
     return render_template('admin_panel_logs.html')
 
 
-@app.route('/admin_panel/logs/get_logs')
+@app_admin.route('/admin_panel/logs/get_logs')
 @login_required
 def admin_panel_get_top100_logs():
     """
@@ -138,7 +138,7 @@ def admin_panel_get_top100_logs():
     return jsonify(cur.fetchall())
 
 
-@app.route('/admin_panel/community')
+@app_admin.route('/admin_panel/community')
 @login_required
 def admin_panel_community():
     """
@@ -150,7 +150,7 @@ def admin_panel_community():
     return render_template('admin_panel_community.html')
 
 
-@app.route('/admin_panel/community/delete_account')
+@app_admin.route('/admin_panel/community/delete_account')
 @login_required
 def admin_panel_community_delete_account():
     """
@@ -178,7 +178,7 @@ def admin_panel_community_delete_account():
         return f'Error: {e}'
 
 
-@app.route('/admin_panel/community/prune_account')
+@app_admin.route('/admin_panel/community/prune_account')
 @login_required
 def admin_panel_community_prune_account():
     """
@@ -216,7 +216,7 @@ def admin_panel_community_prune_account():
         return f'Error: {e}'
 
 
-@app.route('/admin_panel/community/view_account_info')
+@app_admin.route('/admin_panel/community/view_account_info')
 @login_required
 def admin_panel_community_view_account_info():
     """
@@ -252,7 +252,7 @@ def admin_panel_community_view_account_info():
         return f'Error: {e}'
 
 
-@app.route('/admin_panel/community/set_account_info')
+@app_admin.route('/admin_panel/community/set_account_info')
 @login_required
 def admin_panel_community_set_account_info():
     """
@@ -289,7 +289,7 @@ def admin_panel_community_set_account_info():
     return 'Success'
 
 
-@app.route('/admin_panel/update_pages')
+@app_admin.route('/admin_panel/update_pages')
 @login_required
 def admin_panel_update_pages():
     """
@@ -301,7 +301,7 @@ def admin_panel_update_pages():
     return render_template('admin_panel_update_pages.html')
 
 
-@app.route('/admin_panel/update_pages/update_image', methods=['POST'])
+@app_admin.route('/admin_panel/update_pages/update_image', methods=['POST'])
 @login_required
 def admin_panel_update_pages_update_image():
     """Update image API endpoint for the update pages page, passes the given image onto the asset delivery server.
@@ -331,7 +331,7 @@ def admin_panel_update_pages_update_image():
     return 'No file uploaded', 400
 
 
-@app.route('/admin_panel/full_server_status', methods=['GET'])
+@app_admin.route('/admin_panel/full_server_status', methods=['GET'])
 @login_required
 def full_server_status():
     """Returns the server statuses for all microservices running except postgres database.
@@ -358,6 +358,6 @@ def full_server_status():
 
 
 if __name__ == "__main__":
-    app.run(port=5002, debug=True)
+    app_admin.run(port=5002, debug=True)
     cur.close()
     conn.close()
