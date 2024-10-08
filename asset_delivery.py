@@ -52,7 +52,7 @@ def serve_asset(subpath=''):
             </ul>
         ''')
     else:
-        log_event(f"served asset {subpath}", 10)
+        log_event(f"Served asset {subpath}", 10)
         return send_from_directory('assets', subpath)
 
 
