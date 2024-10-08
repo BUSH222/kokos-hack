@@ -4,6 +4,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from dbloader import connect_to_db
 from logger import log_event
+from secrets import token_urlsafe
 import requests
 import requests.exceptions
 import psutil
@@ -12,7 +13,7 @@ import string
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'CHANGE_ME_AS_SOON_AS_POSSIBLE'  # CHANGE THIS
+app.config['SECRET_KEY'] = token_urlsafe(16)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
@@ -60,7 +61,7 @@ def admin_panel():
     Returns:
         str: The rendered HTML template for the admin panel.
     """
-    return render_template('admin_panel/admin_panel.html')
+    return render_template('admin_panel.html')
 
 
 @app.route('/admin_panel/login', methods=['GET', 'POST'])
@@ -96,7 +97,7 @@ def login():
         else:
             return "Registration not allowed or user is not admin"
     else:
-        return render_template('admin_panel/admin_panel_login.html')
+        return render_template('admin_panel_login.html')
 
 
 @app.route('/admin_panel/logout', methods=['GET'])
@@ -118,7 +119,7 @@ def admin_panel_logs():
     Returns:
         str: The rendered HTML template for the admin panel.
     """
-    return render_template('admin_panel/admin_panel_logs.html')
+    return render_template('admin_panel_logs.html')
 
 
 @app.route('/admin_panel/logs/get_logs')
@@ -146,7 +147,7 @@ def admin_panel_community():
     Returns:
         str: The rendered HTML template for the community management page.
     """
-    return render_template('admin_panel/admin_panel_community.html')
+    return render_template('admin_panel_community.html')
 
 
 @app.route('/admin_panel/community/delete_account')
@@ -297,7 +298,7 @@ def admin_panel_update_pages():
     Returns:
         str: The rendered HTML template for the update pages page.
     """
-    return render_template('admin_panel/admin_panel_update_pages.html')
+    return render_template('admin_panel_update_pages.html')
 
 
 @app.route('/admin_panel/update_pages/update_image', methods=['POST'])

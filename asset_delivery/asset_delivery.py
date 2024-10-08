@@ -30,7 +30,8 @@ def serve_asset(subpath=''):
         Accessing `/assets/test/` will list the contents of the 'assets/images' directory.
         Accessing `/assets/test/uni.png` will serve the 'uni.png' file from the 'assets/images' directory.
     """
-    directory = os.path.join(app.root_path, 'assets', subpath)
+    directory = os.path.join(app.root_path, 'assets/', subpath)
+    print(directory)
     if os.path.isdir(directory):
         files = os.listdir(directory)
         file_links = [f'<li><a href="{os.path.join(subpath, file)}">{file}</a></li>' for file in files]
