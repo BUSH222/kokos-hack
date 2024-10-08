@@ -13,11 +13,16 @@
             <form action="{{ url_for('login') }}" method="POST">
                 <div class="input-group">
                     <label for="username">Имя пользователя</label>
-                    <input type="text" id="username" name="username" required>
+                    <input type="text" id="username" name="username" required oninput="limitInputLength(this, 32)">
                 </div>
                 <div class="input-group">
                     <label for="password">Пароль</label>
-                    <input type="password" id="password" name="password" required>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" required>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password')">
+                            <img src="/static/eye.png" alt="Toggle Password Visibility" class="eye-icon">
+                        </button>
+                    </div>
                 </div>
                 <button type="submit" class="login-btn">Войти</button>
             </form>
@@ -42,8 +47,25 @@
                 <p class="register-text">Ещё не зарегистрированы?</p>
                 <a href="{{ url_for('register') }}" class="register-btn">Зарегистрироваться</a>
             </div>            
-            
         </div>
     </div>
+
+    <script>
+        function togglePasswordVisibility(id) {
+            var input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+            } else {
+                input.type = "password";
+            }
+        }
+
+        function limitInputLength(input, maxLength) {
+            console.log(input.value);
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
+            }
+        }
+    </script>
 </body>
 </html>

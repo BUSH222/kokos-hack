@@ -76,6 +76,11 @@ input[type="password"]:focus {
     display: flex;
 }
 
+.password-container {
+    position: relative;
+    display: flex;
+}
+
 /* eye button */
 .toggle-password {
     position: absolute;
@@ -89,6 +94,19 @@ input[type="password"]:focus {
     font-size: 25px;
     padding: 0;
 }
+
+.eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 25px;
+    height: auto;
+    background: none;
+    border: none;
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
