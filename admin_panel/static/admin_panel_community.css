@@ -69,13 +69,16 @@ label {
 }
 
 input {
-    width: 100%;
+    width: calc(100% - 20px);
     padding: 10px;
-    background-color: #1e1e1e;
-    color: #fff;
-    border: 1px solid #fff;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    box-sizing: border-box;
+    background-color: #333;
+    color: white;
+}
+
+input::placeholder {
+    color: #ccc;
 }
 
 input[readonly] {
