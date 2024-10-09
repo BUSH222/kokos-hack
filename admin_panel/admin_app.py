@@ -560,6 +560,23 @@ def product_manager():
 @app.route('/admin_panel/product_manager/new_product', methods=['POST'])
 @login_required
 def product_manager_new_product():
+    """
+    Handles the creation of a new product in the product manager.
+
+    This endpoint accepts POST requests to create a new product in the shop database. It retrieves the product details
+    from the form data and inserts them into the database. The user must be logged in to access this route.
+
+    Args:
+        request.form (ImmutableMultiDict):
+            - product_name (str): The name of the product.
+            - product_price (str): The price of the product.
+            - product_description (str): A brief description of the product.
+            - picture_url (str): The URL of the product image.
+
+    Returns:
+        str: Success message if the product is created successfully, or an error message if there is an issue.
+    """
+
     try:
         product_name = request.form.get('product_name')
         product_price = request.form.get('product_price')
@@ -585,6 +602,25 @@ def product_manager_new_product():
 @app.route('/admin_panel/product_manager/edit_product', methods=['POST'])
 @login_required
 def product_manager_edit_product():
+    """
+    Handles editing an existing product in the product manager.
+
+    This endpoint accepts POST requests to update an existing product in the shop database. It retrieves the product
+    details from the form data and updates the corresponding entry in the database. The user must be logged in to
+    access this route.
+
+    Args:
+        request.form (ImmutableMultiDict):
+            - product_id (str): The ID of the product to be updated.
+            - product_name (str): The updated name of the product.
+            - product_price (str): The updated price of the product.
+            - product_description (str): The updated description of the product.
+            - picture_url (str): The updated URL of the product image.
+
+    Returns:
+        str: Success message if the product is updated successfully, or an error message if there is an issue.
+    """
+
     try:
         # Get parameters from request
         product_id = request.form.get('product_id')
@@ -611,6 +647,23 @@ def product_manager_edit_product():
 @app.route('/admin_panel/product_manager/get_product', methods=['GET'])
 @login_required
 def product_manager_get_product():
+    """
+    Retrieves details of a specific product by its ID.
+
+    This endpoint accepts GET requests and returns the details of a product from the shop db, given its product ID.
+    If the product is not found, an error message is returned. The user must be logged in to access this route.
+
+    Args:
+        request.args (ImmutableMultiDict):
+            - product_id (int): The ID of the product to retrieve.
+
+    Returns:
+        json: A JSON object containing product details (name, price, description, picture URL), or an error message if
+        the product is not found.
+
+    Raises:
+        Exception: If any error occurs during the database query.
+    """
     try:
         # Get the event id from request
         product_id = int(request.args.get('product_id'))
@@ -642,6 +695,23 @@ def product_manager_get_product():
 @app.route('/admin_panel/product_manager/delete_product', methods=['POST'])
 @login_required
 def product_manager_delete_product():
+    """
+    Handles the deletion of a product by its ID.
+
+    This endpoint accepts POST requests to delete a product from the shop database, given its product ID. The user
+    must be logged in to access this route.
+
+    Args:
+        request.form (ImmutableMultiDict):
+            - product_id (int): The ID of the product to be deleted.
+
+    Returns:
+        str: Success message if the product is deleted successfully, or an error message if no rows are affected or if
+        there is an issue.
+
+    Raises:
+        Exception: If any error occurs during the database transaction.
+    """
     try:
         # Get the event id from request
         product_id = int(request.args.get('product_id'))
