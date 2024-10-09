@@ -549,6 +549,110 @@ def product_manager():
     return render_template('admin_panel_product_manager.html')
 
 
+@app.route('/admin_panel/product_manager/new_product')
+@login_required
+def product_manager_new_product():
+    try:
+        product_name = request.form.get('product_name')
+        product_price = request.form.get('product_price')
+        product_description = request.form.get('product_description')
+        picture_url = request.form.get('picture_url')
+
+        # Update in the database
+        update_query = """INSERT INTO shop (product_name, price, description, picture)
+                        VALUES (%s, %s, %s, %s)"""
+        try:
+            cur.execute(update_query, (product_name, product_price, product_description, picture_url))
+            conn.commit()
+            return 'Success', 200
+        except Exception as e:
+            conn.rollback()
+            return f'Error: {e}'
+
+    except Exception as e:
+        conn.rollback()
+        return f"Error: {e}", 400
+
+
+@app.route('/admin_panel/product_manager/edit_product')
+@login_required
+def product_manager_edit_product():
+    try:
+        # Get parameters from request
+        product_id = request.form.get('product_id')
+        product_name = request.form.get('product_name')
+        product_price = request.form.get('product_price')
+        product_description = request.form.get('product_description')
+        picture_url = request.form.get('picture_url')
+
+        # Update in the database
+        update_query = "UPDATE shop SET product_name=%s, price=%s, description=%s, picture=%s WHERE id=%s"
+        try:
+            cur.execute(update_query, (product_name, product_price, product_description, picture_url, product_id))
+            conn.commit()
+            return 'Success', 200
+        except Exception as e:
+            conn.rollback()
+            return f'Error: {e}'
+
+    except Exception as e:
+        conn.rollback()
+        return f"Error: {e}", 400
+
+
+@app.route('/admin_panel/product_manager/get_product')
+@login_required
+def product_manager_get_product():
+    try:
+        # Get the event id from request
+        product_id = int(request.args.get('product_id'))
+
+        select_query = """
+            SELECT product_name, price, description, picture
+            FROM shop
+            WHERE id = %s
+        """
+        cur.execute(select_query, (product_id,))
+        product = cur.fetchone()
+        # If event not found, return error
+        if product is None:
+            return jsonify({"error": f"Product with id {product_id} not found"}), 404
+
+        event_data = {
+            "product_name": product[0],
+            "product_price": product[1],
+            "product_description": product[2],
+            "picture_url": product[3],
+
+        }
+        return jsonify(event_data), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error: {e}"}), 400
+
+
+@app.route('/admin_panel/product_manager/delete_product')
+@login_required
+def product_manager_delete_product():
+    try:
+        # Get the event id from request
+        product_id = int(request.args.get('product_id'))
+
+        delete_query = """
+            DELETE FROM shop
+            WHERE id = %s
+        """
+        cur.execute(delete_query, (product_id,))
+        conn.commit()
+        if cur.rowcount == 0:
+            return "Error: no rows affected", 400
+        return 'Success', 200
+
+    except Exception as e:
+        conn.rollback
+        return f"Error: {e}", 400
+
+
 if __name__ == "__main__":
     app.run(port=5002, debug=True)
     cur.close()
