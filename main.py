@@ -106,7 +106,7 @@ def change_user_data():
     An endpoint parses user info from db than puts it inside text windows for editing.
     """
     allowed_keys = ['profile_pic', 'name', 'fav_player', 'about_me', 'vk_acc', 'telegram_acc']
-    profile_pic, name, fav_player, about_me, vk_acc, telegram_acc, error = '' * 6
+    #profile_pic, name, fav_player, about_me, vk_acc, telegram_acc, error = '' * 6
     if request.method == 'GET':
         usr_id = current_user.id
         cur.execute("""SELECT profile_pic, name, fav_player, about_me, vk_acc, telegram_acc
@@ -132,6 +132,7 @@ def change_user_data():
             cur.commit()
         except Exception:
             error = "Не удалось загрузить изменения"
+            cur.rollback()
     return render_template("change_user_data", profile_pic=profile_pic, name=name, fav_player=fav_player,
                            about_me=about_me, vk_acc=vk_acc, telegram_acc=telegram_acc, error=error)
 
@@ -155,13 +156,16 @@ def shop():
                         "product_name = %s", (request.args.get('id'),))
             items = cur.fetchall()
             return render_template("item.html",items)
+        if request.args.get('search'):
+            cur.execute("SELECT picture,product_name,"
+                            "FROM shop WHERE "
+                            "product_name = %s", (request.args.get('search'),))
+            items = cur.fetchall()
+            return render_template("item.html",items)
     if request.method == "POST":
         usr_input = request.json
         if "search" in usr_input.keys():
-             cur.execute("SELECT picture,product_name,"
-                         "FROM shop WHERE "
-                         "product_name = %s",(usr_input["search"],))
-             items = cur.fetchall()
+             return {'re': f'shop?search={usr_input["search"]}'}
         if "id" in usr_input.keys():
             return {'re':f'shop?id={usr_input["id"]}'}
     return render_template("shop.html",items)
