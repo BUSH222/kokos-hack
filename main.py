@@ -159,7 +159,7 @@ def shop():
         if request.args.get('search'):
             cur.execute("SELECT picture,product_name,"
                             "FROM shop WHERE "
-                            "product_name = %s", (usr_input["search"],))
+                            "product_name = %s", (request.args.get('search'),))
             items = cur.fetchall()
             return render_template("item.html",items)
     if request.method == "POST":
