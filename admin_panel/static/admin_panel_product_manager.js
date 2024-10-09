@@ -7,18 +7,17 @@ function createProduct() {
 
     // Prepare form data
     const formData = new FormData();
+    formData.append('product_name', product_name);
+    formData.append('product_price', product_price);
+    formData.append('product_description', product_description);
+    formData.append('picture_url', picture_url);
 
     let url;
-    if (event_id == '') {
-        formData.append('product_id', product_id);
-        formData.append('product_name', product_name);
-        formData.append('product_price', product_price);
-        formData.append('product_description', product_description);
-        formData.append('picture_url', picture_url);
-        url = '/admin_panel/product_manager/new_product'; // New event
+    if (product_id == '') {
+        url = '/admin_panel/product_manager/new_product';
     } else {
-        formData.append('event_id', event_id); // Add event_id for editing
-        url = '/admin_panel/product_manager/edit_product'; // Edit event
+        formData.append('product_id', product_id);
+        url = '/admin_panel/product_manager/edit_product';
     }
     // Send the request
     fetch(url, {
@@ -68,7 +67,7 @@ function deleteProduct() {
 
     // Send request to delete the product
     fetch(`/admin_panel/product_manager/delete_product?product_id=${product_id}`, {
-        method: 'DELETE'
+        method: 'POST'
     })
     .then(response => {
         if (!response.ok) {
@@ -85,7 +84,6 @@ function deleteProduct() {
 }
 
 function clearInputs() {
-    document.getElementById('product_id').value = '';
     document.getElementById('product_name').value = '';
     document.getElementById('product_price').value = '';
     document.getElementById('product_description').value = '';

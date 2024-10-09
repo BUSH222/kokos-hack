@@ -23,13 +23,14 @@
         <h1>Управление магазином</h1>
         <form id="product-form">
             <input type="text" id="product_id" placeholder="ID Товара">
+            <button type="button" onclick="findProduct()">Найти товар</button>
             <input type="text" id="product_name" placeholder="Название товара">
             <input type="text" id="product_price" placeholder="Цена">
             <input type="text" id="product_description" placeholder="Описание">
             <input type="text" id="picture_url" placeholder="URL изображения">
             
             <div class="button-container">
-                <button type="button" onclick="findProduct()">Найти товар</button>
+                <button type="button" onclick="clearInputs()">Очистить</button>
                 <button type="button" class="stretch" onclick="createProduct()">Создать/Сохранить</button>
                 <button type="button" onclick="deleteProduct()">Удалить товар</button>
             </div>

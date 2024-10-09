@@ -549,7 +549,7 @@ def product_manager():
     return render_template('admin_panel_product_manager.html')
 
 
-@app.route('/admin_panel/product_manager/new_product')
+@app.route('/admin_panel/product_manager/new_product', methods=['POST'])
 @login_required
 def product_manager_new_product():
     try:
@@ -574,7 +574,7 @@ def product_manager_new_product():
         return f"Error: {e}", 400
 
 
-@app.route('/admin_panel/product_manager/edit_product')
+@app.route('/admin_panel/product_manager/edit_product', methods=['POST'])
 @login_required
 def product_manager_edit_product():
     try:
@@ -600,7 +600,7 @@ def product_manager_edit_product():
         return f"Error: {e}", 400
 
 
-@app.route('/admin_panel/product_manager/get_product')
+@app.route('/admin_panel/product_manager/get_product', methods=['GET'])
 @login_required
 def product_manager_get_product():
     try:
@@ -631,7 +631,7 @@ def product_manager_get_product():
         return jsonify({"error": f"Error: {e}"}), 400
 
 
-@app.route('/admin_panel/product_manager/delete_product')
+@app.route('/admin_panel/product_manager/delete_product', methods=['POST'])
 @login_required
 def product_manager_delete_product():
     try:
