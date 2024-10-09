@@ -351,8 +351,8 @@ def event_manager():
 def event_manager_new_event():
     """Creates a new event in the database.
 
-    This endpoint handles the creation of a new event by accepting event details via a POST request. 
-    The event information is extracted from the request's form data and inserted into the database. 
+    This endpoint handles the creation of a new event by accepting event details via a POST request.
+    The event information is extracted from the request's form data and inserted into the database.
     The start and end times of the game are converted from string format to datetime objects.
 
     Args:
@@ -373,7 +373,7 @@ def event_manager_new_event():
         int: 200 OK status code on success.
 
     Raises:
-        Exception: If there is an error during the insertion process, 
+        Exception: If there is an error during the insertion process,
                     a rollback is performed and an error message is returned with a 400 status code.
     """
     try:
@@ -413,9 +413,9 @@ def event_manager_new_event():
 def event_manager_edit_event():
     """Edits an existing event in the database.
 
-    This endpoint handles the editing of an existing event by accepting updated event details via a POST request. 
-    The event information is extracted from the request's form data and updated in the database. 
-    The start and end times of the game are converted from string format to datetime objects, 
+    This endpoint handles the editing of an existing event by accepting updated event details via a POST request.
+    The event information is extracted from the request's form data and updated in the database.
+    The start and end times of the game are converted from string format to datetime objects,
     allowing for optional updates (if not provided, the existing values remain unchanged).
 
     Args:
@@ -437,7 +437,7 @@ def event_manager_edit_event():
         int: 200 OK status code on success.
 
     Raises:
-        Exception: If there is an error during the update process, 
+        Exception: If there is an error during the update process,
                     a rollback is performed and an error message is returned with a 400 status code.
     """
     try:
