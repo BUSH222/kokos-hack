@@ -14,14 +14,14 @@ from datetime import datetime
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = token_urlsafe(16)
+app.config['SECRET_KEY'] = 'a' #token_urlsafe(16)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
 limiter = Limiter(
     key_func=get_remote_address,
     app=app,
-    default_limits=["1 per second"],
+    default_limits=["5 per second"],
     storage_uri="memory://",
 )
 
@@ -383,15 +383,20 @@ def event_manager_new_event():
         game_end_time = request.form.get('game_end_time')
         team1_name = request.form.get('team1_name')
         team2_name = request.form.get('team2_name')
-        team1_score = request.form.get('team1_score')
-        team2_score = request.form.get('team2_score')
+        team1_score = request.form.get('team1_score') or '0'
+        team2_score = request.form.get('team2_score') or '0'
         livestream_link = request.form.get('livestream_link')
         video_link = request.form.get('video_link')
         game_description = request.form.get('game_description')
         match_statistic_external_link = request.form.get('match_statistic_external_link')
-
-        game_start_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
-        game_end_time = datetime.strptime(game_end_time, '%Y-%m-%dT%H:%M')
+        if game_start_time != '':
+            game_start_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
+        else:
+            game_start_time = None
+        if game_end_time != '':
+            game_end_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
+        else:
+            game_end_time = None
 
         insert_query = """
             INSERT INTO games (game_name, game_start_time, game_end_time, team1_name, team2_name,
@@ -448,17 +453,17 @@ def event_manager_edit_event():
         game_end_time = request.form.get('game_end_time')
         team1_name = request.form.get('team1_name')
         team2_name = request.form.get('team2_name')
-        team1_score = request.form.get('team1_score')
-        team2_score = request.form.get('team2_score')
+        team1_score = request.form.get('team1_score') or '0'
+        team2_score = request.form.get('team2_score') or '0'
         livestream_link = request.form.get('livestream_link')
         video_link = request.form.get('video_link')
         game_description = request.form.get('game_description')
         match_statistic_external_link = request.form.get('match_statistic_external_link')
-        if game_start_time is not None:
+        if game_start_time != '':
             game_start_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
         else:
             game_start_time = None
-        if game_end_time is not None:
+        if game_end_time != '':
             game_end_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
         else:
             game_end_time = None
@@ -474,7 +479,11 @@ def event_manager_edit_event():
             cur.execute(update_query, (game_name, game_start_time, game_end_time, team1_name, team2_name,
                         team1_score, team2_score, livestream_link, video_link,
                         game_description, match_statistic_external_link, event_id))
+            if cur.rowcount == 0:
+                conn.rollback
+                return f'Error: event {event_id} doesn\'t exist'
             conn.commit()
+            
             return 'Success', 200
         except Exception as e:
             conn.rollback()
