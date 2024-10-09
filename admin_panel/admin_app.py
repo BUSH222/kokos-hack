@@ -14,7 +14,7 @@ from datetime import datetime
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'a' #token_urlsafe(16)
+app.config['SECRET_KEY'] = token_urlsafe(16)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
