@@ -74,11 +74,11 @@ CREATE TABLE IF NOT EXISTS shop (
 -- GAMES
 CREATE TABLE IF NOT EXISTS games (
     id SERIAL PRIMARY KEY,
-    game_name VARCHAR(32),
+    game_name TEXT,
     game_start_time TIMESTAMP,
     game_end_time TIMESTAMP,
-    team1_name VARCHAR(32),
-    team2_name VARCHAR(32),
+    team1_name TEXT,
+    team2_name TEXT,
     team1_score INTEGER,
     team2_score INTEGER,
     livestream_link TEXT, -- vk video stream url

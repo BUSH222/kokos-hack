@@ -10,6 +10,7 @@ import requests.exceptions
 import psutil
 import random
 import string
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -363,34 +364,144 @@ def event_manager():
     return render_template('admin_panel_event_manager.html')
 
 
-@app.route('/admin_panel/event_manager/new_event')
+@app.route('/admin_panel/event_manager/new_event', methods=['POST'])
+@login_required
 def event_manager_new_event():
-    game_name = request.args.get('game_name')
-    game_start_time = request.args.get('game_start_time')
-    game_end_time = request.args.get('game_end_time')
-    team1_name = request.args.get('team1_name')
-    team2_name = request.args.get('team2_name')
-    team1_score = request.args.get('team1_score')
-    team2_score = request.args.get('team2_score')
-    livestream_link = request.args.get('livestream_link')
-    video_link = request.args.get('video_link')
-    game_description = request.args.get('game_description')
-    match_statistic_external_link = request.args.get('match_statistic_external_link')
+    try:
+        # Get parameters from request
+        game_name = request.form.get('game_name')
+        game_start_time = request.form.get('game_start_time')
+        game_end_time = request.form.get('game_end_time')
+        team1_name = request.form.get('team1_name')
+        team2_name = request.form.get('team2_name')
+        team1_score = request.form.get('team1_score')
+        team2_score = request.form.get('team2_score')
+        livestream_link = request.form.get('livestream_link')
+        video_link = request.form.get('video_link')
+        game_description = request.form.get('game_description')
+        match_statistic_external_link = request.form.get('match_statistic_external_link')
+
+        game_start_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
+        game_end_time = datetime.strptime(game_end_time, '%Y-%m-%dT%H:%M')
+
+        insert_query = """
+            INSERT INTO games (game_name, game_start_time, game_end_time, team1_name, team2_name,
+            team1_score, team2_score, livestream_link, video_link, game_description, match_statistic_external_link)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        cur.execute(insert_query, (game_name, game_start_time, game_end_time, team1_name, team2_name,
+                                   team1_score, team2_score, livestream_link, video_link,
+                                   game_description, match_statistic_external_link))
+        conn.commit()
+        return 'Success', 200
+    except Exception as e:
+        conn.rollback()
+        return f"Error: {e}", 400
 
 
-@app.route('/admin_panel/event_manager/edit_event')
+@app.route('/admin_panel/event_manager/edit_event', methods=['POST'])
+@login_required
 def event_manager_edit_event():
-    game_name = request.args.get('game_name')
-    game_start_time = request.args.get('game_start_time')
-    game_end_time = request.args.get('game_end_time')
-    team1_name = request.args.get('team1_name')
-    team2_name = request.args.get('team2_name')
-    team1_score = request.args.get('team1_score')
-    team2_score = request.args.get('team2_score')
-    livestream_link = request.args.get('livestream_link')
-    video_link = request.args.get('video_link')
-    game_description = request.args.get('game_description')
-    match_statistic_external_link = request.args.get('match_statistic_external_link')
+    try:
+        # Get parameters from request
+        event_id = request.form.get('event_id')
+        game_name = request.form.get('game_name')
+        game_start_time = request.form.get('game_start_time')
+        game_end_time = request.form.get('game_end_time')
+        team1_name = request.form.get('team1_name')
+        team2_name = request.form.get('team2_name')
+        team1_score = request.form.get('team1_score')
+        team2_score = request.form.get('team2_score')
+        livestream_link = request.form.get('livestream_link')
+        video_link = request.form.get('video_link')
+        game_description = request.form.get('game_description')
+        match_statistic_external_link = request.form.get('match_statistic_external_link')
+        if game_start_time is not None:
+            game_start_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
+        else:
+            game_start_time = None
+        if game_end_time is not None:
+            game_end_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
+        else:
+            game_end_time = None
+
+        # Update in the database
+        update_query = """
+            UPDATE games SET game_name=%s, game_start_time=%s, game_end_time=%s,
+            team1_name=%s, team2_name=%s, team1_score=%s, team2_score=%s,
+            livestream_link=%s, video_link=%s, game_description=%s, match_statistic_external_link=%s
+            WHERE id=%s
+        """
+        try:
+            cur.execute(update_query, (game_name, game_start_time, game_end_time, team1_name, team2_name,
+                        team1_score, team2_score, livestream_link, video_link,
+                        game_description, match_statistic_external_link, event_id))
+            conn.commit()
+            return 'Success', 200
+        except Exception as e:
+            conn.rollback()
+            return f'Error: {e}'
+
+    except Exception as e:
+        conn.rollback()
+        return f"Error: {e}", 400
+
+
+@app.route('/admin_panel/event_manager/get_event', methods=['GET'])
+@login_required
+def event_manager_get_event():
+    """
+    Fetches the details of a specific event based on the provided event_id.
+
+    Args:
+        event_id (int): The ID of the event to retrieve.
+
+    Returns:
+        json:
+            200 OK: Returns the event details in JSON format if the event is found.
+            404 Not Found: Returns an error message if the event with the specified ID is not found.
+            400 Bad Request: Returns an error message if there is any issue during the process.
+    """
+    try:
+        # Get the event id from request
+        event_id = int(request.args.get('event_id'))
+
+        select_query = """
+            SELECT game_name, game_start_time, game_end_time, team1_name, team2_name,
+                   team1_score, team2_score, livestream_link, video_link,
+                   game_description, match_statistic_external_link
+            FROM games
+            WHERE id = %s
+        """
+        cur.execute(select_query, (event_id,))
+        event = cur.fetchone()
+        # If event not found, return error
+        if event is None:
+            return jsonify({"error": f"Event with id {event_id} not found"}), 404
+
+        game_start_time = event[1]
+        game_end_time = event[2]
+        if game_start_time is not None:
+            game_start_time = game_start_time.strftime('%Y-%m-%dT%H:%M')
+        if game_end_time is not None:
+            game_end_time = game_end_time.strftime('%Y-%m-%dT%H:%M')
+        event_data = {
+            "game_name": event[0],
+            "game_start_time": game_start_time,
+            "game_end_time": game_end_time,
+            "team1_name": event[3],
+            "team2_name": event[4],
+            "team1_score": event[5],
+            "team2_score": event[6],
+            "livestream_link": event[7],
+            "video_link": event[8],
+            "game_description": event[9],
+            "match_statistic_external_link": event[10]
+        }
+        return jsonify(event_data), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error: {e}"}), 400
 
 
 @app.route('/admin_panel/product_manager')

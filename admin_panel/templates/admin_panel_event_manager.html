@@ -21,16 +21,13 @@
     </nav>
 
     <div class="form-container">
-        <h1>Модерация</h1>
-        <input type="text" id="event_id" placeholder="ID события">
-        <div class="button-group">
-            <button type="button" onclick="findEvent()">Найти событие</button>
-            <button type="button" onclick="saveEvent()">Сохранить событие</button>
-        </div>
+        <h1>Управление событиями</h1>
         <form id="event-form">
+            <input type="text" id="event_id" placeholder="ID события">
+            <button type="button" onclick="findEvent()">Найти событие</button>
             <input type="text" id="game_name" placeholder="Имя турнира">
-            <input type="text" id="game_start_time" placeholder="Начало">
-            <input type="text" id="game_end_time" placeholder="Конец">
+            <input type="datetime-local" id="game_start_time" placeholder="Начало">
+            <input type="datetime-local" id="game_end_time" placeholder="Конец">
             <input type="text" id="team1_name" placeholder="Команда 1">
             <input type="text" id="team2_name" placeholder="Команда 2">
             <input type="text" id="team1_score" placeholder="Счёт команды 1">
@@ -39,7 +36,8 @@
             <input type="text" id="video_link" placeholder="Видеообзоры">
             <input type="text" id="game_description" placeholder="Описание события">
             <input type="text" id="match_statistic_external_link" placeholder="Ссылка на статистику матча">
-            <button type="button" onclick="createGame()">Создать</button>
+            <button type="button" onclick="createGame()">Создать/Сохранить</button>
+            <button type="button" onclick="clearInputs()">Очистить</button>
         </form>
     </div>
     <script src="/static/admin_panel_event_manager.js"></script>
