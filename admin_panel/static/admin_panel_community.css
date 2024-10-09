@@ -166,18 +166,3 @@ button:hover {
     margin-top: 20px;
     color: #ff4c4c;
 }
-
-/* responsive layout */
-@media (max-width: 768px) {
-    .admin-navbar ul {
-        flex-direction: column;
-    }
-
-    .admin-navbar li {
-        margin: 10px 0;
-    }
-
-    .container {
-        padding: 15px;
-    }
-}

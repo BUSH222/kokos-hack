@@ -483,7 +483,6 @@ def event_manager_edit_event():
                 conn.rollback
                 return f'Error: event {event_id} doesn\'t exist'
             conn.commit()
-            
             return 'Success', 200
         except Exception as e:
             conn.rollback()

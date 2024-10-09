@@ -72,37 +72,3 @@ h1 {
 h2 {
     color: #ff4c4c;
 }
-
-/* responsive layout */
-@media (max-width: 768px) {
-    .admin-navbar ul {
-        flex-direction: column;
-    }
-
-    .admin-navbar li {
-        margin: 10px 0;
-    }
-
-    .chart-container {
-        margin: 10px 0;
-        width: 90%;
-    }
-
-    h1 {
-        font-size: 24px;
-    }
-
-    h2 {
-        font-size: 18px;
-    }
-}
-
-@media (max-width: 480px) {
-    h1 {
-        font-size: 20px;
-    }
-
-    h2 {
-        font-size: 16px;
-    }
-}
