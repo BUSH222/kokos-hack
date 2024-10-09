@@ -56,12 +56,7 @@ def load_user(user_id):
 @app.route('/admin_panel')
 @login_required
 def admin_panel():
-    """
-    Render the admin panel page.
-
-    Returns:
-        str: The rendered HTML template for the admin panel.
-    """
+    """Render the admin panel template."""
     return render_template('admin_panel.html')
 
 
@@ -114,12 +109,7 @@ def logout():
 @app.route('/admin_panel/logs')
 @login_required
 def admin_panel_logs():
-    """
-    Render the admin panel server logs page.
-
-    Returns:
-        str: The rendered HTML template for the admin panel.
-    """
+    """Render the admin panel server logs page."""
     return render_template('admin_panel_logs.html')
 
 
@@ -143,11 +133,7 @@ def admin_panel_get_top100_logs():
 @login_required
 def admin_panel_community():
     """
-    Render the community management page within the admin panel.
-
-    Returns:
-        str: The rendered HTML template for the community management page.
-    """
+    Render the community management page within the admin panel."""
     return render_template('admin_panel_community.html')
 
 
@@ -293,12 +279,7 @@ def admin_panel_community_set_account_info():
 @app.route('/admin_panel/update_pages')
 @login_required
 def admin_panel_update_pages():
-    """
-    Render the update pages page of the admin panel.
-
-    Returns:
-        str: The rendered HTML template for the update pages page.
-    """
+    """Render the update pages template of the admin panel."""
     return render_template('admin_panel_update_pages.html')
 
 
@@ -361,12 +342,40 @@ def full_server_status():
 @app.route('/admin_panel/event_manager')
 @login_required
 def event_manager():
+    """Renders the template for the event manager page."""
     return render_template('admin_panel_event_manager.html')
 
 
 @app.route('/admin_panel/event_manager/new_event', methods=['POST'])
 @login_required
 def event_manager_new_event():
+    """Creates a new event in the database.
+
+    This endpoint handles the creation of a new event by accepting event details via a POST request. 
+    The event information is extracted from the request's form data and inserted into the database. 
+    The start and end times of the game are converted from string format to datetime objects.
+
+    Args:
+        game_name (str): The name of the game.
+        game_start_time (str): The starting time of the game in 'YYYY-MM-DDTHH:MM' format.
+        game_end_time (str): The ending time of the game in 'YYYY-MM-DDTHH:MM' format.
+        team1_name (str): The name of the first team.
+        team2_name (str): The name of the second team.
+        team1_score (str): The score of the first team.
+        team2_score (str): The score of the second team.
+        livestream_link (str): The link to the livestream of the event.
+        video_link (str): The link to the video summary of the event.
+        game_description (str): A description of the game event.
+        match_statistic_external_link (str): A link to external match statistics.
+
+    Returns:
+        str: A success message if the event is created successfully.
+        int: 200 OK status code on success.
+
+    Raises:
+        Exception: If there is an error during the insertion process, 
+                    a rollback is performed and an error message is returned with a 400 status code.
+    """
     try:
         # Get parameters from request
         game_name = request.form.get('game_name')
@@ -402,6 +411,35 @@ def event_manager_new_event():
 @app.route('/admin_panel/event_manager/edit_event', methods=['POST'])
 @login_required
 def event_manager_edit_event():
+    """Edits an existing event in the database.
+
+    This endpoint handles the editing of an existing event by accepting updated event details via a POST request. 
+    The event information is extracted from the request's form data and updated in the database. 
+    The start and end times of the game are converted from string format to datetime objects, 
+    allowing for optional updates (if not provided, the existing values remain unchanged).
+
+    Args:
+        event_id (str): The ID of the event to be edited.
+        game_name (str): The updated name of the game.
+        game_start_time (str): The updated starting time of the game in 'YYYY-MM-DDTHH:MM' format.
+        game_end_time (str): The updated ending time of the game in 'YYYY-MM-DDTHH:MM' format.
+        team1_name (str): The updated name of the first team.
+        team2_name (str): The updated name of the second team.
+        team1_score (str): The updated score of the first team.
+        team2_score (str): The updated score of the second team.
+        livestream_link (str): The updated link to the livestream of the event.
+        video_link (str): The updated link to the video summary of the event.
+        game_description (str): The updated description of the game event.
+        match_statistic_external_link (str): The updated link to external match statistics.
+
+    Returns:
+        str: A success message if the event is updated successfully.
+        int: 200 OK status code on success.
+
+    Raises:
+        Exception: If there is an error during the update process, 
+                    a rollback is performed and an error message is returned with a 400 status code.
+    """
     try:
         # Get parameters from request
         event_id = request.form.get('event_id')
@@ -507,7 +545,8 @@ def event_manager_get_event():
 @app.route('/admin_panel/product_manager')
 @login_required
 def product_manager():
-    return render_template('admin_panel_event_manager.html')
+    """Renders the template for the product manager page."""
+    return render_template('admin_panel_product_manager.html')
 
 
 if __name__ == "__main__":
