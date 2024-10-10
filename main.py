@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -91,6 +91,37 @@ def account():
     }
     return render_template('account.html', user_logged_in=user_logged_in, user=user)
 
+# Sample games data
+games = [
+    {'id': 1, 'team1': 'Team A', 'team2': 'Team B', 'datetime': '2024-10-15 18:00'},
+    {'id': 2, 'team1': 'Team C', 'team2': 'Team D', 'datetime': '2024-10-16 19:00'},
+    {'id': 3, 'team1': 'Team E', 'team2': 'Team F', 'datetime': '2024-10-17 20:00'}
+]
+
+# Sample data for current and upcoming games
+current_game = {
+    'id': 1,
+    'team1': 'Команда Г',
+    'team1_logo_url': '/static/team1_logo.png',
+    'team2': 'Команда Д',
+    'team2_logo_url': '/static/team2_logo.png',
+    'datetime': '2024-10-14 20:00'  # Example current game time
+}
+
+upcoming_game = {
+    'id': 2,
+    'team1': 'Команда А',
+    'team1_logo_url': '/static/team1_logo.png',
+    'team2': 'Команда Б',
+    'team2_logo_url': '/static/team2_logo.png',
+    'datetime': (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")  # Set to tomorrow
+}
+
+@app.route('/games')
+def games_view():
+    return render_template('games.html', current_game=current_game, upcoming_game=upcoming_game, games=games)
+
+
 @app.route('/view-account')
 def view_account():
     user_logged_in = True
@@ -113,19 +144,9 @@ games = [
     {'id': 3, 'team1': 'Team E', 'team2': 'Team F', 'datetime': '2024-10-17 20:00'}
 ]
 
-# Current game (you can replace this with your actual logic to determine the current game)
-current_game = {
-    'id': 1,  # This should match an id from your games list or be dynamically set
-    'team1': 'Team A',
-    'team2': 'Team B',
-    'team1_logo_url': '/static/team_a_logo.png',  # Replace with actual URLs
-    'team2_logo_url': '/static/team_b_logo.png',
-    'datetime': '2024-10-15 18:00'
-}
-
 @app.route('/games')
 def games_page():
-    return render_template('games.html', games=games, current_game=current_game)
+    return render_template('games.html', games=games)
 
 @app.route('/admin_panel_login')
 def admin_panel_login():

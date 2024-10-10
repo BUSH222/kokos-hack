@@ -159,6 +159,11 @@ body::-webkit-scrollbar {
     text-align: center;
 }
 
+.next-game-row {
+    margin-top: 20px;
+    text-align: center;
+}
+
 .past-games-heading {
     text-align: center;
     color: #ff4747;

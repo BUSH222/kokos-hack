@@ -51,27 +51,51 @@
 
         <!-- Current Game Section -->
         <div class="current-game-row">
-            <h2 class="live-indicator">В прямом эфире</h2>
-            <div class="game-row">
-                <div class="teams">
-                    <div class="team1">
-                        <img src="{{ current_game.team1_logo_url }}" alt="{{ current_game.team1 }}" class="team-logo">
-                        <div class="team-name">{{ current_game.team1 }}</div>
+            {% if current_game %}
+                <h2 class="live-indicator">В прямом эфире</h2>
+                <div class="game-row">
+                    <div class="teams">
+                        <div class="team1">
+                            <img src="{{ current_game.team1_logo_url }}" alt="{{ current_game.team1 }}" class="team-logo">
+                            <div class="team-name">{{ current_game.team1 }}</div>
+                        </div>
+                        <span class="vs">vs</span>
+                        <div class="team2">
+                            <img src="{{ current_game.team2_logo_url }}" alt="{{ current_game.team2 }}" class="team-logo">
+                            <div class="team-name">{{ current_game.team2 }}</div>
+                        </div>
                     </div>
-                    <span class="vs">vs</span>
-                    <div class="team2">
-                        <img src="{{ current_game.team2_logo_url }}" alt="{{ current_game.team2 }}" class="team-logo">
-                        <div class="team-name">{{ current_game.team2 }}</div>
+                    <div class="datetime">
+                        {{ current_game.datetime }}
+                    </div>
+                    <div class="view-stats">
+                        <a href="/register-match?id={{ current_game.id }}" class="register-match">Смотреть</a>
                     </div>
                 </div>
-                <div class="datetime">
-                    {{ current_game.datetime }}
+            {% else %}
+                <h2 class="live-indicator">Ближайшая игра</h2>
+                <div class="next-game-row">
+                    <div class="teams">
+                        <div class="team1">
+                            <img src="{{ upcoming_game.team1_logo_url }}" alt="{{ upcoming_game.team1 }}" class="team-logo">
+                            <div class="team-name">{{ upcoming_game.team1 }}</div>
+                        </div>
+                        <span class="vs">vs</span>
+                        <div class="team2">
+                            <img src="{{ upcoming_game.team2_logo_url }}" alt="{{ upcoming_game.team2 }}" class="team-logo">
+                            <div class="team-name">{{ upcoming_game.team2 }}</div>
+                        </div>
+                    </div>
+                    <div class="datetime">
+                        {{ upcoming_game.datetime }}
+                    </div>
+                    <div class="view-stats">
+                        <a href="/register-match?id={{ upcoming_game.id }}" class="register-match">Зарегистрироваться</a>
+                    </div>
                 </div>
-                <div class="view-stats">
-                    <a href="/register-match?id={{ current_game.id }}" class="register-match">Смотреть</a> <!-- New clickable link -->
-                </div>
-            </div>
+            {% endif %}
         </div>
+
 
         <!-- Existing Games Table -->
         <div class="games-table">
