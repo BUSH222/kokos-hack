@@ -1,0 +1,277 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #ff4747;
+}
+
+/* navbar */
+.navbar {
+    background-color: #ff4747;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.navbar .left-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .right-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar li {
+    margin: 0 20px;
+    padding: 10px 0;
+}
+
+.navbar a {
+    color: #f2f2f2;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.navbar a:hover {
+    color: #91e8b4;
+}
+
+.navbar .center {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.navbar .center li {
+    margin: 0 30px;
+}
+
+.logo {
+    height: 40px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.profile-pic-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* news page */
+.news-container {
+    padding: 100px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.news-navigation {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.nav-link {
+    margin: 0 30px;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff4747;
+}
+
+.nav-link:hover {
+    color: #91e8b4;
+    text-decoration: none;
+}
+
+/* search bar */
+.search-bar {
+    text-align: center;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-bar input[type="text"] {
+    width: 60%;
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    box-sizing: border-box;
+    margin-right: -10px;
+}
+
+.search-bar input[type="text"]:focus {
+    outline: none;
+    border-color: #91e8b4;
+}
+
+.search-bar img {
+    cursor: pointer;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
+    margin-left: -35px;
+}
+
+/* news field */
+.news-field {
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto; /* Centering the field */
+    border: 2px solid #ff4747;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    border-radius: 25px;
+    width: 1200px;
+    height: 400px;
+    overflow: hidden;
+}
+
+.news-field:hover {
+    transform: scale(1.02);
+}
+
+.news-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.news-tags {
+    font-size: 14px;
+    color: #777777;
+    margin-bottom: 20px;
+}
+
+.tag {
+    text-transform: lowercase;
+    margin-right: 5px;
+}
+
+.news-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+
+.news-photo {
+    margin-right: 20px;
+    flex: 0 0 150px; /* set a fixed width for the photo */
+}
+
+.news-photo img {
+    width: 100%;
+    height: auto;
+    /*border-radius: 10px;*/
+    border: 2px solid #ff4747;
+}
+
+.news-text {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    max-width: 40%;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    margin-right: 20px;
+    margin-left: 0;
+}
+
+.news-text::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+/* comments section */
+.news-comments {
+    flex: 0 0 300px;
+    margin-left: 20px;
+    border: 2px solid #ff4747;
+    padding: 10px;
+    width: 300px;
+    height: 300px;
+    /*max-height: 300px;*/
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    border-radius: 10px;
+}
+
+
+.news-comments::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+.comment {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.comment-user {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.user-pfp {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-nickname {
+    font-weight: bold;
+}
+
+.comment-text {
+    flex: 1;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin-right: 10px;
+}
+
+.comment-likes {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.like-icon {
+    margin-left: 5px;
+    width: 20px;
+    height: 20px;
+}

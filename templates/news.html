@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новости</title>
+    <link rel="stylesheet" href="/static/news.css">
+</head>
+<body>
+    <!-- navigation bar -->
+    <div class="navbar">
+        <ul>
+            <div class="left-side">
+                <li>
+                    <a href="/">
+                        <img src="/static/logo.png" alt="Website Logo" class="logo">
+                    </a>
+                </li>
+            </div>
+
+            <div class="center">
+                <li><a href="/news">Новости</a></li>
+                <li><a href="/games">Игры</a></li>
+                <li><a href="/shop">Магазин</a></li>
+                <li><a href="/about">О клубе</a></li>
+                <li><a href="/forum">Форум</a></li>
+            </div>
+
+            <div class="right-side">
+                {% if user_logged_in %}
+                    <li>
+                        <a href="/account">
+                            <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                        </a>
+                    </li>
+                {% else %}
+                    <li><a href="/login">Войти</a></li>
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+
+    <div class="news-container">
+        <!-- top navigation -->
+        <div class="news-navigation">
+            <a href="#" class="nav-link">новый пост</a>
+            <a href="#" class="nav-link">топ</a>
+            <a href="#" class="nav-link">фильтры</a>
+        </div>
+
+        <!-- search bar -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Найти новость">
+            <a id="searchButton" href="javascript:void(0);" onclick="performSearch()">
+                <img src="/static/magnifier.png" alt="Search" width="24" height="24">
+            </a>
+        </div>
+
+        <!-- news fields -->
+        <div class="news-field">
+            <div class="news-header">
+                <div class="comment-user">
+                    <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="user-pfp">
+                    <span class="user-nickname">{{ user.username }}</span>
+                    <span class="post-date">{{ post.date_created }}</span>
+                </div>
+            </div>
+            <div class="news-title">
+                {{ title }}
+            </div>
+            <div class="news-tags">
+                {{ tags }}
+            </div>
+            <div class="news-content">
+                <div class="news-photo">
+                    <img src="{{ news_photo_url }}" alt="News Image">
+                </div>
+                <div class="news-text">
+                    {{ text }}
+                </div>
+            
+
+                <!-- comments section -->
+                <div class="news-comments">
+                    {% for comment in comments %}
+                        <div class="comment">
+                            <div class="comment-user">
+                                <img src="{{ comment.user_pfp }}" alt="Profile Picture" class="user-pfp">
+                                <span class="user-nickname">{{ comment.user_nickname }}</span>
+                            </div>
+                            <div class="comment-text">{{ comment.text }}</div>
+                            <div class="comment-likes">
+                                <span>{{ comment.likes }}</span>
+                                <img src="/static/heart.png" alt="Like" class="like-icon" onclick="likeComment('{{ comment.id }}')">
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // search
+        function performSearch() {
+            const searchQuery = document.getElementById('searchInput').value;
+            if (searchQuery) {
+                window.location.href = `/search?query=${encodeURIComponent(searchQuery)}`;
+            }
+        }
+
+        // Listen for the Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+    </script>
+</body>
+</html>

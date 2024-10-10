@@ -27,6 +27,63 @@ def register():
     # Handle registration logic here
     return render_template('register.html')
 
+@app.route('/news')
+def news():
+    # Sample data for the news post
+    news_data = {
+        'title': 'Новое событие в клубе!',
+        'tags': 'Спорт, Клуб, Новости',
+        'news_photo_url': '/static/news_photo.jpg',  # Path to your news photo
+        'text': 'Сегодня в нашем клубе произошло замечательное событие. Мы рады сообщить, что клуб очень крутой короче и ваще топ 1 скоро станет я верю в это правда. Вообще я пишу много текста чтобы проверить работает ли скролл)) судя по всему не очень он работает, точнее нет, он по идее работает вот только окно с текстом выходит за рамки и это надо фиксить срочно! а нет с ним все хорошо ну ладно тогда я просто попишу еще чего нибудь смешного и неинтересного чтобы просто всего лишь проверить работу того что я накалякал. Честно говоря я уже устал делать только одну эту страницу целый день я уже хочу просто лечь в постель, посмотреть ют, выспаться и уже завтра продолжить и да Федя я помню что мне нужно сделать еще всего лишь +-20 страниц за 1 завтрашний день bruhhh я не знаю как мне вообще выжить с такой нагрузкой!',
+        'comments': [
+            {
+                'user_pfp': '/static/user1.png',
+                'user_nickname': 'User1',
+                'text': 'Это первый комментарий!',
+                'likes': 10,
+                'id': 1,
+            },
+            {
+                'user_pfp': '/static/user2.png',
+                'user_nickname': 'User2',
+                'text': 'Отличная новость, спасибо!',
+                'likes': 5,
+                'id': 2,
+            },
+            {
+                'user_pfp': '/static/user3.png',
+                'user_nickname': 'User3',
+                'text': 'Согласен, очень интересно!',
+                'likes': 3,
+                'id': 3,
+            },
+            {
+                'user_pfp': '/static/user4.png',
+                'user_nickname': 'User4',
+                'text': 'Не могу дождаться следующей новости!',
+                'likes': 7,
+                'id': 4,
+            },
+            {
+                'user_pfp': '/static/user5.png',
+                'user_nickname': 'User5',
+                'text': 'Классная статья, продолжайте в том же духе!',
+                'likes': 2,
+                'id': 5,
+            },
+        ],
+        # Example user data
+        'user': {
+            'profile_picture_url': '/static/current_user.png',  # Path to the current user's profile picture
+            'username': 'Текущий Пользователь',  # Username of the current user
+        },
+        'post': {
+            'date_created': '2024-10-09'  # Example creation date for the post
+        }
+    }
+    
+    return render_template('news.html', **news_data)
+
 @app.route('/account')
 def account():
     user_logged_in = True
