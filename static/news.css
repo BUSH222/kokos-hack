@@ -78,8 +78,7 @@ body {
 
 /* news page */
 .news-container {
-    padding: 100px 20px;
-    max-width: 1200px;
+    padding: 100px 10%;
     margin: 0 auto;
 }
 
@@ -144,8 +143,6 @@ body {
     flex-direction: column;
     transition: transform 0.3s ease;
     border-radius: 25px;
-    width: 1200px;
-    height: 400px;
     overflow: hidden;
 }
 
@@ -171,11 +168,11 @@ body {
 }
 
 .news-content {
+    position:relative;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
-    width: 100%;
     box-sizing: border-box;
     padding: 10px;
 }
@@ -183,95 +180,45 @@ body {
 
 .news-photo {
     margin-right: 20px;
-    flex: 0 0 150px; /* set a fixed width for the photo */
+    flex: 0 0 35%; /* set a fixed width for the photo */
 }
 
-.news-photo img {
-    width: 100%;
-    height: auto;
-    /*border-radius: 10px;*/
-    border: 2px solid #ff4747;
+.user-pfp {
+    height: 20px;
+    width: 20px;
 }
 
-.news-text {
-    flex: 1;
-    padding: 10px;
-    border: 2px solid #ff4747;
-    border-radius: 10px;
-    max-width: 40%;
-    max-height: 300px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: none;
-    margin-right: 20px;
-    margin-left: 0;
-}
-
-.news-text::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
-}
-
-/* comments section */
-.news-comments {
-    flex: 0 0 300px;
-    margin-left: 20px;
-    border: 2px solid #ff4747;
-    padding: 10px;
-    width: 300px;
-    height: 300px;
-    /*max-height: 300px;*/
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: none;
-    border-radius: 10px;
-}
-
-
-.news-comments::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
-}
-
-.comment {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+.user-nickname {
+    padding-right:20px;
+    padding-left: 20px;
 }
 
 .comment-user {
     display: flex;
     align-items: center;
-    margin-right: 10px;
 }
 
-.user-pfp {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
+.news-photo img {
+    width: 100%;
+    height: auto;
+    border-radius: 30px;
+    /*border: 2px solid #ff4747;*/
 }
 
-.user-nickname {
-    font-weight: bold;
-}
-
-.comment-text {
-    flex: 1;
-    padding: 5px;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    margin-right: 10px;
-}
-
-.comment-likes {
+.news-text {
     display: flex;
-    align-items: center;
-    cursor: pointer;
+    flex-direction: column;
+    height: 100%;
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    scrollbar-width: none;
+    margin-right: 20px;
+    margin-left: 0;
+    align-items: stretch;
 }
 
-.like-icon {
-    margin-left: 5px;
-    width: 20px;
-    height: 20px;
+.news-text::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
 }

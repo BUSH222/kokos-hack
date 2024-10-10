@@ -78,24 +78,7 @@
                 <div class="news-text">
                     {{ text }}
                 </div>
-            
 
-                <!-- comments section -->
-                <div class="news-comments">
-                    {% for comment in comments %}
-                        <div class="comment">
-                            <div class="comment-user">
-                                <img src="{{ comment.user_pfp }}" alt="Profile Picture" class="user-pfp">
-                                <span class="user-nickname">{{ comment.user_nickname }}</span>
-                            </div>
-                            <div class="comment-text">{{ comment.text }}</div>
-                            <div class="comment-likes">
-                                <span>{{ comment.likes }}</span>
-                                <img src="/static/heart.png" alt="Like" class="like-icon" onclick="likeComment('{{ comment.id }}')">
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
             </div>
         </div>
     </div>
