@@ -14,11 +14,7 @@ import json
 from dbloader import connect_to_db
 from settings_loader import get_processor_settings
 from logger import log_event
-from helper import (GOOGLE_CLIENT_ID,
-                    GOOGLE_CLIENT_SECRET,
-                    YANDEX_CLIENT_ID,
-                    YANDEX_CLIENT_SECRET,
-                    YANDEX_REDIRECT_URI)
+from helper import (GOOGLE_CLIENT_ID)
 
 conn, cur = connect_to_db()
 
@@ -67,7 +63,6 @@ def load_user(user_id):
     return None
 
 
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -107,7 +102,7 @@ def account():
     if request.method == 'POST':
         usr_input = request.json
         if usr_input["btn_type"] == "change_user_data":
-            return {'re':'/account/change_account_data'}
+            return {'re': '/account/change_account_data'}
     return render_template('account.html', profile_pic=profile_pic, name=name, fav_player=fav_player,
                            about_me=about_me, telegram_acc=telegram_acc, vk_acc=vk_acc)
 
@@ -119,7 +114,7 @@ def change_user_data():
     An endpoint parses user info from db than puts it inside text windows for editing.
     """
     allowed_keys = ['profile_pic', 'name', 'fav_player', 'about_me', 'vk_acc', 'telegram_acc']
-    profile_pic, name, fav_player, about_me, vk_acc, telegram_acc, error = '','','','','','',''
+    profile_pic, name, fav_player, about_me, vk_acc, telegram_acc, error = '', '', '', '', '', '', ''
     if request.method == 'GET':
         usr_id = current_user.id
         cur.execute("""SELECT profile_pic, name, fav_player, about_me, vk_acc, telegram_acc
@@ -150,8 +145,7 @@ def change_user_data():
                            about_me=about_me, vk_acc=vk_acc, telegram_acc=telegram_acc, error=error)
 
 
-
-@app.route('/shop',methods=['GET','POST'])
+@app.route('/shop', methods=['GET', 'POST'])
 def shop():
     """
     GET:contains all shop items, but only names and photos so they can be placed in slides
@@ -168,22 +162,20 @@ def shop():
                         "description,price FROM shop WHERE "
                         "product_name = %s", (request.args.get('id'),))
             items = cur.fetchall()
-            return render_template("item.html",items)
+            return render_template("item.html", items)
         if request.args.get('search'):
-            cur.execute("SELECT picture,product_name,"
-                            "FROM shop WHERE "
-                            "product_name = %s", (request.args.get('search'),))
+            cur.execute("SELECT picture,product_name, \
+                             FROM shop WHERE \
+                             product_name = %s", (request.args.get('search'),))
             items = cur.fetchall()
-            return render_template("item.html",items)
+            return render_template("item.html", items)
     if request.method == "POST":
         usr_input = request.json
         if "search" in usr_input.keys():
-             return {'re': f'shop?search={usr_input["search"]}'}
+            return {'re': f'shop?search={usr_input["search"]}'}
         if "id" in usr_input.keys():
-            return {'re':f'shop?id={usr_input["id"]}'}
+            return {'re': f'shop?id={usr_input["id"]}'}
     return render_template("shop.html", items)
-
-
 
 
 @app.route('/main_server_status', methods=['GET'])

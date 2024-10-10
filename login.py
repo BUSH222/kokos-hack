@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for, session, Blueprint
+from flask import redirect, render_template, request, url_for, session, Blueprint
 from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user
 from dbloader import connect_to_db
 from oauthlib.oauth2 import WebApplicationClient
@@ -17,7 +17,6 @@ login_manager = LoginManager(app_login)
 login_manager.login_view = 'login'
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
-
 
 
 class User(UserMixin):
@@ -228,4 +227,5 @@ def profile():
 
 
 if __name__ == '__main__':
-    app_login.run(host='0.0.0.0', port=5000, ssl_context=('certificate.pem', 'private_key.pem'))  # , ssl_context='adhoc')
+    app_login.run(host='0.0.0.0', port=5000, ssl_context=('certificate.pem', 'private_key.pem'))
+    # , ssl_context='adhoc')
