@@ -5,6 +5,8 @@ from flask import Flask, render_template, request, url_for, flash, redirect, abo
 from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user, current_user
 from oauthlib.oauth2 import WebApplicationClient
 import psutil
+import time
+from collections import deque
 import requests
 from werkzeug.utils import secure_filename
 import json
@@ -37,11 +39,22 @@ GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configura
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 app.config['SECRET_KEY'] = 'bruh'
+request_timestamps = deque()
 
 
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.before_request
+def track_requests():  # DONT TOUCH
+    """Track the timestamp of each request."""
+    global request_timestamps
+    current_time = time.time()
+    request_timestamps.append(current_time)
+    while request_timestamps and request_timestamps[0] < current_time - 60:
+        request_timestamps.popleft()
 
 
 @login_manager.user_loader
@@ -184,7 +197,9 @@ def main_server_status():
     allowed_ips = settings['allowed_ips']
     if request.remote_addr not in allowed_ips:
         return abort(403)
-    return jsonify({'ram': psutil.virtual_memory().percent, 'cpu': psutil.cpu_percent()})
+    return jsonify({'ram': psutil.virtual_memory().percent,
+                    'cpu': psutil.cpu_percent(),
+                    'rpm': len(request_timestamps)})
 
 
 if __name__ == "__main__":

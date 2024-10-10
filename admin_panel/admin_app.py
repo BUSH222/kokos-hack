@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, url_for, jsonify, abort
+from flask import Flask, render_template, redirect, request, url_for, jsonify
 from flask_login import login_user, logout_user, LoginManager, login_required, UserMixin
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -47,17 +47,6 @@ def track_requests():
     request_timestamps.append(current_time)
     while request_timestamps and request_timestamps[0] < current_time - 60:
         request_timestamps.popleft()
-
-
-@app.route('/admin_panel/get_rpm')
-@login_required
-def get_rpm():
-    """Calculate and return the current requests per minute (RPM)."""
-    global request_timestamps
-    if request.remote_addr != '127.0.0.1':
-        return abort(403)
-    rpm = len(request_timestamps)  # Number of requests in the last 60 seconds
-    return f"Current requests per minute: {rpm}"
 
 
 class User(UserMixin):
@@ -342,20 +331,22 @@ def full_server_status():
     """Returns the server statuses for all microservices running except postgres database.
 
     Returns:
-        json: json of ram and cpu usage of every server in the format {"server_status": {"ram": number, "cpu": number}}
+        json: status of every server in the format {"server_status": {"ram": number, "cpu": number, "rpm": number}}
     """
     try:
         main_status_response = requests.get('http://127.0.0.1:5000/main_server_status', timeout=1)
         main_status = main_status_response.json()
     except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError, requests.exceptions.ConnectionError):
-        main_status = {'ram': 0, 'cpu': 0}
+        main_status = {'ram': 0, 'cpu': 0, "rpm": 0}
 
     try:
         asset_delivery_status_response = requests.get('http://127.0.0.1:5001/asset_delivery_server_status', timeout=1)
         asset_delivery_status = asset_delivery_status_response.json()
     except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError, requests.exceptions.ConnectionError):
-        asset_delivery_status = {'ram': 0, 'cpu': 0}
-    admin_panel_status = {'ram': psutil.virtual_memory().percent, 'cpu': psutil.cpu_percent()}
+        asset_delivery_status = {'ram': 0, 'cpu': 0, "rpm": 0}
+    admin_panel_status = {'ram': psutil.virtual_memory().percent,
+                          'cpu': psutil.cpu_percent(),
+                          'rpm': len(request_timestamps)}
 
     return jsonify({"Main server": main_status,
                     "Asset delivery": asset_delivery_status,
