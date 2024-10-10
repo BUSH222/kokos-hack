@@ -86,3 +86,13 @@ function clearInputs() {
     document.getElementById('game_description').value = '';
     document.getElementById('match_statistic_external_link').value = '';
 }
+
+function downloadTickets() {
+    const event_id = document.getElementById('event_id').value;
+    if (event_id == ''){
+        alert('ID must not be empty.')
+    }
+    else{
+        window.location.href = `/admin_panel/tickets?id=${event_id}`;
+    }
+}

@@ -139,3 +139,19 @@ button {
 button:hover {
     background-color: #d93b3b;
 }
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-container button {
+    padding: 10px;
+    flex-direction: row;
+}
+
+
+.button-container .stretch {
+    flex-grow: 2; /* This will make the middle button stretch */
+    margin: 0 10px;
+}

@@ -36,8 +36,11 @@
             <input type="text" id="video_link" placeholder="Видеообзоры">
             <input type="text" id="game_description" placeholder="Описание события">
             <input type="text" id="match_statistic_external_link" placeholder="Ссылка на статистику матча">
-            <button type="button" onclick="createGame()">Создать/Сохранить</button>
-            <button type="button" onclick="clearInputs()">Очистить</button>
+            <div class="button-container">
+                <button type="button" onclick="downloadTickets()">Скачать все билеты</button>
+                <button type="button" onclick="createGame()">Создать/Сохранить</button>
+                <button type="button" onclick="clearInputs()">Очистить</button>
+            </div>
         </form>
     </div>
     <script src="/static/admin_panel_event_manager.js"></script>

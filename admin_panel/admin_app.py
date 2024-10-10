@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, url_for, jsonify
+from flask import Flask, render_template, redirect, request, url_for, jsonify, Response
 from flask_login import login_user, logout_user, LoginManager, login_required, UserMixin
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -751,7 +751,36 @@ def product_manager_delete_product():
 @app.route('/admin_panel/help')
 @login_required
 def admin_help():
+    """Render the template for the admin help page."""
     return render_template("admin_help.html")
+
+
+@app.route('/admin_panel/tickets')
+@login_required
+def admin_panel_tickets():
+    """Return all the tickets ordered for the upcoming match with id.
+    Args:
+        id - the id of the game
+    Returns:
+        file: tickets.txt if everything worked
+        str: error message if something failed"""
+    try:
+        game_id = int(request.args.get('id'))
+        query = """SELECT games.id AS game_id, games.game_name, tickets.fullname
+        FROM games
+        JOIN tickets ON games.id = tickets.game_id
+        WHERE tickets.game_id = %s"""
+        cur.execute(query, (game_id, ))
+        data = cur.fetchall()
+        content = '\n'.join([f'{item[0]} | {item[1]} | {item[2]}' for item in data])
+        return Response(
+            content,
+            mimetype='text/plain',
+            headers={"Content-Disposition": "attachment;filename=tickets.txt"}
+        )
+    except Exception as e:
+        conn.rollback()
+        return f'Something went wrong: {e}'
 
 
 if __name__ == "__main__":
