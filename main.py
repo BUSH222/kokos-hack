@@ -44,6 +44,24 @@ def news():
     
     return render_template('news.html', data=max_news_data)
 
+@app.route('/forum')
+def forum():
+    # Sample data for the news post
+    news_data = {
+        'title': 'Boeing jets just hit the twin towers',
+        'tags': 'USA, tragedy, crash',
+        'news_photo_url': '/static/eye.png',  # Path to your news photo
+        'text': 'Сегодня в нашем twin towers произошло horrible событие. Мы рады сообщить, что 2979 people died that day. Вообще я пишу много текста чтобы проверить работает ли скролл)) судя по всему не очень он работает, точнее нет, он по идее работает вот только окно с текстом выходит за рамки и это надо фиксить срочно! а нет с ним все хорошо ну ладно тогда я просто попишу еще чего нибудь смешного и неинтересного чтобы просто всего лишь проверить работу того что я накалякал. Честно говоря я уже устал делать только одну эту страницу целый день я уже хочу просто лечь в постель, посмотреть ют, выспаться и уже завтра продолжить и да Федя я помню что мне нужно сделать еще всего лишь +-20 страниц за 1 завтрашний день bruhhh я не знаю как мне вообще выжить с такой нагрузкой! hkjdgamfjsgddghfgdhjfahjgdfhjkgafkghjafdkghdfghkakgdfhsgdfghkfgkhfdgkafdghkfdsghdfsghkfhkgakghadfskghadsfkhgafdskghghkakgdfhsgdfghkfgkhfdgkafdghkfdsghdfsghkfhkgakghadfskghadsfkhgafdskghghkakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghuuauau',
+        'profile_picture_url': '/static/google_icon.png',  # Path to the current user's profile picture
+        'username': 'Текущий Пользователь',  # Username of the current user
+        'date_created': '2001-09-1'  # Example creation date for the post
+    }
+
+    max_news_data = [news_data for _ in range(3)]
+    
+    return render_template('forum.html', data=max_news_data)
+
+
 @app.route('/account')
 def account():
     user_logged_in = True
@@ -70,6 +88,18 @@ def view_account():
         'vk_handle': 'kokocfan'  # VK handle
     }
     return render_template('view-account.html', user_logged_in=user_logged_in, user=user)
+
+
+# Sample games data
+games = [
+    {'id': 1, 'team1': 'Team A', 'team2': 'Team B', 'datetime': '2024-10-15 18:00'},
+    {'id': 2, 'team1': 'Team C', 'team2': 'Team D', 'datetime': '2024-10-16 19:00'},
+    {'id': 3, 'team1': 'Team E', 'team2': 'Team F', 'datetime': '2024-10-17 20:00'}
+]
+
+@app.route('/games')
+def games_page():
+    return render_template('games.html', games=games)
 
 @app.route('/admin_panel_login')
 def admin_panel_login():

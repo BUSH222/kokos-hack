@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Новости</title>
-    <link rel="stylesheet" href="/static/news.css">
+    <link rel="stylesheet" href="/static/forum.css">
 </head>
 <body>
     <!-- navigation bar -->
@@ -71,8 +71,8 @@
         <div class="news-field">
             <div class="news-header">
                 <div class="comment-user">
-                    <img src="/static/eye.png" alt="User Profile Picture" class="user-pfp">
-                    <span class="user-nickname">Admin</span>
+                    <img src="{{ item.profile_picture_url }}" alt="User Profile Picture" class="user-pfp">
+                    <span class="user-nickname">{{ item.username }}</span>
                     <span class="post-date">{{ item.date_created }}</span>
                 </div>
             </div>
@@ -95,7 +95,9 @@
         {% endfor %}
     </div>
 
-   
+    <div class="floating-help-plus">
+        <a href="/new-post">+</a>
+    </div>
 
         <!-- Bottom Bar -->
     <div class="bottom-bar">
