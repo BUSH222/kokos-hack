@@ -35,6 +35,7 @@ body {
 }
 
 .admin-navbar li {
+    overflow: hidden;
     margin: 10px 15px; /* Increased margin for better touch targets */
 }
 

@@ -1,22 +1,26 @@
-from flask import Flask, render_template, redirect, request, url_for, jsonify
+from flask import Flask, render_template, redirect, request, url_for, jsonify, abort
 from flask_login import login_user, logout_user, LoginManager, login_required, UserMixin
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from dbloader import connect_to_db
 from logger import log_event
 from secrets import token_urlsafe
+from collections import deque
+from datetime import datetime
 import requests
 import requests.exceptions
 import psutil
 import random
 import string
-from datetime import datetime
+import time
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = token_urlsafe(16)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
+request_timestamps = deque()
 
 limiter = Limiter(
     key_func=get_remote_address,
@@ -33,6 +37,27 @@ def generate_random_string():
     length = 32
     characters = string.ascii_letters + string.digits + '_' + ',' + '.'
     return ''.join(random.choices(characters, k=length))
+
+
+@app.before_request
+def track_requests():
+    """Track the timestamp of each request."""
+    global request_timestamps
+    current_time = time.time()
+    request_timestamps.append(current_time)
+    while request_timestamps and request_timestamps[0] < current_time - 60:
+        request_timestamps.popleft()
+
+
+@app.route('/admin_panel/get_rpm')
+@login_required
+def get_rpm():
+    """Calculate and return the current requests per minute (RPM)."""
+    global request_timestamps
+    if request.remote_addr != '127.0.0.1':
+        return abort(403)
+    rpm = len(request_timestamps)  # Number of requests in the last 60 seconds
+    return f"Current requests per minute: {rpm}"
 
 
 class User(UserMixin):
@@ -294,7 +319,6 @@ def admin_panel_update_pages_update_image():
     """
     image_name = request.form.get('image_name')
     file = request.files.get('img')
-    print(type(file))
     if file:
         # Define the URL of the other microservice
         upload_url = 'http://127.0.0.1:5001/upload_assets'
@@ -305,7 +329,6 @@ def admin_panel_update_pages_update_image():
         # Send the POST request to the other microservice
         data = {'img_name': image_name}
         response = requests.post(upload_url, files=files, data=data)
-        print(response.status_code)
         if response.status_code == 200:
             return 'Success', 200
         else:
@@ -547,6 +570,7 @@ def event_manager_get_event():
         return jsonify(event_data), 200
 
     except Exception as e:
+        conn.rollback()
         return jsonify({"error": f"Error: {e}"}), 400
 
 
@@ -689,6 +713,8 @@ def product_manager_get_product():
         return jsonify(event_data), 200
 
     except Exception as e:
+        conn.rollback()
+        print(e)
         return jsonify({"error": f"Error: {e}"}), 400
 
 
@@ -727,7 +753,7 @@ def product_manager_delete_product():
         return 'Success', 200
 
     except Exception as e:
-        conn.rollback
+        conn.rollback()
         return f"Error: {e}", 400
 
 
