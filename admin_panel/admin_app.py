@@ -748,6 +748,12 @@ def product_manager_delete_product():
         return f"Error: {e}", 400
 
 
+@app.route('/admin_panel/help')
+@login_required
+def admin_help():
+    return render_template("admin_help.html")
+
+
 if __name__ == "__main__":
     app.run(port=5002, debug=True)
     cur.close()
