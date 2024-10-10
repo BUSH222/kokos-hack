@@ -1,5 +1,6 @@
 const cpuLoadData = {};
 const ramUsageData = {};
+const rpmData = {};
 const serverNames = [];
 
 const colors = ['#E60000', '#32CD32', '#0000FF']
@@ -33,19 +34,23 @@ function updateCharts(data) {
             if (!cpuLoadData[server]) {
                 cpuLoadData[server] = Array(10).fill(null); // Initialize with 10 null values
                 ramUsageData[server] = Array(10).fill(null); // Initialize with 10 null values
+                rpmData[server] = Array(10).fill(null);
             }
             cpuLoadData[server].push(data[server].cpu);
             ramUsageData[server].push(data[server].ram);
+            rpmData[server].push(data[server].rpm)
 
             // Limit to 10 data points
             if (cpuLoadData[server].length > 10) cpuLoadData[server].shift();
             if (ramUsageData[server].length > 10) ramUsageData[server].shift();
+            if (rpmData[server].length > 10) rpmData[server].shift();
         }
     }
 
     // Redraw the charts with new data
     drawChart(cpuLoadChart, cpuLoadData, 'Нагрузка ЦП');
     drawChart(ramUsageChart, ramUsageData, 'Оперативная память');
+    drawChart(rpmChart, rpmData, 'Оперативная память');
 }
 
 // Function to draw the chart
@@ -116,6 +121,40 @@ const ramUsageChart = new Chart(document.getElementById('ramUsageChart').getCont
             y: {
                 beginAtZero: true,
                 max: 100
+            },
+            x: {
+                ticks: {
+                    font: {
+                        size: 10
+                    }
+                }
+            }
+        },
+        animation: false
+    }
+});
+
+const rpmChart = new Chart(document.getElementById('rpmChart').getContext('2d'), {
+    type: 'line',
+    data: {
+        labels: timeLabels,
+        datasets: []
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top'
+            },
+            title: {
+                display: false,
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 1000,
+                type: 'logarithmic'
             },
             x: {
                 ticks: {

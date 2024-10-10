@@ -1,16 +1,18 @@
-from flask import Flask, render_template, redirect, request, url_for, jsonify
+from flask import Flask, render_template, redirect, request, url_for, jsonify, Response
 from flask_login import login_user, logout_user, LoginManager, login_required, UserMixin
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from dbloader import connect_to_db
 from logger import log_event
 from secrets import token_urlsafe
+from collections import deque
+from datetime import datetime
 import requests
 import requests.exceptions
 import psutil
 import random
 import string
-from datetime import datetime
+import time
 
 
 app = Flask(__name__)
@@ -18,10 +20,12 @@ app.config['SECRET_KEY'] = token_urlsafe(16)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+request_timestamps = deque()
+
 limiter = Limiter(
     key_func=get_remote_address,
     app=app,
-    default_limits=["1 per second"],
+    default_limits=["5 per second"],
     storage_uri="memory://",
 )
 
@@ -33,6 +37,16 @@ def generate_random_string():
     length = 32
     characters = string.ascii_letters + string.digits + '_' + ',' + '.'
     return ''.join(random.choices(characters, k=length))
+
+
+@app.before_request
+def track_requests():
+    """Track the timestamp of each request."""
+    global request_timestamps
+    current_time = time.time()
+    request_timestamps.append(current_time)
+    while request_timestamps and request_timestamps[0] < current_time - 60:
+        request_timestamps.popleft()
 
 
 class User(UserMixin):
@@ -294,7 +308,6 @@ def admin_panel_update_pages_update_image():
     """
     image_name = request.form.get('image_name')
     file = request.files.get('img')
-    print(type(file))
     if file:
         # Define the URL of the other microservice
         upload_url = 'http://127.0.0.1:5001/upload_assets'
@@ -305,7 +318,6 @@ def admin_panel_update_pages_update_image():
         # Send the POST request to the other microservice
         data = {'img_name': image_name}
         response = requests.post(upload_url, files=files, data=data)
-        print(response.status_code)
         if response.status_code == 200:
             return 'Success', 200
         else:
@@ -319,20 +331,22 @@ def full_server_status():
     """Returns the server statuses for all microservices running except postgres database.
 
     Returns:
-        json: json of ram and cpu usage of every server in the format {"server_status": {"ram": number, "cpu": number}}
+        json: status of every server in the format {"server_status": {"ram": number, "cpu": number, "rpm": number}}
     """
     try:
         main_status_response = requests.get('http://127.0.0.1:5000/main_server_status', timeout=1)
         main_status = main_status_response.json()
     except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError, requests.exceptions.ConnectionError):
-        main_status = {'ram': 0, 'cpu': 0}
+        main_status = {'ram': 0, 'cpu': 0, "rpm": 0}
 
     try:
         asset_delivery_status_response = requests.get('http://127.0.0.1:5001/asset_delivery_server_status', timeout=1)
         asset_delivery_status = asset_delivery_status_response.json()
     except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError, requests.exceptions.ConnectionError):
-        asset_delivery_status = {'ram': 0, 'cpu': 0}
-    admin_panel_status = {'ram': psutil.virtual_memory().percent, 'cpu': psutil.cpu_percent()}
+        asset_delivery_status = {'ram': 0, 'cpu': 0, "rpm": 0}
+    admin_panel_status = {'ram': psutil.virtual_memory().percent,
+                          'cpu': psutil.cpu_percent(),
+                          'rpm': len(request_timestamps)}
 
     return jsonify({"Main server": main_status,
                     "Asset delivery": asset_delivery_status,
@@ -383,15 +397,20 @@ def event_manager_new_event():
         game_end_time = request.form.get('game_end_time')
         team1_name = request.form.get('team1_name')
         team2_name = request.form.get('team2_name')
-        team1_score = request.form.get('team1_score')
-        team2_score = request.form.get('team2_score')
+        team1_score = request.form.get('team1_score') or '0'
+        team2_score = request.form.get('team2_score') or '0'
         livestream_link = request.form.get('livestream_link')
         video_link = request.form.get('video_link')
         game_description = request.form.get('game_description')
         match_statistic_external_link = request.form.get('match_statistic_external_link')
-
-        game_start_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
-        game_end_time = datetime.strptime(game_end_time, '%Y-%m-%dT%H:%M')
+        if game_start_time != '':
+            game_start_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
+        else:
+            game_start_time = None
+        if game_end_time != '':
+            game_end_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
+        else:
+            game_end_time = None
 
         insert_query = """
             INSERT INTO games (game_name, game_start_time, game_end_time, team1_name, team2_name,
@@ -448,17 +467,17 @@ def event_manager_edit_event():
         game_end_time = request.form.get('game_end_time')
         team1_name = request.form.get('team1_name')
         team2_name = request.form.get('team2_name')
-        team1_score = request.form.get('team1_score')
-        team2_score = request.form.get('team2_score')
+        team1_score = request.form.get('team1_score') or '0'
+        team2_score = request.form.get('team2_score') or '0'
         livestream_link = request.form.get('livestream_link')
         video_link = request.form.get('video_link')
         game_description = request.form.get('game_description')
         match_statistic_external_link = request.form.get('match_statistic_external_link')
-        if game_start_time is not None:
+        if game_start_time != '':
             game_start_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
         else:
             game_start_time = None
-        if game_end_time is not None:
+        if game_end_time != '':
             game_end_time = datetime.strptime(game_start_time, '%Y-%m-%dT%H:%M')
         else:
             game_end_time = None
@@ -474,6 +493,9 @@ def event_manager_edit_event():
             cur.execute(update_query, (game_name, game_start_time, game_end_time, team1_name, team2_name,
                         team1_score, team2_score, livestream_link, video_link,
                         game_description, match_statistic_external_link, event_id))
+            if cur.rowcount == 0:
+                conn.rollback
+                return f'Error: event {event_id} doesn\'t exist'
             conn.commit()
             return 'Success', 200
         except Exception as e:
@@ -539,6 +561,7 @@ def event_manager_get_event():
         return jsonify(event_data), 200
 
     except Exception as e:
+        conn.rollback()
         return jsonify({"error": f"Error: {e}"}), 400
 
 
@@ -547,6 +570,217 @@ def event_manager_get_event():
 def product_manager():
     """Renders the template for the product manager page."""
     return render_template('admin_panel_product_manager.html')
+
+
+@app.route('/admin_panel/product_manager/new_product', methods=['POST'])
+@login_required
+def product_manager_new_product():
+    """
+    Handles the creation of a new product in the product manager.
+
+    This endpoint accepts POST requests to create a new product in the shop database. It retrieves the product details
+    from the form data and inserts them into the database. The user must be logged in to access this route.
+
+    Args:
+        request.form (ImmutableMultiDict):
+            - product_name (str): The name of the product.
+            - product_price (str): The price of the product.
+            - product_description (str): A brief description of the product.
+            - picture_url (str): The URL of the product image.
+
+    Returns:
+        str: Success message if the product is created successfully, or an error message if there is an issue.
+    """
+
+    try:
+        product_name = request.form.get('product_name')
+        product_price = request.form.get('product_price')
+        product_description = request.form.get('product_description')
+        picture_url = request.form.get('picture_url')
+
+        # Update in the database
+        update_query = """INSERT INTO shop (product_name, price, description, picture)
+                        VALUES (%s, %s, %s, %s)"""
+        try:
+            cur.execute(update_query, (product_name, product_price, product_description, picture_url))
+            conn.commit()
+            return 'Success', 200
+        except Exception as e:
+            conn.rollback()
+            return f'Error: {e}'
+
+    except Exception as e:
+        conn.rollback()
+        return f"Error: {e}", 400
+
+
+@app.route('/admin_panel/product_manager/edit_product', methods=['POST'])
+@login_required
+def product_manager_edit_product():
+    """
+    Handles editing an existing product in the product manager.
+
+    This endpoint accepts POST requests to update an existing product in the shop database. It retrieves the product
+    details from the form data and updates the corresponding entry in the database. The user must be logged in to
+    access this route.
+
+    Args:
+        request.form (ImmutableMultiDict):
+            - product_id (str): The ID of the product to be updated.
+            - product_name (str): The updated name of the product.
+            - product_price (str): The updated price of the product.
+            - product_description (str): The updated description of the product.
+            - picture_url (str): The updated URL of the product image.
+
+    Returns:
+        str: Success message if the product is updated successfully, or an error message if there is an issue.
+    """
+
+    try:
+        # Get parameters from request
+        product_id = request.form.get('product_id')
+        product_name = request.form.get('product_name')
+        product_price = request.form.get('product_price')
+        product_description = request.form.get('product_description')
+        picture_url = request.form.get('picture_url')
+
+        # Update in the database
+        update_query = "UPDATE shop SET product_name=%s, price=%s, description=%s, picture=%s WHERE id=%s"
+        try:
+            cur.execute(update_query, (product_name, product_price, product_description, picture_url, product_id))
+            conn.commit()
+            return 'Success', 200
+        except Exception as e:
+            conn.rollback()
+            return f'Error: {e}'
+
+    except Exception as e:
+        conn.rollback()
+        return f"Error: {e}", 400
+
+
+@app.route('/admin_panel/product_manager/get_product', methods=['GET'])
+@login_required
+def product_manager_get_product():
+    """
+    Retrieves details of a specific product by its ID.
+
+    This endpoint accepts GET requests and returns the details of a product from the shop db, given its product ID.
+    If the product is not found, an error message is returned. The user must be logged in to access this route.
+
+    Args:
+        request.args (ImmutableMultiDict):
+            - product_id (int): The ID of the product to retrieve.
+
+    Returns:
+        json: A JSON object containing product details (name, price, description, picture URL), or an error message if
+        the product is not found.
+
+    Raises:
+        Exception: If any error occurs during the database query.
+    """
+    try:
+        # Get the event id from request
+        product_id = int(request.args.get('product_id'))
+
+        select_query = """
+            SELECT product_name, price, description, picture
+            FROM shop
+            WHERE id = %s
+        """
+        cur.execute(select_query, (product_id,))
+        product = cur.fetchone()
+        # If event not found, return error
+        if product is None:
+            return jsonify({"error": f"Product with id {product_id} not found"}), 404
+
+        event_data = {
+            "product_name": product[0],
+            "product_price": product[1],
+            "product_description": product[2],
+            "picture_url": product[3],
+
+        }
+        return jsonify(event_data), 200
+
+    except Exception as e:
+        conn.rollback()
+        print(e)
+        return jsonify({"error": f"Error: {e}"}), 400
+
+
+@app.route('/admin_panel/product_manager/delete_product', methods=['POST'])
+@login_required
+def product_manager_delete_product():
+    """
+    Handles the deletion of a product by its ID.
+
+    This endpoint accepts POST requests to delete a product from the shop database, given its product ID. The user
+    must be logged in to access this route.
+
+    Args:
+        request.form (ImmutableMultiDict):
+            - product_id (int): The ID of the product to be deleted.
+
+    Returns:
+        str: Success message if the product is deleted successfully, or an error message if no rows are affected or if
+        there is an issue.
+
+    Raises:
+        Exception: If any error occurs during the database transaction.
+    """
+    try:
+        # Get the event id from request
+        product_id = int(request.args.get('product_id'))
+
+        delete_query = """
+            DELETE FROM shop
+            WHERE id = %s
+        """
+        cur.execute(delete_query, (product_id,))
+        conn.commit()
+        if cur.rowcount == 0:
+            return "Error: no rows affected", 400
+        return 'Success', 200
+
+    except Exception as e:
+        conn.rollback()
+        return f"Error: {e}", 400
+
+
+@app.route('/admin_panel/help')
+@login_required
+def admin_help():
+    """Render the template for the admin help page."""
+    return render_template("admin_help.html")
+
+
+@app.route('/admin_panel/tickets')
+@login_required
+def admin_panel_tickets():
+    """Return all the tickets ordered for the upcoming match with id.
+    Args:
+        id - the id of the game
+    Returns:
+        file: tickets.txt if everything worked
+        str: error message if something failed"""
+    try:
+        game_id = int(request.args.get('id'))
+        query = """SELECT games.id AS game_id, games.game_name, tickets.fullname
+        FROM games
+        JOIN tickets ON games.id = tickets.game_id
+        WHERE tickets.game_id = %s"""
+        cur.execute(query, (game_id, ))
+        data = cur.fetchall()
+        content = '\n'.join([f'{item[0]} | {item[1]} | {item[2]}' for item in data])
+        return Response(
+            content,
+            mimetype='text/plain',
+            headers={"Content-Disposition": "attachment;filename=tickets.txt"}
+        )
+    except Exception as e:
+        conn.rollback()
+        return f'Something went wrong: {e}'
 
 
 if __name__ == "__main__":

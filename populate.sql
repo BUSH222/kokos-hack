@@ -45,13 +45,13 @@ VALUES
 ('2024-10-05 14:00:00', 5, 5, 'I met the team last year, it was awesome!');
 
 -- Insert data into shop table
-INSERT INTO shop (product_name, sales, description, picture)
+INSERT INTO shop (product_name, price, sales, description, picture)
 VALUES
-('Team Jersey', 100, 'Official team jersey', 'https://cdn.example.com/jersey.jpg'),
-('Football', 200, 'Official match football', 'https://cdn.example.com/football.jpg'),
-('Scarf', 300, 'Team scarf', 'https://cdn.example.com/scarf.jpg'),
-('Cap', 400, 'Team cap', 'https://cdn.example.com/cap.jpg'),
-('Poster', 500, 'Team poster', 'https://cdn.example.com/poster.jpg');
+('Team Jersey', 100, 123, 'Official team jersey', 'https://cdn.example.com/jersey.jpg'),
+('Football', 200, 456, 'Official match football', 'https://cdn.example.com/football.jpg'),
+('Scarf', 300, 789, 'Team scarf', 'https://cdn.example.com/scarf.jpg'),
+('Cap', 400, 12, 'Team cap', 'https://cdn.example.com/cap.jpg'),
+('Poster', 500, 345, 'Team poster', 'https://cdn.example.com/poster.jpg');
 
 -- Insert data into games table
 INSERT INTO games (game_name, game_start_time, game_end_time, team1_name, team2_name, team1_score, team2_score, livestream_link, video_link, game_description, match_statistic_external_link)

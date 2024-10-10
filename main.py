@@ -130,7 +130,7 @@ def change_user_data():
         if usr_input["btn_type"] == "submit":
             for key in usr_input.keys():
                 if key in allowed_keys:
-                    cur.execute('UPDATE user SET %s = %s where id = %s', (key, usr_input[key], usr_id,))
+                    cur.execute('UPDATE users SET %s = %s where id = %s', (key, usr_input[key], usr_id,))
         try:
             cur.commit()
         except Exception:
