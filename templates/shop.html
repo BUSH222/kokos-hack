@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новости</title>
+    <link rel="stylesheet" href="/static/shop.css">
+</head>
+<body>
+    <!-- navigation bar -->
+    <div class="navbar">
+        <ul>
+            <div class="left-side">
+                <li>
+                    <a href="/">
+                        <img src="/static/logo.png" alt="Website Logo" class="logo">
+                    </a>
+                </li>
+            </div>
+
+            <div class="center">
+                <li><a href="/news">Новости</a></li>
+                <li><a href="/games">Игры</a></li>
+                <li><a href="/shop">Магазин</a></li>
+                <li><a href="/about">О клубе</a></li>
+                <li><a href="/forum">Форум</a></li>
+            </div>
+
+            <div class="right-side">
+                {% if user_logged_in %}
+                    <li>
+                        <a href="/account">
+                            <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                        </a>
+                    </li>
+                {% else %}
+                    <li><a href="/login">Войти</a></li>
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+
+    <div class="news-container">
+
+        <!-- search bar -->
+        <div class="search-bar">
+            <!-- Search Input -->
+            <input type="text" id="searchInput" placeholder="Найти продукт">
+            <button id="searchButton" onclick="performSearch()">Найти</button>
+        </div>        
+        
+
+        <!-- news fields -->
+        {% for item in data %}
+        <div class="news-field">
+            <div class="news-title">
+                {{ item.title }}
+                <button class="buybutton">BUY NOW</button>
+            </div>
+            
+            <div class="news-tags">
+                ₽ {{ item.price }}
+            </div>
+            <div class="news-content">
+                <div class="news-photo">
+                    <img src="{{ item.news_photo_url }}" alt="News Image">
+                </div>
+                <div class="news-text">
+                    {{ item.text }}
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+   
+
+        <!-- Bottom Bar -->
+    <div class="bottom-bar">
+        <div class="bottom-bar-content">
+            <!-- Left side: Logo -->
+            <div class="bottom-left">
+                <img src="/static/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
+            </div>
+
+            <!-- Center: Links -->
+            <div class="bottom-center">
+                <a href="/help" class="footer-link">help</a>
+                <a href="/privacy" class="footer-link">privacy policy, legal</a>
+                <span class="footer-text">Developed by "MISIS Leaf Lovers" for "KOKOC hackathon"</span>
+            </div>
+
+            <!-- Right side: Social Media -->
+            <div class="bottom-right">
+                <a href="https://vk.com/kokocgroup_ru" target="_blank">
+                    <img src="/static/vk_icon.png" alt="VK" class="social-logo">
+                </a>
+                <a href="https://t.me/kokocgroupru" target="_blank">
+                    <img src="/static/telegram_icon.png" alt="Telegram" class="social-logo">
+                </a>
+                <a href="https://www.youtube.com/@TVKokoc" target="_blank">
+                    <img src="/static/youtube_icon.png" alt="YouTube" class="social-logo">
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        // search
+        function performSearch() {
+            const searchQuery = document.getElementById('searchInput').value;
+            if (searchQuery) {
+                window.location.href = `/search?query=${encodeURIComponent(searchQuery)}`;
+            }
+        }
+    </script>
+</body>
+</html>

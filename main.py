@@ -61,6 +61,21 @@ def forum():
     
     return render_template('forum.html', data=max_news_data)
 
+@app.route('/shop')
+def shop():
+    # Sample data for the news post
+    news_data = {
+        'title': 'goobab',
+        'price': '825',
+        'news_photo_url': '/static/goobab.jpg',  # Path to your news photo
+        'text': 'epic goobab merch or something buy now or die 神说：要有光， 就有了光。',
+        'date_created': '2024-10-09'  # Example creation date for the post
+    }
+
+    max_news_data = [news_data for _ in range(3)]
+    
+    return render_template('shop.html', data=max_news_data)
+
 
 @app.route('/account')
 def account():
