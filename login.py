@@ -69,7 +69,7 @@ def login():
                 new_user_data = cur.fetchone()[0]
                 new_user = User(*new_user_data)
                 login_user(new_user)
-                return redirect(url_for('account'))
+                return redirect(url_for('app_login.account_editor'))
         elif usr_input["btn_type"] == "use_google":
             # Find out what URL to hit for Google login
             authorization_endpoint = google_provider_cfg["authorization_endpoint"]
@@ -123,6 +123,7 @@ def yandex_callback():
     if user_data:
         user = User(*user_data)
         login_user(user)
+        return redirect(url_for('app_login.account_editor'))
     else:
         cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) \
                     RETURNING id, name, password, email', (user_name, unique_id, user_email))
@@ -130,7 +131,7 @@ def yandex_callback():
         new_user_data = cur.fetchone()
         new_user = User(*new_user_data)
         login_user(new_user)
-    return redirect(url_for('account'))
+        return redirect(url_for('app_login.account_editor'))
 
 
 @app_login.route('/login_gmail', methods=['GET', 'POST'])
@@ -185,6 +186,7 @@ def callback():
     if user_data:
         user = User(*user_data)
         login_user(user)
+        return redirect(url_for('account'))
     else:
         cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) \
                     RETURNING id, name, password, email', (username, unique_id, user_email))
@@ -192,7 +194,7 @@ def callback():
         new_user_data = cur.fetchone()
         new_user = User(*new_user_data)
         login_user(new_user)
-    return redirect(url_for('account'))
+        return redirect(url_for('app_login.account_editor'))
 
 
 @app_login.route('/profile')
@@ -211,10 +213,10 @@ def profile():
 #     return redirect(url_for('login'))
 
 
-# @app_login.route('/account', methods=['GET', 'POST'])
-# @login_required
-# def account():
-#     return "негры"
+@app_login.route('/account_editor', methods=['GET', 'POST'])
+@login_required
+def account_editor():
+    return "негры"
 
 
 if __name__ == '__main__':

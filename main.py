@@ -6,6 +6,7 @@ from flask_login import login_user, LoginManager, login_required, UserMixin, log
 from oauthlib.oauth2 import WebApplicationClient
 import psutil
 import time
+from secrets import token_urlsafe
 from collections import deque
 import requests
 from werkzeug.utils import secure_filename
@@ -29,7 +30,7 @@ app = Flask(__name__)
 app.register_blueprint(app_login)
 app.register_blueprint(app_news)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SECRET_KEY'] = 'bruh'
+app.config['SECRET_KEY'] = token_urlsafe(16)
 
 config = []
 login_manager = LoginManager(app)
@@ -38,7 +39,6 @@ conn, cur = connect_to_db()
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
-app.config['SECRET_KEY'] = 'bruh'
 request_timestamps = deque()
 
 
@@ -59,7 +59,7 @@ def track_requests():  # DONT TOUCH
 
 @login_manager.user_loader
 def load_user(user_id):
-    cur.execute("SELECT id, name, password FROM users WHERE id = %s AND role", (user_id, '%5%'))
+    cur.execute("SELECT id, name, password, email FROM users WHERE id = %s", (user_id,))
     user_data = cur.fetchone()
     print(user_data)
     if user_data:
@@ -203,6 +203,6 @@ def main_server_status():
 
 
 if __name__ == "__main__":
-    app.run(port=5003, debug=True, ssl_context=('certificate.pem', 'private_key.pem'))
+    app.run(port=5000, debug=True, ssl_context=('certificate.pem', 'private_key.pem'))
     cur.close()
     conn.close()
