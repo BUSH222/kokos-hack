@@ -135,13 +135,13 @@ def change_user_data():
         if usr_input["btn_type"] == "submit":
             for key in usr_input.keys():
                 if key in allowed_keys:
-                    cur.execute('UPDATE user SET %s = %s where id = %s', (key, usr_input[key], usr_id,))
+                    cur.execute('UPDATE users SET %s = %s where id = %s', (key, usr_input[key], usr_id,))
         try:
             cur.commit()
         except Exception:
             error = "Не удалось загрузить изменения"
             cur.rollback()
-    return render_template("change_user_data", profile_pic=profile_pic, name=name, fav_player=fav_player,
+    return render_template("account_editor.html", profile_pic=profile_pic, name=name, fav_player=fav_player,
                            about_me=about_me, vk_acc=vk_acc, telegram_acc=telegram_acc, error=error)
 
 

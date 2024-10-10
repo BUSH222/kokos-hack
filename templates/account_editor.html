@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Изменение данных пользователя</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group img {
+            max-width: 100px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Изменение данных пользователя</h1>
+        <form id="userForm" method="POST" action="/account/change_account_data">
+            <div class="form-group">
+                <label for="profile_pic">Фото профиля</label>
+                <img id="profile_pic_preview" src="{{ profile_pic }}" alt="Фото профиля">
+                <input type="file" id="profile_pic" name="profile_pic" accept="image/*" onchange="previewImage(event)">
+            </div>
+            <div class="form-group">
+                <label for="name">Имя</label>
+                <input type="text" id="name" name="name" value="{{ name }}">
+            </div>
+            <div class="form-group">
+                <label for="fav_player">Любимый игрок</label>
+                <input type="text" id="fav_player" name="fav_player" value="{{ fav_player }}">
+            </div>
+            <div class="form-group">
+                <label for="about_me">Обо мне</label>
+                <textarea id="about_me" name="about_me">{{ about_me }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="vk_acc">VK аккаунт</label>
+                <input type="text" id="vk_acc" name="vk_acc" value="{{ vk_acc }}">
+            </div>
+            <div class="form-group">
+                <label for="telegram_acc">Telegram аккаунт</label>
+                <input type="text" id="telegram_acc" name="telegram_acc" value="{{ telegram_acc }}">
+            </div>
+            <div class="form-group error" id="error">{{ error }}</div>
+            <button type="submit">Сохранить</button>
+        </form>
+    </div>
+
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById('profile_pic_preview');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        async function updateUserData() {
+            const uid = document.getElementById('user-id').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const points = document.getElementById('points').value;
+
+            // Collect roles
+            const roles = Array.from(document.querySelectorAll('input[name="role"]:checked')).map(checkbox => checkbox.value).join('');
+
+            try {
+                const response = await fetch(`/admin_panel/community/set_account_info?user=${uid}&name=${name}&email=${email}&password=${password}&points=${points}&role=${roles}`);
+                const result = await response.text();
+                alert(result)
+            } catch (error) {
+                console.error('Error updating user data:', error);
+                alert('Error updating user data.');
+            }
+        }
+    </script>
+</body>
+</html>
