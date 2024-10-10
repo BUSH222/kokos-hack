@@ -108,13 +108,29 @@ form {
 }
 
 input {
-    width: calc(100%);
+    width: 100%;
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: #333;
     color: white;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-container button {
+    padding: 10px;
+    margin: 0 5px; /* Adds a bit of space between the buttons */
+    flex-direction: row;
+}
+
+
+.button-container .stretch {
+    flex-grow: 2; /* This will make the middle button stretch */
 }
 
 input::placeholder {
