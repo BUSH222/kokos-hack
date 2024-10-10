@@ -90,6 +90,7 @@ def account():
         'vk_handle': 'kokocfan'  # VK handle
     }
     return render_template('account.html', user_logged_in=user_logged_in, user=user)
+
 @app.route('/view-account')
 def view_account():
     user_logged_in = True
@@ -112,9 +113,19 @@ games = [
     {'id': 3, 'team1': 'Team E', 'team2': 'Team F', 'datetime': '2024-10-17 20:00'}
 ]
 
+# Current game (you can replace this with your actual logic to determine the current game)
+current_game = {
+    'id': 1,  # This should match an id from your games list or be dynamically set
+    'team1': 'Team A',
+    'team2': 'Team B',
+    'team1_logo_url': '/static/team_a_logo.png',  # Replace with actual URLs
+    'team2_logo_url': '/static/team_b_logo.png',
+    'datetime': '2024-10-15 18:00'
+}
+
 @app.route('/games')
 def games_page():
-    return render_template('games.html', games=games)
+    return render_template('games.html', games=games, current_game=current_game)
 
 @app.route('/admin_panel_login')
 def admin_panel_login():

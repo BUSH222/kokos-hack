@@ -152,6 +152,20 @@ body::-webkit-scrollbar {
     overflow: hidden;
 }
 
+.live-indicator {
+    color: #ff4747;
+    font-size: 24px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.past-games-heading {
+    text-align: center;
+    color: #ff4747;
+    font-size: 24px;
+    margin: 20px 0;
+}
+
 .game-row {
     display: flex;
     justify-content: space-between;
