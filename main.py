@@ -97,7 +97,7 @@ def account():
     profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = '' * 5
     if request.method == 'GET':
         usr_id = current_user.id
-        cur.execute("SELECT profile_pic,name,fav_player,about_me,vk_acc FROM user WHERE id = %s", (usr_id,))
+        cur.execute("SELECT profile_pic,name,fav_player,about_me,vk_acc FROM users WHERE id = %s", (usr_id,))
         profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.fetchone()
 
         if vk_acc is None:
@@ -119,11 +119,11 @@ def change_user_data():
     An endpoint parses user info from db than puts it inside text windows for editing.
     """
     allowed_keys = ['profile_pic', 'name', 'fav_player', 'about_me', 'vk_acc', 'telegram_acc']
-    #profile_pic, name, fav_player, about_me, vk_acc, telegram_acc, error = '' * 6
+    profile_pic, name, fav_player, about_me, vk_acc, telegram_acc, error = '','','','','','',''
     if request.method == 'GET':
         usr_id = current_user.id
         cur.execute("""SELECT profile_pic, name, fav_player, about_me, vk_acc, telegram_acc
-                    FROM user
+                    FROM users
                     WHERE id = %s""", (usr_id,))
         profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.fetchone()
         if vk_acc is None:
@@ -181,7 +181,7 @@ def shop():
              return {'re': f'shop?search={usr_input["search"]}'}
         if "id" in usr_input.keys():
             return {'re':f'shop?id={usr_input["id"]}'}
-    return render_template("shop.html",items)
+    return render_template("shop.html", items)
 
 
 
