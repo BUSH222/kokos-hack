@@ -117,6 +117,9 @@ def change_user_data():
             vk_acc = "Не привязан"
         if telegram_acc is None:
             telegram_acc = "Не привязан"
+        return render_template("change_user_data.html", profile_pic=profile_pic, name=name, fav_player=fav_player,
+                               about_me=about_me, vk_acc=vk_acc, telegram_acc=telegram_acc)
+
     if request.method == 'POST':
         usr_id = current_user.id
         usr_input = request.json
@@ -131,10 +134,8 @@ def change_user_data():
         try:
             cur.commit()
         except Exception:
-            error = "Не удалось загрузить изменения"
+            abort(304)
             cur.rollback()
-    return render_template("change_user_data", profile_pic=profile_pic, name=name, fav_player=fav_player,
-                           about_me=about_me, vk_acc=vk_acc, telegram_acc=telegram_acc, error=error)
 
 
 
@@ -143,7 +144,7 @@ def shop():
     """
     GET:contains all shop items, but only names and photos so they can be placed in slides
     parses info from db and places it back via jinja
-    POST:expects {"search":"string"} and makes new db request that is placed back in html form via jinja
+    POST:expects ?search=string and makes new db request that is placed back in html form via jinja
     or redirects to itself with id and returns page of a certain item, when clicked
     So, lets get to it folks
     :return shop.html:
@@ -151,27 +152,175 @@ def shop():
     if request.method == "GET":
         items = cur.execute("SELECT id,picture,product_name FROM shop").fetchall()
         if request.args.get('id'):
-            cur.execute("SELECT picture,product_name,"
-                        "description,price FROM shop WHERE "
-                        "product_name = %s", (request.args.get('id'),))
+            cur.execute("""SELECT picture,product_name,description,price
+             FROM shop 
+             WHERE id = %s""", (request.args.get('id'),))
             items = cur.fetchall()
             return render_template("item.html",items)
         if request.args.get('search'):
-            cur.execute("SELECT picture,product_name,"
-                            "FROM shop WHERE "
-                            "product_name = %s", (request.args.get('search'),))
+            cur.execute("""SELECT picture,product_name,
+                            FROM shop 
+                            WHERE product_name LIKE %s""", (f"%{request.args.get('search')}%",))
             items = cur.fetchall()
-            return render_template("item.html",items)
+            return render_template("shop.html",items)
+        return render_template("shop.html", items)
     if request.method == "POST":
         usr_input = request.json
-        if "search" in usr_input.keys():
+        if usr_input['btn_type'] == "search":
              return {'re': f'shop?search={usr_input["search"]}'}
         if "id" in usr_input.keys():
             return {'re':f'shop?id={usr_input["id"]}'}
-    return render_template("shop.html",items)
 
 
+@app.route('/news',methods=['GET','POST'])
+def news():
+    """
+    GET:contains all news items, but only names and photos so they can be placed in slides
+    parses info from db and places it back via jinja
+    POST:this b requests json that contains "find" field with "yes", after which it redirects
+    you to itself but with all search options that are inside json that comes with find field
+    i.e. tags,search,news_time etc.
+    :return news.html OR if it gets an id option, returns one_new.html:
+    """
+    if request.method == "GET":
+        exec_string = """SELECT * FROM news WHERE"""
+        filter_params=[]
+        if request.args.get('search'):
+            if exec_string.split(' ')[0] != "AND":exec_string+=" AND "
+            exec_string+="WHERE title LIKE %s OR news_text LIKE %s"
+            filter_params.append(f"%{request.args.get('search')}%")
+            filter_params.append(f"%{request.args.get('search')}%")
+        if request.args.get('news_time'):
+            if exec_string.split(' ')[0] != "AND":exec_string+=" AND "
+            exec_string+="WHERE news_time = %s"
+            filter_params.append({request.args.get('news_time')})
+        if request.args.get('tags'):
+            if exec_string.split(' ')[0] != "AND":exec_string+=" AND "
+            exec_string+="WHERE tag LIKE %s"
+            filter_params.append(f"%{request.args.get('tag')}%")
+        if exec_string == """SELECT * FROM news WHERE""": exec_string ="""SELECT * FROM news"""
+        if request.args.get('pag'):
+            if request.args.get('pag') == "desc": exec_string+=" ORDER BY date DESC"
+            elif request.args.get('pag') == "asc": exec_string +=" ORDER BY date ASC"
 
+        if len(filter_params)!=0:cur.execute(exec_string,filter_params)
+        else:cur.execute(exec_string)
+
+        items = cur.fetchall()
+        return render_template("news.html", items)
+    if request.method == "POST":
+        usr_input = request.json
+        if usr_input["btn_type"] == "find":
+            querry_str = 'news?'
+            for key in usr_input.keys():
+                querry_str+=f"{key}={usr_input[key]}&"
+            if querry_str[-1] == "&":querry_str=querry_str[:-1]
+            return {'re':querry_str}
+        if "id" in usr_input.keys():
+            return {'re':f'news/view_story?id={usr_input["id"]}'}
+
+@app.route('/news/view_story')
+@login_required
+def view_story():
+    if request.method == "GET":
+        cur.execute("""SELECT *
+         FROM news 
+         WHERE product_name = %s""", (request.args.get('id'),))
+        items = cur.fetchall()
+        return render_template("view_story.html", items)
+    if request.method == "POST":
+        usr_input = request.json
+        if usr_input["btn_type"] == "submit":
+            try:
+                cur.execute("""INSERT INTO news_comments (comment_time,post_id,user_id,comment_text) 
+                VALUES (NOW(),%s,%s,%s)""", (request.args.get('id'), current_user.id, usr_input["comment_value"]))
+                cur.commit()
+            except Exception:
+                abort(500)
+                cur.rollback()
+
+@app.route('/forum',methods=['GET','POST'])
+def forum():
+    """
+    GET:contains all news items, but only names and photos so they can be placed in slides
+    parses info from db and places it back via jinja
+    POST:this b requests json that contains "btn_type" field with "find", after which it redirects
+    you to itself but with all search options that are inside json that comes with find field
+    i.e. tags,search,news_time etc.
+    :return news.html OR if it gets an id option, returns one_new.html:
+    """
+    if request.method == "GET":
+        exec_string = """SELECT * FROM news WHERE"""
+        filter_params=[]
+        if request.args.get('search'):
+            if exec_string.split(' ')[0] != "AND":exec_string+=" AND "
+            exec_string+="WHERE title LIKE %s OR post_text LIKE %s"
+            filter_params.append(f"%{request.args.get('search')}%")
+            filter_params.append(f"%{request.args.get('search')}%")
+        if request.args.get('news_time'):
+            if exec_string.split(' ')[0] != "AND":exec_string+=" AND "
+            exec_string+="WHERE post_time = %s"
+            filter_params.append({request.args.get('news_time')})
+        if request.args.get('tags'):
+            if exec_string.split(' ')[0] != "AND":exec_string+=" AND "
+            exec_string+="WHERE tags LIKE %s"
+            filter_params.append(f"%{request.args.get('tags')}%")
+        if exec_string == """SELECT * FROM news WHERE""": exec_string ="""SELECT * FROM news"""
+        if request.args.get('pag'):
+            if request.args.get('pag') == "desc": exec_string+=" ORDER BY date DESC"
+            elif request.args.get('pag') == "asc": exec_string +=" ORDER BY date ASC"
+
+        if len(filter_params)!=0:cur.execute(exec_string,filter_params)
+        else:cur.execute(exec_string)
+
+        items = cur.fetchall()
+        return render_template("forum.html", items)
+    if request.method == "POST":
+        usr_input = request.json
+        if usr_input["btn_type"] == "find":
+            querry_str = 'forum?'
+            for key in usr_input.keys():
+                querry_str+=f"{key}={usr_input[key]}&"
+            if querry_str[-1] == "&":querry_str=querry_str[:-1]
+            return {'re':querry_str}
+        if "id" in usr_input.keys():
+            return {'re':f'forum/view_post?id={usr_input["id"]}'}
+
+@app.route('/forum/view_post')
+@login_required
+def view_post():
+    if request.method == "GET":
+        cur.execute("""SELECT *
+         FROM news 
+         WHERE product_name = %s""", (request.args.get('id'),))
+        items = cur.fetchall()
+        return render_template("view_post.html", items)
+    if request.method == "POST":
+        usr_input = request.json
+        if usr_input["btn_type"] == "submit":
+            try:
+                cur.execute("""INSERT INTO forum_comments (comment_time,post_id,user_id,comment_text) 
+                VALUES (NOW(),%s,%s,%s)""", (request.args.get('id'), current_user.id, usr_input["comment_value"]))
+                cur.commit()
+            except Exception:
+                abort(500)
+                cur.rollback()
+
+@app.route('/forum/new_post')
+@login_required
+def new_post():
+    if request.method == "GET":
+        return render_template("new_post.html")
+    if request.method == "POST":
+        usr_input = request.json
+        if usr_input["btn_type"] == "submit":
+            try:
+                cur.execute("""INSERT INTO forum (post_time,author,tags,title,post_text) 
+                VALUES (NOW(),%s,%s,%s,%s)""", (current_user.name, usr_input["tags"], usr_input["title"],usr_input["post_text"]))
+                cur.commit()
+            except Exception:
+                abort(500)
+                cur.rollback()
 
 @app.route('/main_server_status', methods=['GET'])
 def main_server_status():

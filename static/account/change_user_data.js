@@ -10,7 +10,7 @@ async function send_to_server(btn_type) {
           'Content-Type': 'application/json'
         },
         method: 'POST',
-        body: JSON.stringify({'btn_type':btn_type , 'pb_id':elem,'name':name,'fav_player':fav_player,'about_me':about_me,'vk_acc':vk_acc,"telegram_acc":telegram_acc}),
+        body: JSON.stringify({'btn_type':btn_type , 'name':name,'fav_player':fav_player,'about_me':about_me,'vk_acc':vk_acc,"telegram_acc":telegram_acc}),
       });
     } catch (error) {
       console.error('Error: ', error);
