@@ -50,7 +50,6 @@ body {
 /* Hover effects */
 .admin-navbar a:hover {
     color: #ff4c4c;
-    transform: scale(1.05); /* Slightly enlarge on hover */
 }
 
 /* Media Queries for Responsiveness */
@@ -69,7 +68,6 @@ body {
         border-top: 1px solid #f5f5f5;
         border-bottom: 1px solid #f5f5f5; /* Added border to distinguish items */
         background-color: rgba(30, 30, 30, 0.8); /* Slightly lighter background */
-        width:92%;
     }
 
     .admin-navbar a {
