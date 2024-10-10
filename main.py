@@ -33,19 +33,16 @@ def news():
     news_data = {
         'title': 'Новое событие в клубе!',
         'tags': 'Спорт, Клуб, Новости',
-        'news_photo_url': '/static/player.jpg',  # Path to your news photo
-        'text': 'Сегодня в нашем клубе произошло замечательное событие. Мы рады сообщить, что клуб очень крутой короче и ваще топ 1 скоро станет я верю в это правда. Вообще я пишу много текста чтобы проверить работает ли скролл)) судя по всему не очень он работает, точнее нет, он по идее работает вот только окно с текстом выходит за рамки и это надо фиксить срочно! а нет с ним все хорошо ну ладно тогда я просто попишу еще чего нибудь смешного и неинтересного чтобы просто всего лишь проверить работу того что я накалякал. Честно говоря я уже устал делать только одну эту страницу целый день я уже хочу просто лечь в постель, посмотреть ют, выспаться и уже завтра продолжить и да Федя я помню что мне нужно сделать еще всего лишь +-20 страниц за 1 завтрашний день bruhhh я не знаю как мне вообще выжить с такой нагрузкой!',
-        # Example user data
-        'user': {
-            'profile_picture_url': '/static/google_icon.png',  # Path to the current user's profile picture
-            'username': 'Текущий Пользователь',  # Username of the current user
-        },
-        'post': {
-            'date_created': '2024-10-09'  # Example creation date for the post
-        }
+        'news_photo_url': '/static/eye.png',  # Path to your news photo
+        'text': 'Сегодня в нашем клубе произошло замечательное событие. Мы рады сообщить, что клуб очень крутой короче и ваще топ 1 скоро станет я верю в это правда. Вообще я пишу много текста чтобы проверить работает ли скролл)) судя по всему не очень он работает, точнее нет, он по идее работает вот только окно с текстом выходит за рамки и это надо фиксить срочно! а нет с ним все хорошо ну ладно тогда я просто попишу еще чего нибудь смешного и неинтересного чтобы просто всего лишь проверить работу того что я накалякал. Честно говоря я уже устал делать только одну эту страницу целый день я уже хочу просто лечь в постель, посмотреть ют, выспаться и уже завтра продолжить и да Федя я помню что мне нужно сделать еще всего лишь +-20 страниц за 1 завтрашний день bruhhh я не знаю как мне вообще выжить с такой нагрузкой! hkjdgamfjsgddghfgdhjfahjgdfhjkgafkghjafdkghdfghkakgdfhsgdfghkfgkhfdgkafdghkfdsghdfsghkfhkgakghadfskghadsfkhgafdskghghkakgdfhsgdfghkfgkhfdgkafdghkfdsghdfsghkfhkgakghadfskghadsfkhgafdskghghkakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghuuauau',
+        'profile_picture_url': '/static/google_icon.png',  # Path to the current user's profile picture
+        'username': 'Текущий Пользователь',  # Username of the current user
+        'date_created': '2024-10-09'  # Example creation date for the post
     }
+
+    max_news_data = [news_data for _ in range(3)]
     
-    return render_template('news.html', **news_data)
+    return render_template('news.html', data=max_news_data)
 
 @app.route('/account')
 def account():

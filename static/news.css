@@ -4,6 +4,13 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
     color: #ff4747;
+    background: url('/static/background.png') no-repeat center center fixed;
+    background-size: cover;
+    scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
 }
 
 /* navbar */
@@ -77,16 +84,113 @@ body {
 }
 
 /* news page */
+/* General news container */
 .news-container {
     padding: 100px 10%;
     margin: 0 auto;
 }
 
-.news-navigation {
-    text-align: center;
+/* Search Bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Distribute the elements evenly */
+    width: 100%; /* Full width of the container */
+    box-sizing: border-box; /* Include padding/border in width calculations */
     margin-bottom: 20px;
-    padding: 10px;
 }
+
+/* Input fields (Search, Tag, Date Picker) */
+.search-bar input[type="text"],
+.search-bar input[type="date"],
+.search-bar select,
+.search-bar button {
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+/* Search Input */
+.search-bar input#searchInput {
+    flex: 2;
+    margin-right: 10px;
+}
+
+/* Tag Input Container */
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px; /* Gap between tags */
+    flex: 2; /* Takes up similar width to search input */
+    margin-right: 10px;
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    box-sizing: border-box;
+    min-height: 50px; /* Ensures container size stays consistent */
+}
+
+/* Tag Input */
+.tag-container input[type="text"] {
+    border: none;
+    flex: 1;
+    outline: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Individual Tags */
+.tag {
+    display: inline-block;
+    background-color: #ff4747;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px; /* Oval shape */
+    font-size: 14px;
+}
+
+.tag .remove-tag {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* Smaller Date Picker */
+.search-bar input[type="date"] {
+    flex: 1;
+    width: 150px; /* Smaller width */
+    margin-right: 10px;
+}
+
+/* Smaller Dropdown */
+.search-bar select {
+    flex: 1;
+    width: 120px; /* Smaller width */
+    margin-right: 10px;
+}
+
+/* Search Button */
+.search-bar button {
+    padding: 10px 20px; /* Add more padding to the button */
+    background-color: #ff4747;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+.search-bar button:hover {
+    background-color: #d63b3b;
+}
+
+/* Focus state for input fields */
+.search-bar input[type="text"]:focus,
+.search-bar input[type="date"]:focus,
+.search-bar select:focus {
+    outline: none;
+    border-color: #91e8b4;
+}
+
+
 
 .nav-link {
     margin: 0 30px;
@@ -99,37 +203,6 @@ body {
 .nav-link:hover {
     color: #91e8b4;
     text-decoration: none;
-}
-
-/* search bar */
-.search-bar {
-    text-align: center;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.search-bar input[type="text"] {
-    width: 60%;
-    padding: 10px;
-    border: 2px solid #ff4747;
-    border-radius: 10px;
-    box-sizing: border-box;
-    margin-right: -10px;
-}
-
-.search-bar input[type="text"]:focus {
-    outline: none;
-    border-color: #91e8b4;
-}
-
-.search-bar img {
-    cursor: pointer;
-    vertical-align: middle;
-    width: 24px;
-    height: 24px;
-    margin-left: -35px;
 }
 
 /* news field */
@@ -167,22 +240,6 @@ body {
     margin-right: 5px;
 }
 
-.news-content {
-    position:relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
-    box-sizing: border-box;
-    padding: 10px;
-}
-
-
-.news-photo {
-    margin-right: 20px;
-    flex: 0 0 35%; /* set a fixed width for the photo */
-}
-
 .user-pfp {
     height: 20px;
     width: 20px;
@@ -197,26 +254,40 @@ body {
     display: flex;
     align-items: center;
 }
+.news-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch; /* Ensures both the image and text divs are the same height */
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.news-photo {
+    margin-right: 20px;
+    flex: 0 0 35%; /* Fixed width for the photo */
+    height: auto; /* Let the image height adapt to its container */
+    border-radius: 30px;
+    overflow: hidden; /* Ensures the image won't overflow */
+}
 
 .news-photo img {
-    width: 100%;
-    height: auto;
-    border-radius: 30px;
-    /*border: 2px solid #ff4747;*/
+    width: 100%; /* Makes the image fill its container */
+    object-fit: cover; /* Ensures the image covers the entire space */
 }
 
 .news-text {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    flex: 1; /* Makes the text div fill the remaining width */
     padding: 10px;
     border: 2px solid #ff4747;
     border-radius: 10px;
-    scrollbar-width: none;
-    margin-right: 20px;
-    margin-left: 0;
-    align-items: stretch;
+    overflow-y: auto; /* Allows vertical scrolling if content is larger */
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    max-height: 100%; /* Limits height to ensure it's equal to the image */
+    word-wrap: break-word; /* Breaks long words to prevent overflow */
+    box-sizing: border-box; /* Ensures padding and border are included in width */
 }
+
 
 .news-text::-webkit-scrollbar {
     width: 0;
