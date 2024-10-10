@@ -1,3 +1,7 @@
+* {
+    overflow-x: hidden;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -7,6 +11,7 @@ body {
     background: url('/static/background.png') no-repeat center center fixed;
     background-size: cover;
     scrollbar-width: none;
+    height:100%;
 }
 
 body::-webkit-scrollbar {
@@ -87,6 +92,7 @@ body::-webkit-scrollbar {
 /* General news container */
 .news-container {
     padding: 100px 10%;
+    min-height: 100%;
     margin: 0 auto;
 }
 
@@ -128,7 +134,7 @@ body::-webkit-scrollbar {
     border: 2px solid #ff4747;
     border-radius: 10px;
     box-sizing: border-box;
-    min-height: 50px; /* Ensures container size stays consistent */
+    min-height: 35px; /* Ensures container size stays consistent */
 }
 
 /* Tag Input */
@@ -292,4 +298,83 @@ body::-webkit-scrollbar {
 .news-text::-webkit-scrollbar {
     width: 0;
     background: transparent;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Main wrapper that ensures the footer stays at the bottom */
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures content + footer fills at least the height of the viewport */
+}
+
+/* Content area takes the remaining space, pushing footer to the bottom if necessary */
+.content {
+    flex: 1; /* Fills the remaining space in the viewport */
+    padding: 20px;
+}
+
+/* Bottom bar (footer) */
+.bottom-bar {
+    background-color: #ff4747;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* Make sure it's pushed to the bottom when content is short */
+    position: relative;
+}
+
+/* Flexbox layout for footer content */
+.bottom-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    max-width: 1200px;
+}
+
+/* KOKOS logo styling */
+.kokos-logo {
+    height: 40px;
+}
+
+/* Footer links */
+.footer-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 20px;
+    font-size: 16px;
+}
+
+.footer-text {
+    color: #ffffff;
+    font-size: 14px;
+    margin-left: 30px;
+}
+
+.footer-link:hover {
+    color: #91e8b4;
+}
+
+/* Footer sections */
+.bottom-left,
+.bottom-center,
+.bottom-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Social media icons */
+.social-logo {
+    height: 30px;
+    margin-left: 15px;
 }

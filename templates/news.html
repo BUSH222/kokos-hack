@@ -49,7 +49,7 @@
         
             <!-- Tag Input (for adding tags when space is pressed) -->
             <div id="tagContainer" class="tag-container">
-                <input type="text" id="tagInput" placeholder="Add tags">
+                <input type="text" id="tagInput" placeholder="Add tags" oninput="limitInputLength(this, 10)">
             </div>
         
             <!-- Date Picker -->
@@ -62,9 +62,8 @@
             </select>
         
             <!-- Search Button -->
-            <button id="searchButton" onclick="performSearch()">Search</button>
-        </div>
-x        
+            <button id="searchButton" onclick="performSearch()">Найти</button>
+        </div>        
         
 
         <!-- news fields -->
@@ -96,7 +95,48 @@ x
         {% endfor %}
     </div>
 
+        <!-- Bottom Bar -->
+    <div class="bottom-bar">
+        <div class="bottom-bar-content">
+            <!-- Left side: Logo -->
+            <div class="bottom-left">
+                <img src="/static/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
+            </div>
+
+            <!-- Center: Links -->
+            <div class="bottom-center">
+                <a href="/help" class="footer-link">help</a>
+                <a href="/privacy" class="footer-link">privacy policy, legal</a>
+                <span class="footer-text">Developed by "MISIS Leaf Lovers" for "KOKOC hackathon"</span>
+            </div>
+
+            <!-- Right side: Social Media -->
+            <div class="bottom-right">
+                <a href="https://vk.com/kokocgroup_ru" target="_blank">
+                    <img src="/static/vk_icon.png" alt="VK" class="social-logo">
+                </a>
+                <a href="https://t.me/kokocgroupru" target="_blank">
+                    <img src="/static/telegram_icon.png" alt="Telegram" class="social-logo">
+                </a>
+                <a href="https://www.youtube.com/@TVKokoc" target="_blank">
+                    <img src="/static/youtube_icon.png" alt="YouTube" class="social-logo">
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
     <script>
+
+        function limitInputLength(input, maxLength) {
+            console.log(input.value);
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
+            }
+        }
+
+
         // search
         function performSearch() {
             const searchQuery = document.getElementById('searchInput').value;
@@ -119,12 +159,14 @@ x
             if (event.key === ' ') {
                 event.preventDefault(); // Prevent space from being added to input
                 const tagValue = tagInput.value.trim(); // Get input value and remove extra spaces
-
-                if (tagValue) {
+                
+                var tagCount = document.getElementsByClassName('tag').length
+                if (tagValue && tagValue.length <= 10 && tagCount < 3) {
                     // Create tag element
                     const tag = document.createElement('span');
                     tag.classList.add('tag');
                     tag.innerHTML = `${tagValue} <span class="remove-tag">&times;</span>`;
+                    
                     
                     // Append tag to the container
                     tagContainer.insertBefore(tag, tagInput);
