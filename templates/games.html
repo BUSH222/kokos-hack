@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Games</title>
+    <title>Игры</title>
     <link rel="stylesheet" href="/static/games.css">
 </head>
 <body>
@@ -69,7 +69,7 @@
                         {{ current_game.datetime }}
                     </div>
                     <div class="view-stats">
-                        <a href="/register-match?id={{ current_game.id }}" class="register-match">Смотреть</a>
+                        <a href="/view-game?id={{ current_game.id }}" class="register-match">Смотреть</a>
                     </div>
                 </div>
             {% else %}
@@ -90,7 +90,7 @@
                         {{ upcoming_game.datetime }}
                     </div>
                     <div class="view-stats">
-                        <a href="/register-match?id={{ upcoming_game.id }}" class="register-match">Зарегистрироваться</a>
+                        <a href="/order-ticket?id={{ upcoming_game.id }}" class="register-match">Заказать билет</a>
                     </div>
                 </div>
             {% endif %}
