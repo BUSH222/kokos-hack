@@ -1,6 +1,6 @@
 import os
 from login import app_login, User
-from news import app_news
+from forum import app_forum
 from flask import Flask, render_template, request, url_for, flash, redirect, abort, jsonify, session
 from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user, current_user
 from oauthlib.oauth2 import WebApplicationClient
@@ -22,7 +22,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg'}
 
 app = Flask(__name__)
 app.register_blueprint(app_login)
-app.register_blueprint(app_news)
+app.register_blueprint(app_forum)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = token_urlsafe(16)
 
@@ -33,12 +33,11 @@ conn, cur = connect_to_db()
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
-app.config['SECRET_KEY'] = 'bruh'
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+# def allowed_file(filename):
+#     return '.' in filename and \
+#         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @login_manager.user_loader
@@ -77,10 +76,10 @@ def account():
     """
     An endpoint with all of a user data.
     """
-    profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = '' * 5
+    profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = '', '', '', '', '', ''
     if request.method == 'GET':
         usr_id = current_user.id
-        cur.execute("SELECT profile_pic,name,fav_player,about_me,vk_acc FROM users WHERE id = %s", (usr_id,))
+        cur.execute("SELECT profile_pic, name, fav_player, about_me, vk_acc, telegram_acc FROM users WHERE id = %s", (usr_id,))
         profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.fetchone()
 
         if vk_acc is None:
@@ -91,7 +90,7 @@ def account():
         usr_input = request.json
         if usr_input["btn_type"] == "change_user_data":
             return {'re': '/account/change_account_data'}
-    return render_template('account.html', profile_pic=profile_pic, name=name, fav_player=fav_player,
+    return render_template('/account/account.html', profile_pic=profile_pic, name=name, fav_player=fav_player,
                            about_me=about_me, telegram_acc=telegram_acc, vk_acc=vk_acc)
 
 
@@ -122,16 +121,19 @@ def change_user_data():
         usr_input["telegram_acc"] = usr_input["telegram_acc"].replace(' ', '')
         if "@" not in usr_input["telegram_acc"]:
             usr_input["telegram_acc"] = "@" + usr_input["telegram_acc"]
-        '''input name length control'''
-        if usr_input["btn_type"] == "submit":
-            for key in usr_input.keys():
-                if key in allowed_keys:
-                    cur.execute('UPDATE users SET %s = %s where id = %s', (key, usr_input[key], usr_id,))
+
         try:
-            cur.commit()
+            if usr_input["btn_type"] == "submit":
+                for key in usr_input.keys():
+                    if key in allowed_keys:
+                        query = f"UPDATE users SET {key} = %s WHERE id = %s"
+                        cur.execute(query, (usr_input[key], usr_id))
+            conn.commit()
         except Exception:
+            conn.rollback()
+            print("БАЗЫ ДаЛИ ЗАЗЫ " * 5)
             abort(304)
-            cur.rollback()
+        return(redirect(url_for("account")))
 
 
 @app.route('/shop', methods=['GET', 'POST'])
@@ -239,10 +241,10 @@ def view_story():
             try:
                 cur.execute("""INSERT INTO news_comments (comment_time,post_id,user_id,comment_text)
                 VALUES (NOW(),%s,%s,%s)""", (request.args.get('id'), current_user.id, usr_input["comment_value"]))
-                cur.commit()
+                conn.commit()
             except Exception:
                 abort(500)
-                cur.rollback()
+                conn.rollback()
 
 
 @app.route('/forum', methods=['GET', 'POST'])
@@ -317,10 +319,10 @@ def view_post():
             try:
                 cur.execute("""INSERT INTO forum_comments (comment_time,post_id,user_id,comment_text)
                 VALUES (NOW(),%s,%s,%s)""", (request.args.get('id'), current_user.id, usr_input["comment_value"]))
-                cur.commit()
+                conn.commit()
             except Exception:
                 abort(500)
-                cur.rollback()
+                conn.rollback()
 
 
 @app.route('/forum/new_post')
@@ -335,10 +337,10 @@ def new_post():
                 cur.execute("""INSERT INTO forum (post_time,author,tags,title,post_text)
                 VALUES (NOW(),%s,%s,%s,%s)""", (current_user.name, usr_input["tags"],
                             usr_input["title"], usr_input["post_text"]))
-                cur.commit()
+                conn.commit()
             except Exception:
                 abort(500)
-                cur.rollback()
+                conn.rollback()
 
 
 @app.route('/main_server_status', methods=['GET'])

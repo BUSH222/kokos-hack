@@ -2,11 +2,19 @@ from flask import request, flash, redirect, Blueprint
 import requests
 from werkzeug.utils import secure_filename
 from logger import log_event
+from settings_loader import get_processor_settings
 
-app_news = Blueprint('app_news', __name__)
+app_forum = Blueprint('app_forum', __name__)
+ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg'}
+settings = get_processor_settings()
 
 
-@app_news.route("/forum/new-post")
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app_forum.route("/forum/new-post")
 def forum_new_post():
     if 'file' not in request.files:
         log_event('No file part', 20)

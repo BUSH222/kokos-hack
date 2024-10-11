@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,5 +6,70 @@
 </head>
 <body>
 
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Основная информация пользователя</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .profile-pic img {
+            max-width: 100px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .info {
+            margin-bottom: 15px;
+        }
+        .info label {
+            font-weight: bold;
+        }
+        .info p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Основная информация пользователя</h1>
+        <div class="profile-pic">
+            <label for="profile_pic">Фото профиля:</label>
+            <img src="{{ profile_pic }}" alt="Фото профиля" id="profile_pic">
+        </div>
+        <div class="info">
+            <label for="name">Имя:</label>
+            <p id="name">{{ name }}</p>
+        </div>
+        <div class="info">
+            <label for="fav_player">Любимый игрок:</label>
+            <p id="fav_player">{{ fav_player }}</p>
+        </div>
+        <div class="info">
+            <label for="about_me">Обо мне:</label>
+            <p id="about_me">{{ about_me }}</p>
+        </div>
+        <div class="info">
+            <label for="vk_acc">VK аккаунт:</label>
+            <p id="vk_acc">{{ vk_acc }}</p>
+        </div>
+        <div class="info">
+            <label for="telegram_acc">Telegram аккаунт:</label>
+            <p id="telegram_acc">{{ telegram_acc }}</p>
+        </div>
+        <form method="POST" action="/account/change_account_data">
+            <input type="hidden" name="btn_type" value="change_user_data">
+            <button type="submit">Изменить данные</button>
+        </form>
+    </div>
 </body>
 </html>
