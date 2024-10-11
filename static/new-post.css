@@ -148,11 +148,22 @@ body::-webkit-scrollbar {
 
 /* Individual Tags */
 .tag {
-    display: inline-block;
-    background-color: #ff4747;
-    color: white;
+    display: inline-flex;
+    align-items: center; /* This vertically centers the content */
+    background-color: #f0f0f0;
+    border-radius: 5px;
     padding: 5px 10px;
-    border-radius: 20px; /* Oval shape */
+    font-size: 14px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+
+#tagInput {
+    border: none; /* Removes the input border */
+    outline: none; /* Ensures no outline appears on focus */
+    flex-grow: 1; /* Allows it to grow and take up remaining space */
+    padding: 5px;
     font-size: 14px;
 }
 
