@@ -203,6 +203,10 @@ def view_post():
     return render_template('view-post.html', data=data, comments=comments)
 
 
+@app.route('/new-post')
+def new_post():
+    return render_template('new-post.html')
+
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)

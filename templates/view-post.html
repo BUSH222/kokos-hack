@@ -49,6 +49,13 @@
                     <img src="{{data.user_pfp}}" alt="User Profile Picture" class="user-pfp">
                     <span class="user-nickname">{{data.username}}</span>
                     <span class="post-date">{{ data.date_created }}</span>
+
+                    <!-- like button -->
+                    <img id="likeButton" src="/static/heart_icon_empty.png" alt="Like" class="like-button" onclick="toggleLike()">
+
+                    <!-- comment button -->
+                    <img id="commentButton" src="/static/comments_icon.png" alt="Comment" class="comment-button" onclick="scrollToComment()">
+                    
                 </div>
             </div>
             <div class="news-title">
@@ -122,5 +129,33 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Function to toggle the like button between empty and filled states
+        function toggleLike() {
+            const likeButton = document.getElementById('likeButton');
+            
+            // Add a CSS class that triggers the animation
+            likeButton.classList.add('like-animation');
+
+            // Toggle the heart image
+            if (likeButton.src.includes("heart_icon_empty.png")) {
+                likeButton.src = "/static/heart_icon_filled.png";
+            } else {
+                likeButton.src = "/static/heart_icon_empty.png";
+            }
+
+            // Remove the animation class after the animation ends
+            setTimeout(() => {
+                likeButton.classList.remove('like-animation');
+            }, 300);
+        }
+
+        // Function to scroll to the comment section when the comment button is clicked
+        function scrollToComment() {
+            const commentSection = document.querySelector('.news-newcomment');
+            commentSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>

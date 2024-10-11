@@ -96,6 +96,26 @@ body::-webkit-scrollbar {
     margin: 0 auto;
 }
 
+.like-button {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: auto;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.like-animation {
+    transform: scale(0.9);
+    filter: brightness(1.2);
+}
+
+.comment-button {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
 /* Search Bar */
 .news-newcomment {
     display: flex;
