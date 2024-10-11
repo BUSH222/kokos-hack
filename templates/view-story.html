@@ -133,6 +133,21 @@
 
 
     <script>
+        // Function to toggle the like button between empty and filled states
+        function toggleLike() {
+            const likeButton = document.getElementById('likeButton');
+            if (likeButton.src.includes("like_icon_empty.png")) {
+                likeButton.src = "/static/like_button_filled.png";
+            } else {
+                likeButton.src = "/static/like_icon_empty.png";
+            }
+        }
+
+        // Function to scroll to the comment section when the comment button is clicked
+        function scrollToComment() {
+            const commentSection = document.querySelector('.news-newcomment');
+            commentSection.scrollIntoView({ behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>
