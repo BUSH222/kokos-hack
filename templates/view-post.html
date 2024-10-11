@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Новости</title>
-    <link rel="stylesheet" href="/static/view-story.css">
+    <link rel="stylesheet" href="/static/view-post.css">
 </head>
 <body>
     <!-- navigation bar -->
@@ -46,16 +46,9 @@
         <div class="news-field">
             <div class="news-header">
                 <div class="comment-user">
-                    <img src="/static/eye.png" alt="User Profile Picture" class="user-pfp">
-                    <span class="user-nickname">Admin</span>
+                    <img src="{{data.user_pfp}}" alt="User Profile Picture" class="user-pfp">
+                    <span class="user-nickname">{{data.username}}</span>
                     <span class="post-date">{{ data.date_created }}</span>
-
-                    <!-- like button -->
-                    <img id="likeButton" src="/static/like_icon_empty.png" alt="Like" class="like-button" onclick="toggleLike()">
-
-                    <!-- comment button -->
-                    <img id="commentButton" src="/static/comments_icon.png" alt="Comment" class="comment-button" onclick="scrollToComment()">
-
                 </div>
             </div>
             <div class="news-title">
@@ -129,10 +122,5 @@
             </div>
         </div>
     </div>
-
-
-
-    <script>
-    </script>
 </body>
 </html>
