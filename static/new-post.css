@@ -278,7 +278,7 @@ body::-webkit-scrollbar {
 
 /* General styling */
 html, body {
-    height: 100vh; /* Ensures the body stretches to the full viewport height */
+    height: 100%; /* this */
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
@@ -292,12 +292,12 @@ html, body {
 .main-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100%; /* Ensures content + footer fills the height of the viewport */
+    min-height: 100vh; /* this */
 }
 
 .content {
     flex: 1; /* Fills the remaining space, pushing footer to the bottom */
-    padding: 20px;
+    /* padding: 20px; */ /* this */
 }
 
 /* Navbar remains fixed */
@@ -333,64 +333,4 @@ html, body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 2px solid #ff4747;
     border-radius: 10px;
-}
-
-/* Bottom bar (footer) */
-.bottom-bar {
-    background-color: #ff4747;
-    padding: 20px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    /* Make sure it's pushed to the bottom when content is short */
-    position: relative;
-}
-
-/* Flexbox layout for footer content */
-.bottom-bar-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 80%;
-    max-width: 1200px;
-}
-
-/* KOKOS logo styling */
-.kokos-logo {
-    height: 40px;
-}
-
-/* Footer links */
-.footer-link {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: bold;
-    margin: 0 20px;
-    font-size: 16px;
-}
-
-.footer-text {
-    color: #ffffff;
-    font-size: 14px;
-    margin-left: 30px;
-}
-
-.footer-link:hover {
-    color: #91e8b4;
-}
-
-/* Footer sections */
-.bottom-left,
-.bottom-center,
-.bottom-right {
-    display: flex;
-    align-items: center;
-}
-
-/* Social media icons */
-.social-logo {
-    height: 30px;
-    margin-left: 15px;
 }
