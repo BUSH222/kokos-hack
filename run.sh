@@ -1,10 +1,10 @@
 #!/bin/bash
 
-FLASK_APP=main.py flask run --port=5000 &
+python3 main.py &
 
-FLASK_APP=asset_delivery/asset_delivery.py flask run --port=5001 &
+python3 asset_delivery/asset_delivery.py &
 
-FLASK_APP=admin_panel/admin_app.py flask run --port=5002 &
+python3 admin_panel/admin_app.py &
 
 wait
 

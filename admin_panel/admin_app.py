@@ -334,7 +334,7 @@ def full_server_status():
         json: status of every server in the format {"server_status": {"ram": number, "cpu": number, "rpm": number}}
     """
     try:
-        main_status_response = requests.get('http://127.0.0.1:5000/main_server_status', timeout=1)
+        main_status_response = requests.get('https://127.0.0.1:5000/main_server_status', verify=False, timeout=1)
         main_status = main_status_response.json()
     except (requests.exceptions.Timeout, requests.exceptions.JSONDecodeError, requests.exceptions.ConnectionError):
         main_status = {'ram': 0, 'cpu': 0, "rpm": 0}
