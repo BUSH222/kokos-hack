@@ -301,10 +301,10 @@ body::-webkit-scrollbar {
 }
 
 .like-count, .comment-count {
-    margin-left: 5px;
     margin-top: 5px;
     font-size: 16px;
     color: #777;
+    align-items: center;
 }
 
 .social-interaction {

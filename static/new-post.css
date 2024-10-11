@@ -343,9 +343,12 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
+    /* Make sure it's pushed to the bottom when content is short */
     position: relative;
 }
 
+/* Flexbox layout for footer content */
 .bottom-bar-content {
     display: flex;
     justify-content: space-between;
@@ -354,10 +357,12 @@ html, body {
     max-width: 1200px;
 }
 
+/* KOKOS logo styling */
 .kokos-logo {
     height: 40px;
 }
 
+/* Footer links */
 .footer-link {
     color: #ffffff;
     text-decoration: none;
@@ -369,8 +374,22 @@ html, body {
 .footer-text {
     color: #ffffff;
     font-size: 14px;
+    margin-left: 30px;
 }
 
+.footer-link:hover {
+    color: #91e8b4;
+}
+
+/* Footer sections */
+.bottom-left,
+.bottom-center,
+.bottom-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Social media icons */
 .social-logo {
     height: 30px;
     margin-left: 15px;

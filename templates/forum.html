@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новости</title>
+    <title>Форум</title>
     <link rel="stylesheet" href="/static/forum.css">
 </head>
 <body>
@@ -66,7 +66,6 @@
         </div>        
         
 
-        <!-- news fields -->
         <!-- news fields -->
         {% for item in data %}
         <div class="news-field">
@@ -142,21 +141,27 @@
             window.location.href = `/view-post?id=${postId}`;
         }
     
-        // Function to toggle the like button between empty and filled states
         function toggleLike(postId) {
-            const likeButton = document.getElementById(`likeButton_${postId}`);
-            
-            // Add a CSS class that triggers the animation
+            const likeButton = document.getElementById('likeButton-' + postId);
+            const likeCountSpan = document.getElementById('likeCount-' + postId);
+            let currentCount = parseInt(likeCountSpan.innerText);
+
+            // Add a CSS class for animation
             likeButton.classList.add('like-animation');
-    
-            // Toggle the heart image
+
+            // Toggle the heart icon and like count
             if (likeButton.src.includes("heart_icon_empty.png")) {
                 likeButton.src = "/static/heart_icon_filled.png";
+                currentCount += 1;
             } else {
                 likeButton.src = "/static/heart_icon_empty.png";
+                currentCount -= 1;
             }
-    
-            // Remove the animation class after the animation ends
+
+            // Update the like count display
+            likeCountSpan.innerText = currentCount;
+
+            // Remove animation class after it's done
             setTimeout(() => {
                 likeButton.classList.remove('like-animation');
             }, 300);
