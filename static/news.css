@@ -213,6 +213,7 @@ body::-webkit-scrollbar {
 
 /* news field */
 .news-field {
+    position: relative;
     background-color: #ffffff;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -223,6 +224,7 @@ body::-webkit-scrollbar {
     transition: transform 0.3s ease;
     border-radius: 25px;
     overflow: hidden;
+    min-height: 150px;
 }
 
 .news-field:hover {
@@ -308,9 +310,11 @@ body::-webkit-scrollbar {
     position: absolute;
     top: 10px;  /* Adjust the distance from the top of the post field */
     right: 10px;  /* Adjust the distance from the right edge */
-    display: flex;
-    flex-direction: column;  /* Stack like and comment sections vertically */
-    align-items: center;
+    display: flex;              /* Align items in a row */
+    flex-direction: row;        /* Change to row layout */
+    align-items: center;        /* Center align items vertically */
+    z-index: 10;
+    gap: 10px;                  /* Add space between like and comment sections */
 }
 
 .news-photo {

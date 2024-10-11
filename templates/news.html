@@ -64,7 +64,6 @@
             <!-- Search Button -->
             <button id="searchButton" onclick="performSearch()">Найти</button>
         </div>        
-        
 
         <!-- news fields -->
         {% for item in data %}
@@ -74,42 +73,33 @@
                     <img src="/static/eye.png" alt="User Profile Picture" class="user-pfp">
                     <span class="user-nickname">Admin</span>
                     <span class="post-date">{{ item.date_created }}</span>
+                </div>
 
-                    <!-- like button with counter -->
+                <!-- Positioning likes and comments section here -->
+                <div class="social-interaction">
                     <div class="like-section">
                         <img id="likeButton-{{ item.id }}" src="/static/heart_icon_empty.png" alt="Like" class="like-button" onclick="toggleLike('{{ item.id }}')">
-                        <span id="likeCount-{{ item.id }}" class="like-count">{{ item.like_count }}</span>
+                        <span id="likeCount-{{ item.id }}" class="like-count">{{ item.like_count or 0 }}</span>
                     </div>
-
-                    <!-- comment button with counter -->
                     <div class="comment-section">
                         <img id="commentButton-{{ item.id }}" src="/static/comments_icon.png" alt="Comment" class="comment-button" onclick="redirectToPost('{{ item.id }}')">
-                        <span id="commentCount-{{ item.id }}" class="comment-count">{{ item.comment_count }}</span>
+                        <span id="commentCount-{{ item.id }}" class="comment-count">{{ item.comment_count or 0 }}</span>
                     </div>
                 </div>
             </div>
-            <div class="news-title">
-                {{ item.title }}
-            </div>
-            <div class="news-tags">
-                {{ item.tags }}
-            </div>
+            <div class="news-title">{{ item.title }}</div>
+            <div class="news-tags">{{ item.tags }}</div>
             <div class="news-content">
                 <div class="news-photo">
                     <img src="{{ item.news_photo_url }}" alt="News Image">
                 </div>
-                <div class="news-text">
-                    {{ item.text }}
-                </div>
-
+                <div class="news-text">{{ item.text }}</div>
             </div>
         </div>
         {% endfor %}
     </div>
 
-   
-
-        <!-- Bottom Bar -->
+    <!-- Bottom Bar -->
     <div class="bottom-bar">
         <div class="bottom-bar-content">
             <!-- Left side: Logo -->
@@ -139,47 +129,42 @@
         </div>
     </div>
 
-
-
     <script>
-
         function redirectToPost(postId) {
             window.location.href = `/view-post?id=${postId}`;
         }
 
         function toggleLike(postId) {
-        const likeButton = document.getElementById('likeButton-' + postId);
-        const likeCountSpan = document.getElementById('likeCount-' + postId);
-        let currentCount = parseInt(likeCountSpan.innerText);
+            const likeButton = document.getElementById('likeButton-' + postId);
+            const likeCountSpan = document.getElementById('likeCount-' + postId);
+            let currentCount = parseInt(likeCountSpan.innerText);
 
-        // Add a CSS class for animation
-        likeButton.classList.add('like-animation');
+            // Add a CSS class for animation
+            likeButton.classList.add('like-animation');
 
-        // Toggle the heart icon and like count
-        if (likeButton.src.includes("heart_icon_empty.png")) {
-            likeButton.src = "/static/heart_icon_filled.png";
-            currentCount += 1;
+            // Toggle the heart icon and like count
+            if (likeButton.src.includes("heart_icon_empty.png")) {
+                likeButton.src = "/static/heart_icon_filled.png";
+                currentCount += 1;
             } else {
-            likeButton.src = "/static/heart_icon_empty.png";
-            currentCount -= 1;
+                likeButton.src = "/static/heart_icon_empty.png";
+                currentCount -= 1;
             }
 
-        // Update the like count display
-        likeCountSpan.innerText = currentCount;
+            // Update the like count display
+            likeCountSpan.innerText = currentCount;
 
-        // Remove animation class after it's done
-        setTimeout(() => {
-            likeButton.classList.remove('like-animation');
+            // Remove animation class after it's done
+            setTimeout(() => {
+                likeButton.classList.remove('like-animation');
             }, 300);
         }
 
         function limitInputLength(input, maxLength) {
-            console.log(input.value);
             if (input.value.length > maxLength) {
                 input.value = input.value.slice(0, maxLength);
             }
         }
-
 
         // search
         function performSearch() {
@@ -196,36 +181,35 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-        const tagInput = document.getElementById('tagInput');
-        const tagContainer = document.getElementById('tagContainer');
+            const tagInput = document.getElementById('tagInput');
+            const tagContainer = document.getElementById('tagContainer');
 
-        tagInput.addEventListener('keydown', function(event) {
-            if (event.key === ' ') {
-                event.preventDefault(); // Prevent space from being added to input
-                const tagValue = tagInput.value.trim(); // Get input value and remove extra spaces
-                
-                var tagCount = document.getElementsByClassName('tag').length
-                if (tagValue && tagValue.length <= 10 && tagCount < 3) {
-                    // Create tag element
-                    const tag = document.createElement('span');
-                    tag.classList.add('tag');
-                    tag.innerHTML = `${tagValue} <span class="remove-tag">&times;</span>`;
+            tagInput.addEventListener('keydown', function(event) {
+                if (event.key === ' ') {
+                    event.preventDefault(); // Prevent space from being added to input
+                    const tagValue = tagInput.value.trim(); // Get input value and remove extra spaces
                     
-                    
-                    // Append tag to the container
-                    tagContainer.insertBefore(tag, tagInput);
+                    var tagCount = document.getElementsByClassName('tag').length;
+                    if (tagValue && tagValue.length <= 10 && tagCount < 3) {
+                        // Create tag element
+                        const tag = document.createElement('span');
+                        tag.classList.add('tag');
+                        tag.innerHTML = `${tagValue} <span class="remove-tag">&times;</span>`;
+                        
+                        // Append tag to the container
+                        tagContainer.insertBefore(tag, tagInput);
 
-                    // Clear the input field
-                    tagInput.value = '';
+                        // Clear the input field
+                        tagInput.value = '';
 
-                    // Add remove functionality to the tag
-                    tag.querySelector('.remove-tag').addEventListener('click', function() {
-                        tag.remove();
-                    });
+                        // Add remove functionality to the tag
+                        tag.querySelector('.remove-tag').addEventListener('click', function() {
+                            tag.remove();
+                        });
+                    }
                 }
-            }
+            });
         });
-    });
     </script>
 </body>
 </html>

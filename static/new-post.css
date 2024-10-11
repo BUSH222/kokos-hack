@@ -225,6 +225,7 @@ body::-webkit-scrollbar {
 /* Main Post Container */
 .post-container {
     max-width: 800px;
+    width: 60%;
     margin: 100px auto; /* Adds space for the fixed navbar */
     background-color: #fff;
     padding: 20px;
@@ -291,7 +292,7 @@ html, body {
 .main-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensures content + footer fills the height of the viewport */
+    min-height: 100%; /* Ensures content + footer fills the height of the viewport */
 }
 
 .content {

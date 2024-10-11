@@ -208,5 +208,10 @@ def new_post():
     return render_template('new-post.html')
 
 
+@app.route('/new-story')
+def new_story():
+    return render_template('new-story.html')
+
+
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
