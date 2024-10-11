@@ -1,0 +1,433 @@
+* {
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #ff4747;
+    background: url('/static/background.png') no-repeat center center fixed;
+    background-size: cover;
+    scrollbar-width: none;
+    height: 100%;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+html, body {
+    height: 100%;
+}
+
+/* navbar */
+.navbar {
+    background-color: #ff4747;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 999;
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.navbar .left-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .right-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar li {
+    margin: 0 20px;
+    padding: 10px 0;
+}
+
+.navbar a {
+    color: #f2f2f2;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.navbar a:hover {
+    color: #91e8b4;
+}
+
+.navbar .center {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.navbar .center li {
+    margin: 0 30px;
+}
+
+.logo {
+    height: 40px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.profile-pic-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Game Page */
+.games-container {
+    padding: 100px 10%;
+    min-height: 100%;
+    margin: 0 auto;
+}
+
+/* Games Table */
+.games-table {
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.table-container {
+    overflow: hidden;
+}
+
+.live-indicator {
+    color: #ff4747;
+    font-size: 24px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.next-game-row {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.game-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border: 2px solid #ff4747;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    width: 95%;
+    max-width: 1200px;
+    box-sizing: border-box;
+    margin: 10px auto;
+    background-color: #f2f2f2;
+}
+
+.game-row:hover {
+    transform: scale(1.01);
+}
+
+.game-row-container {
+    overflow: hidden;
+    padding: 10px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.current-game-row {
+    margin-bottom: 10px;
+}
+
+.teams, .datetime, .view-stats {
+    font-size: 18px;
+    color: #ff4747;
+    flex: 1;
+    text-align: center;
+}
+
+.view-stats a {
+    text-decoration: none;
+    color: #ff4747;
+    font-weight: bold;
+}
+
+.view-stats a:hover {
+    color: #91e8b4;
+}
+
+/* Team logos and names */
+.team1, .team2 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.team-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+
+.team-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ff4747;
+}
+
+.vs {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff4747;
+    margin: 0 20px;
+}
+
+/* Team Info Section */
+.team-info-row {
+    margin-top: 10px;
+}
+
+.team-info-header {
+    color: #ff4747;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.team-info {
+    font-size: 18px;
+    color: #ff4747;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #f2f2f2;
+    width: 95%;
+    max-width: 1200px;
+    margin: auto;
+    text-align: center;
+}
+
+.team-info p {
+    margin: 0;
+    color: #ff4747;
+}
+
+/* General news container */
+.news-container {
+    padding: 100px 10%;
+    min-height: 100%;
+    margin: 0 auto;
+    padding: 20px 10%;
+}
+
+/* news field */
+.news-field {
+    position: relative;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto; /* Centering the field */
+    border: 2px solid #ff4747;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    border-radius: 25px;
+    overflow: hidden;
+    min-height: 150px;
+}
+
+.news-field:hover {
+    transform: scale(1.02);
+}
+
+.news-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.news-tags {
+    font-size: 14px;
+    color: #777777;
+    margin-bottom: 20px;
+}
+
+.tag {
+    text-transform: lowercase;
+    margin-right: 5px;
+}
+
+.user-pfp {
+    object-fit: contain;
+    height: 20px;
+    width: 20px;
+}
+
+.user-nickname {
+    padding-right:20px;
+    padding-left: 20px;
+}
+
+.comment-user {
+    display: flex;
+    align-items: center;
+}
+
+.news-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch; /* Ensures both the image and text divs are the same height */
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.like-button {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: auto;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.like-animation {
+    transform: scale(0.9);
+    filter: brightness(1.2);
+}
+
+.comment-button {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.like-section, .comment-section {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    flex-direction: column;
+}
+
+.like-count, .comment-count {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #777;
+    align-items: center;
+}
+
+.social-interaction {
+    position: absolute;
+    top: 10px;  /* Adjust the distance from the top of the post field */
+    right: 10px;  /* Adjust the distance from the right edge */
+    display: flex;              /* Align items in a row */
+    flex-direction: row;        /* Change to row layout */
+    align-items: center;        /* Center align items vertically */
+    z-index: 10;
+    gap: 10px;                  /* Add space between like and comment sections */
+}
+
+.news-photo {
+    margin-right: 20px;
+    flex: 0 0 35%; /* Fixed width for the photo */
+    height: auto; /* Let the image height adapt to its container */
+    border-radius: 30px;
+    overflow: hidden; /* Ensures the image won't overflow */
+}
+
+.news-photo img {
+    width: 100%; /* Makes the image fill its container */
+    object-fit: cover; /* Ensures the image covers the entire space */
+}
+
+.news-text {
+    flex: 1; /* Makes the text div fill the remaining width */
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    overflow-y: auto; /* Allows vertical scrolling if content is larger */
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    max-height: 100%; /* Limits height to ensure it's equal to the image */
+    word-wrap: break-word; /* Breaks long words to prevent overflow */
+    box-sizing: border-box; /* Ensures padding and border are included in width */
+}
+
+
+.news-text::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+
+/* Bottom bar (footer) */
+.bottom-bar {
+    background-color: #ff4747;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    z-index: 1000;
+}
+
+/* Flexbox layout for footer content */
+.bottom-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    max-width: 1200px;
+}
+
+/* KOKOS logo styling */
+.kokos-logo {
+    height: 40px;
+}
+
+/* Footer links */
+.footer-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 20px;
+    font-size: 16px;
+}
+
+.footer-text {
+    color: #ffffff;
+    font-size: 14px;
+    margin-left: 30px;
+}
+
+.footer-link:hover {
+    color: #91e8b4;
+}
+
+/* Footer sections */
+.bottom-left,
+.bottom-center,
+.bottom-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Social media icons */
+.social-logo {
+    height: 30px;
+    margin-left: 15px;
+}

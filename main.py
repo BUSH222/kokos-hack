@@ -4,9 +4,54 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 
 
+# Sample games data
+games = [
+    {'id': 1, 'team1': 'Team A', 'team2': 'Team B', 'datetime': '2024-10-15 18:00'},
+    {'id': 2, 'team1': 'Team C', 'team2': 'Team D', 'datetime': '2024-10-16 19:00'},
+    {'id': 3, 'team1': 'Team E', 'team2': 'Team F', 'datetime': '2024-10-17 20:00'}
+]
+
+# Sample data for current and upcoming games
+current_game = {
+    'id': 1,
+    'team1': 'Команда Г',
+    'team1_logo_url': '/static/team1_logo.png',
+    'team2': 'Команда Д',
+    'team2_logo_url': '/static/team2_logo.png',
+    'datetime': '2024-10-14 20:00'  # Example current game time
+}
+
+upcoming_game = {
+    'id': 2,
+    'team1': 'Команда А',
+    'team1_logo_url': '/static/team1_logo.png',
+    'team2': 'Команда Б',
+    'team2_logo_url': '/static/team2_logo.png',
+    'datetime': (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")  # Set to tomorrow
+}
+
+
 @app.route('/')
 def index():
-    return render_template("index.html")
+
+    # Sample data for the news post
+    news_data = {
+        'id': '0',
+        'title': 'Новое событие в клубе!',
+        'tags': 'Спорт, Клуб, Новости',
+        'news_photo_url': '/static/eye.png',  # Path to your news photo
+        'text': 'Сегодня в нашем клубе произошло замечательное событие. Мы рады сообщить, что клуб очень крутой короче и ваще топ 1 скоро станет я верю в это правда. Вообще я пишу много текста чтобы проверить работает ли скролл)) судя по всему не очень он работает, точнее нет, он по идее работает вот только окно с текстом выходит за рамки и это надо фиксить срочно! а нет с ним все хорошо ну ладно тогда я просто попишу еще чего нибудь смешного и неинтересного чтобы просто всего лишь проверить работу того что я накалякал. Честно говоря я уже устал делать только одну эту страницу целый день я уже хочу просто лечь в постель, посмотреть ют, выспаться и уже завтра продолжить и да Федя я помню что мне нужно сделать еще всего лишь +-20 страниц за 1 завтрашний день bruhhh я не знаю как мне вообще выжить с такой нагрузкой! hkjdgamfjsgddghfgdhjfahjgdfhjkgafkghjafdkghdfghkakgdfhsgdfghkfgkhfdgkafdghkfdsghdfsghkfhkgakghadfskghadsfkhgafdskghghkakgdfhsgdfghkfgkhfdgkafdghkfdsghdfsghkfhkgakghadfskghadsfkhgafdskghghkakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghuuauau',
+        'profile_picture_url': '/static/google_icon.png',  # Path to the current user's profile picture
+        'username': 'Текущий Пользователь',  # Username of the current user
+        'date_created': '2024-10-09'  # Example creation date for the post
+    }
+
+    max_news_data = []
+    for i in range(3):
+        news_data['id'] = str(i)
+        max_news_data.append(news_data.copy())
+
+    return render_template('index.html', current_game=current_game, upcoming_game=upcoming_game, data=max_news_data)
 
 @app.route('/login')
 def login():
@@ -97,32 +142,6 @@ def account():
         'vk_handle': 'kokocfan'  # VK handle
     }
     return render_template('account.html', user_logged_in=user_logged_in, user=user)
-
-# Sample games data
-games = [
-    {'id': 1, 'team1': 'Team A', 'team2': 'Team B', 'datetime': '2024-10-15 18:00'},
-    {'id': 2, 'team1': 'Team C', 'team2': 'Team D', 'datetime': '2024-10-16 19:00'},
-    {'id': 3, 'team1': 'Team E', 'team2': 'Team F', 'datetime': '2024-10-17 20:00'}
-]
-
-# Sample data for current and upcoming games
-current_game = {
-    'id': 1,
-    'team1': 'Команда Г',
-    'team1_logo_url': '/static/team1_logo.png',
-    'team2': 'Команда Д',
-    'team2_logo_url': '/static/team2_logo.png',
-    'datetime': '2024-10-14 20:00'  # Example current game time
-}
-
-upcoming_game = {
-    'id': 2,
-    'team1': 'Команда А',
-    'team1_logo_url': '/static/team1_logo.png',
-    'team2': 'Команда Б',
-    'team2_logo_url': '/static/team2_logo.png',
-    'datetime': (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")  # Set to tomorrow
-}
 
 @app.route('/games')
 def games_view():
