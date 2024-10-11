@@ -126,15 +126,13 @@ def change_user_data():
             if usr_input["btn_type"] == "submit":
                 for key in usr_input.keys():
                     if key in allowed_keys:
-                        query = f"UPDATE users SET {key} = %s WHERE id = %s"
-                        cur.execute(query, (usr_input[key], usr_id))
+                        query = "UPDATE users SET %s = %s WHERE id = %s"
+                        cur.execute(query, (key,usr_input[key], usr_id))
             conn.commit()
         except Exception:
             conn.rollback()
-            print("БАЗЫ ДаЛИ ЗАЗЫ " * 5)
+            print("БАЗЫ ДАЛИ ЗАЗЫ " * 5)
             abort(304)
-        return(redirect(url_for("account")))
-
 
 @app.route('/shop', methods=['GET', 'POST'])
 def shop():
