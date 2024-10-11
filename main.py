@@ -31,6 +31,7 @@ def register():
 def news():
     # Sample data for the news post
     news_data = {
+        'id': '0',
         'title': 'Новое событие в клубе!',
         'tags': 'Спорт, Клуб, Новости',
         'news_photo_url': '/static/eye.png',  # Path to your news photo
@@ -40,9 +41,12 @@ def news():
         'date_created': '2024-10-09'  # Example creation date for the post
     }
 
-    max_news_data = [news_data for _ in range(3)]
-    
-    return render_template('news.html', data=max_news_data, post={'id': 1})
+    max_news_data = []
+    for i in range(3):
+        news_data['id'] = str(i)
+        max_news_data.append(news_data.copy())
+
+    return render_template('news.html', data=max_news_data)
 
 @app.route('/forum')
 def forum():
@@ -57,7 +61,10 @@ def forum():
         'date_created': '2001-09-1'  # Example creation date for the post
     }
 
-    max_news_data = [news_data for _ in range(3)]
+    max_news_data = []
+    for i in range(3):
+        news_data['id'] = str(i)
+        max_news_data.append(news_data.copy())
     
     return render_template('forum.html', data=max_news_data, post={'id': 1})
 
@@ -211,6 +218,11 @@ def new_post():
 @app.route('/new-story')
 def new_story():
     return render_template('new-story.html')
+
+
+@app.route('/order-ticket')
+def order_ticket():
+    return render_template('order-ticket.html')
 
 
 if __name__ == '__main__':
