@@ -148,17 +148,33 @@ games = [
 def games_page():
     return render_template('games.html', games=games)
 
-@app.route('/admin_panel_login')
-def admin_panel_login():
-    return render_template("admin_panel_login.html")
 
-@app.route('/admin_panel/logs')
-def admin_panel_logs():
-    return render_template("admin_panel_logs.html")
+@app.route('/view-story')
+def view_story():
+    comments = [
+    {'user': {'username': 'CoolGamer', 'profile_picture_url': '/static/profile2.png'}, 
+     'text': 'This is an amazing post!', 
+     'date_posted': '2024-09-15 14:23:41'},
 
-@app.route('/admin_panel/update_pages', methods=['GET'])
-def update_pages():
-    return render_template('update_pages.html')
+    {'user': {'username': 'TechGeek', 'profile_picture_url': '/static/profile3.png'}, 
+     'text': 'Wow, such a great read!', 
+     'date_posted': '2024-10-05 11:09:58'},
+
+    {'user': {'username': 'User2', 'profile_picture_url': '/static/profile1.png'}, 
+     'text': 'Can you explain more about this?', 
+     'date_posted': '2024-09-28 18:34:07'}]
+
+    data = {
+        'title': 'Новое событие в клубе!',
+        'tags': 'Спорт, Клуб, Новости',
+        'news_photo_url': '/static/eye.png',  # Path to your news photo
+        'text': 'Сегодня в нашем клубе произошло замечательное событие. Мы рады сообщить, что клуб очень крутой короче и ваще топ 1 скоро станет я верю в это правда. Вообще я пишу много текста чтобы проверить работает ли скролл)) судя по всему не очень он работает, точнее нет, он по идее работает вот только окно с текстом выходит за рамки и это надо фиксить срочно! а нет с ним все хорошо ну ладно тогда я просто попишу еще чего нибудь смешного и неинтересного чтобы просто всего лишь проверить работу того что я накалякал. Честно говоря я уже устал делать только одну эту страницу целый день я уже хочу просто лечь в постель, посмотреть ют, выспаться и уже завтра продолжить и да Федя я помню что мне нужно сделать еще всего лишь +-20 страниц за 1 завтрашний день bruhhh я не знаю как мне вообще выжить с такой нагрузкой! hkjdgamfjsgddghfgdhjfahjgdfhjkgafkghjafdkghdfghkakgdfhsgdfghkfgkhfdgkafdghkfdsghdfsghkfhkgakghadfskghadsfkhgafdskghghkakgdfhsgdfghkfgkhfdgkafdghkfdsghdfsghkfhkgakghadfskghadsfkhgafdskghghkakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghakgdfhsgdfghkfgk hfdgkafdghkfdsghdfs ghkfhkgakghadfskghadsfkh gafdskghghkakgdfhsgdfg hkfgkhfdgkafdgh kfdsghdfsghkfhkgakghadf skghadsfkhgafdskgh ghkakgdfhsgdfghk fgkhfdgkafdghkfdsghdfsghkfhkgakgha dfskghadsfkhgafdsk ghuuauau',
+        'profile_picture_url': '/static/google_icon.png',  # Path to the current user's profile picture
+        'username': 'Текущий Пользователь',  # Username of the current user
+        'date_created': '2024-10-09'  # Example creation date for the post
+    }
+    return render_template('view-story.html', data=data, comments=comments)
+
 
 
 if __name__ == '__main__':

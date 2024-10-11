@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новости</title>
+    <link rel="stylesheet" href="/static/view-story.css">
+</head>
+<body>
+    <!-- navigation bar -->
+    <div class="navbar">
+        <ul>
+            <div class="left-side">
+                <li>
+                    <a href="/">
+                        <img src="/static/logo.png" alt="Website Logo" class="logo">
+                    </a>
+                </li>
+            </div>
+
+            <div class="center">
+                <li><a href="/news">Новости</a></li>
+                <li><a href="/games">Игры</a></li>
+                <li><a href="/shop">Магазин</a></li>
+                <li><a href="/about">О клубе</a></li>
+                <li><a href="/forum">Форум</a></li>
+            </div>
+
+            <div class="right-side">
+                {% if user_logged_in %}
+                    <li>
+                        <a href="/account">
+                            <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                        </a>
+                    </li>
+                {% else %}
+                    <li><a href="/login">Войти</a></li>
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+
+    <div class="news-container">        
+
+        <!-- news fields -->
+        <div class="news-field">
+            <div class="news-header">
+                <div class="comment-user">
+                    <img src="/static/eye.png" alt="User Profile Picture" class="user-pfp">
+                    <span class="user-nickname">Admin</span>
+                    <span class="post-date">{{ data.date_created }}</span>
+                </div>
+            </div>
+            <div class="news-title">
+                {{ data.title }}
+            </div>
+            <div class="news-tags">
+                {{ data.tags }}
+            </div>
+            <div class="news-content">
+                <div class="news-photo">
+                    <img src="{{ data.news_photo_url }}" alt="News Image">
+                </div>
+                <div class="news-text">
+                    {{ data.text }}
+                </div>
+            </div>
+            <br><br><br><br>
+            <div class="news-newcomment">
+                <input type="text" id="searchInput" placeholder="Создать комментарий">
+                <select id="filterDropdown">
+                    <option value="top">Top Posts</option>
+                    <option value="recent">Recent Posts</option>
+                </select>
+                <button id="postButton" onclick="postComment()">Опубликовать</button>
+            </div>
+            <div class="comments">
+                {% for comment in comments %}
+                <div class="comment">
+                    <div class="comment-user">
+                        <img src="{{ comment.user.profile_picture_url }}" alt="User Profile Picture" class="comment-pfp">
+                        <span class="comment-username">{{ comment.user.username }}</span>
+                        <span class="comment-date">{{ comment.date_posted }}</span>
+                    </div>
+                    <div class="comment-text">
+                        {{ comment.text }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+   
+
+        <!-- Bottom Bar -->
+    <div class="bottom-bar">
+        <div class="bottom-bar-content">
+            <!-- Left side: Logo -->
+            <div class="bottom-left">
+                <img src="/static/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
+            </div>
+
+            <!-- Center: Links -->
+            <div class="bottom-center">
+                <a href="/help" class="footer-link">help</a>
+                <a href="/privacy" class="footer-link">privacy policy, legal</a>
+                <span class="footer-text">Developed by "MISIS Leaf Lovers" for "KOKOC hackathon"</span>
+            </div>
+
+            <!-- Right side: Social Media -->
+            <div class="bottom-right">
+                <a href="https://vk.com/kokocgroup_ru" target="_blank">
+                    <img src="/static/vk_icon.png" alt="VK" class="social-logo">
+                </a>
+                <a href="https://t.me/kokocgroupru" target="_blank">
+                    <img src="/static/telegram_icon.png" alt="Telegram" class="social-logo">
+                </a>
+                <a href="https://www.youtube.com/@TVKokoc" target="_blank">
+                    <img src="/static/youtube_icon.png" alt="YouTube" class="social-logo">
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+
+        function limitInputLength(input, maxLength) {
+            console.log(input.value);
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
+            }
+        }
+
+
+        // search
+        function performSearch() {
+            const searchQuery = document.getElementById('searchInput').value;
+            if (searchQuery) {
+                window.location.href = `/search?query=${encodeURIComponent(searchQuery)}`;
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+        const tagInput = document.getElementById('tagInput');
+        const tagContainer = document.getElementById('tagContainer');
+
+        tagInput.addEventListener('keydown', function(event) {
+            if (event.key === ' ') {
+                event.preventDefault(); // Prevent space from being added to input
+                const tagValue = tagInput.value.trim(); // Get input value and remove extra spaces
+                
+                var tagCount = document.getElementsByClassName('tag').length
+                if (tagValue && tagValue.length <= 10 && tagCount < 3) {
+                    // Create tag element
+                    const tag = document.createElement('span');
+                    tag.classList.add('tag');
+                    tag.innerHTML = `${tagValue} <span class="remove-tag">&times;</span>`;
+                    
+                    
+                    // Append tag to the container
+                    tagContainer.insertBefore(tag, tagInput);
+
+                    // Clear the input field
+                    tagInput.value = '';
+
+                    // Add remove functionality to the tag
+                    tag.querySelector('.remove-tag').addEventListener('click', function() {
+                        tag.remove();
+                    });
+                }
+            }
+        });
+    });
+    </script>
+</body>
+</html>
