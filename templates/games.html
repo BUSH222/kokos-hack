@@ -41,7 +41,7 @@
         </ul>
     </div>
 
-    <!-- Games Container -->
+    <!-- games container -->
     <div class="games-container">
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Найти игру">
@@ -49,7 +49,7 @@
             <button onclick="performSearch()">Найти</button>
         </div>
 
-        <!-- Current Game Section -->
+        <!-- current game section -->
         <div class="current-game-row">
             {% if current_game %}
                 <h2 class="live-indicator">В прямом эфире</h2>
@@ -97,7 +97,7 @@
         </div>
 
 
-        <!-- Existing Games Table -->
+        <!-- existing games table -->
         <div class="games-table">
             <h2 class="past-games-heading">Прошедшие игры</h2>
             {% for game in games %}
@@ -127,19 +127,19 @@
     <!-- footer -->
     <div class="bottom-bar">
         <div class="bottom-bar-content">
-            <!-- Left side: Logo -->
+            <!-- feft side: Logo -->
             <div class="bottom-left">
                 <img src="/static/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
             </div>
 
-            <!-- Center: Links -->
+            <!-- center: Links -->
             <div class="bottom-center">
                 <a href="/help" class="footer-link">help</a>
                 <a href="/privacy" class="footer-link">privacy policy, legal</a>
                 <span class="footer-text">Developed by "MISIS Leaf Lovers" for "KOKOC hackathon"</span>
             </div>
 
-            <!-- Right side: Social Media -->
+            <!-- right side: Social media -->
             <div class="bottom-right">
                 <a href="https://vk.com/kokocgroup_ru" target="_blank">
                     <img src="/static/vk_icon.png" alt="VK" class="social-logo">
