@@ -270,6 +270,26 @@ body::-webkit-scrollbar {
     padding: 10px;
 }
 
+.like-button {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: auto;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.like-animation {
+    transform: scale(0.9);
+    filter: brightness(1.2);
+}
+
+.comment-button {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
 .news-photo {
     margin-right: 20px;
     flex: 0 0 35%; /* Fixed width for the photo */

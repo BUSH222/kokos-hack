@@ -42,7 +42,7 @@ def news():
 
     max_news_data = [news_data for _ in range(3)]
     
-    return render_template('news.html', data=max_news_data)
+    return render_template('news.html', data=max_news_data, post={'id': 1})
 
 @app.route('/forum')
 def forum():
@@ -59,7 +59,7 @@ def forum():
 
     max_news_data = [news_data for _ in range(3)]
     
-    return render_template('forum.html', data=max_news_data)
+    return render_template('forum.html', data=max_news_data, post={'id': 1})
 
 @app.route('/shop')
 def shop():

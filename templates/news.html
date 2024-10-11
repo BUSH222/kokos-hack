@@ -74,6 +74,12 @@
                     <img src="/static/eye.png" alt="User Profile Picture" class="user-pfp">
                     <span class="user-nickname">Admin</span>
                     <span class="post-date">{{ item.date_created }}</span>
+
+                    <!-- like button -->
+                    <img id="likeButton" src="/static/heart_icon_empty.png" alt="Like" class="like-button" onclick="toggleLike()">
+
+                    <!-- comment button -->
+                    <img id="commentButton" src="/static/comments_icon.png" alt="Comment" class="comment-button" onclick="redirectToPost('{{ post.id }}')">
                 </div>
             </div>
             <div class="news-title">
@@ -130,6 +136,30 @@
 
 
     <script>
+
+        function redirectToPost(postId) {
+            window.location.href = `/view-post?id=${postId}`;
+        }
+
+        // Function to toggle the like button between empty and filled states
+        function toggleLike() {
+            const likeButton = document.getElementById('likeButton');
+            
+            // Add a CSS class that triggers the animation
+            likeButton.classList.add('like-animation');
+
+            // Toggle the heart image
+            if (likeButton.src.includes("heart_icon_empty.png")) {
+                likeButton.src = "/static/heart_icon_filled.png";
+            } else {
+                likeButton.src = "/static/heart_icon_empty.png";
+            }
+
+            // Remove the animation class after the animation ends
+            setTimeout(() => {
+                likeButton.classList.remove('like-animation');
+            }, 300);
+        }
 
         function limitInputLength(input, maxLength) {
             console.log(input.value);

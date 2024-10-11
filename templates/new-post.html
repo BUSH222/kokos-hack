@@ -7,95 +7,86 @@
     <link rel="stylesheet" href="/static/new-post.css">
 </head>
 <body>
-    <!-- Navigation bar -->
-    <div class="navbar">
-        <ul>
-            <div class="left-side">
-                <li>
-                    <a href="/">
-                        <img src="/static/logo.png" alt="Website Logo" class="logo">
-                    </a>
-                </li>
-            </div>
-
-            <div class="center">
-                <li><a href="/news">Новости</a></li>
-                <li><a href="/games">Игры</a></li>
-                <li><a href="/shop">Магазин</a></li>
-                <li><a href="/about">О клубе</a></li>
-                <li><a href="/forum">Форум</a></li>
-            </div>
-
-            <div class="right-side">
-                {% if user_logged_in %}
+    <div class="main-wrapper">
+        <!-- Navigation bar -->
+        <div class="navbar">
+            <ul>
+                <div class="left-side">
                     <li>
-                        <a href="/account">
-                            <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                        <a href="/">
+                            <img src="/static/logo.png" alt="Website Logo" class="logo">
                         </a>
                     </li>
-                {% else %}
-                    <li><a href="/login">Войти</a></li>
-                {% endif %}
-            </div>
-        </ul>
-    </div>
+                </div>
 
-    <!-- Main container for creating a post -->
-    <div class="post-container">
-        <h1>Создать Новую Новость</h1>
-        <form action="/submit_post" method="post" enctype="multipart/form-data">
-            <!-- Post Title -->
-            <div class="form-group">
-                <label for="post-title">Заголовок:</label>
-                <input type="text" id="post-title" name="post-title" placeholder="Введите заголовок" required>
-            </div>
+                <div class="center">
+                    <li><a href="/news">Новости</a></li>
+                    <li><a href="/games">Игры</a></li>
+                    <li><a href="/shop">Магазин</a></li>
+                    <li><a href="/about">О клубе</a></li>
+                    <li><a href="/forum">Форум</a></li>
+                </div>
 
-            <!-- Tags -->
-            <div class="form-group">
-                <label for="post-tags">Теги:</label>
-                <input type="text" id="post-tags" name="post-tags" placeholder="Введите теги (разделяйте запятой)" required>
-            </div>
+                <div class="right-side">
+                    {% if user_logged_in %}
+                        <li>
+                            <a href="/account">
+                                <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                            </a>
+                        </li>
+                    {% else %}
+                        <li><a href="/login">Войти</a></li>
+                    {% endif %}
+                </div>
+            </ul>
+        </div>
 
-            <!-- Upload Image -->
-            <div class="form-group">
-                <label for="post-image">Изображение:</label>
-                <input type="file" id="post-image" name="post-image" accept="image/*" required>
+        <!-- Main content -->
+        <div class="content">
+            <div class="post-container">
+                <h1>Создать Новую Новость</h1>
+                <form action="/submit_post" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="post-title">Заголовок:</label>
+                        <input type="text" id="post-title" name="post-title" placeholder="Введите заголовок" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="post-tags">Теги:</label>
+                        <input type="text" id="post-tags" name="post-tags" placeholder="Введите теги (разделяйте запятой)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="post-image">Изображение:</label>
+                        <input type="file" id="post-image" name="post-image" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="post-content">Контент:</label>
+                        <textarea id="post-content" name="post-content" rows="10" placeholder="Введите текст новости..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="submit-button">Опубликовать</button>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <!-- Post Content -->
-            <div class="form-group">
-                <label for="post-content">Контент:</label>
-                <textarea id="post-content" name="post-content" rows="10" placeholder="Введите текст новости..." required></textarea>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="form-group">
-                <button type="submit" class="submit-button">Опубликовать</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Bottom Bar -->
-    <div class="bottom-bar">
-        <div class="bottom-bar-content">
-            <div class="bottom-left">
-                <img src="/static/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
-            </div>
-            <div class="bottom-center">
-                <a href="/help" class="footer-link">Help</a>
-                <a href="/privacy" class="footer-link">Privacy Policy</a>
-                <span class="footer-text">Developed by "MISIS Leaf Lovers" for "KOKOC hackathon"</span>
-            </div>
-            <div class="bottom-right">
-                <a href="https://vk.com/kokocgroup_ru" target="_blank">
-                    <img src="/static/vk_icon.png" alt="VK" class="social-logo">
-                </a>
-                <a href="https://t.me/kokocgroupru" target="_blank">
-                    <img src="/static/telegram_icon.png" alt="Telegram" class="social-logo">
-                </a>
-                <a href="https://www.youtube.com/@TVKokoc" target="_blank">
-                    <img src="/static/youtube_icon.png" alt="YouTube" class="social-logo">
-                </a>
+        <!-- Bottom Bar (Footer) -->
+        <div class="bottom-bar">
+            <div class="bottom-bar-content">
+                <div class="bottom-left">
+                    <img src="/static/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
+                </div>
+                <div class="bottom-center">
+                    <a href="/help" class="footer-link">Help</a>
+                    <a href="/privacy" class="footer-link">Privacy Policy</a>
+                    <span class="footer-text">Developed by "MISIS Leaf Lovers" for "KOKOC hackathon"</span>
+                </div>
+                <div class="bottom-right">
+                    <a href="https://vk.com/kokocgroup_ru" target="_blank"><img src="/static/vk_icon.png" alt="VK" class="social-logo"></a>
+                    <a href="https://t.me/kokocgroupru" target="_blank"><img src="/static/telegram_icon.png" alt="Telegram" class="social-logo"></a>
+                    <a href="https://www.youtube.com/@TVKokoc" target="_blank">
+                        <img src="/static/youtube_icon.png" alt="YouTube" class="social-logo">
+                    </a>
+                </div>
             </div>
         </div>
     </div>
