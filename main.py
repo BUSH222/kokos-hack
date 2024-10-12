@@ -244,9 +244,19 @@ def news():
             user['logged_in'] = True
             user['profile_picture_url'] = '/static/img/eye.png'
 
-        exec_string = """SELECT * FROM news WHERE"""
+        exec_string = """SELECT news.id,
+                        news.news_time,
+                        COUNT(news_likes.post_id) AS like_count,
+                        COUNT(news_comments.post_id) AS comment_count,
+                        news.title,
+                        news.tag,
+                        news.news_text
+                        FROM news
+                        LEFT JOIN news_likes ON news.id = news_likes.post_id
+                        LEFT JOIN news_comments ON news.id = news_comments.post_id
+                        GROUP BY news.id
+                        WHERE"""
         filter_params = []
-        thing = ['date_created', 'like_count', 'comment_count', 'title', 'tags', 'text']
         if request.args.get('search'):
             if exec_string.split(' ')[0] != "AND":
                 exec_string += " AND "
@@ -263,19 +273,19 @@ def news():
                 exec_string += " AND "
             exec_string += "WHERE tag LIKE %s"
             filter_params.append(f"%{request.args.get('tag')}%")
-        if exec_string == """SELECT * FROM news WHERE""":
-            exec_string = """SELECT * FROM news"""
+        if exec_string.endswith('WHERE'):
+            exec_string = exec_string[:-6]
         if request.args.get('pag'):
             if request.args.get('pag') == "desc":
                 exec_string += " ORDER BY date DESC"
             elif request.args.get('pag') == "asc":
                 exec_string += " ORDER BY date ASC"
-        print(exec_string)
         if len(filter_params) != 0:
             cur.execute(exec_string, filter_params)
         else:
             cur.execute(exec_string)
-        items = cur.fetchall()
+        news_fields = ['id', 'date_created', 'like_count', 'comment_count', 'title', 'tags', 'text']
+        items = [dict(zip(news_fields, i)) for i in cur.fetchall()]
         return render_template("news/news.html", data=items, user=user)
     if request.method == "POST":
         usr_input = request.json
