@@ -1,19 +1,15 @@
 import os
 from login import app_login, User
-from forum import app_forum
-from flask import Flask, render_template, request, url_for, flash, redirect, abort, jsonify, session
-from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user, current_user
+from flask import Flask, render_template, request, url_for, redirect, abort, jsonify
+from flask_login import LoginManager, login_required, logout_user, current_user
 from oauthlib.oauth2 import WebApplicationClient
 from collections import deque
 import time
 import psutil
 import requests
-from werkzeug.utils import secure_filename
 from secrets import token_urlsafe
-import json
 from dbloader import connect_to_db
 from settings_loader import get_processor_settings
-from logger import log_event
 from helper import GOOGLE_CLIENT_ID
 
 conn, cur = connect_to_db()
@@ -24,7 +20,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg'}
 
 app = Flask(__name__)
 app.register_blueprint(app_login)
-app.register_blueprint(app_forum)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = token_urlsafe(16)
 
@@ -43,6 +38,7 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 
 request_timestamps = deque()
+
 
 @app.before_request
 def track_requests():
@@ -73,7 +69,7 @@ def logout():
 
 @app.route("/")
 def main_page():
-    top_three_posts = cur.execute("SELECT TOP 3 * FROM forum").fetchone()
+    top_three_posts = cur.execute("SELECT * FROM forum").fetchone()
     top_three_selling_posts = cur.execute("SELECT * FROM forum ORDER BY sales DESC")
     cur.execute("""SELECT your_timestamp
                 FROM your_table
@@ -93,7 +89,8 @@ def account():
     profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = '', '', '', '', '', ''
     if request.method == 'GET':
         usr_id = current_user.id
-        cur.execute("SELECT profile_pic, name, fav_player, about_me, vk_acc, telegram_acc FROM users WHERE id = %s", (usr_id,))
+        cur.execute("SELECT profile_pic, name, fav_player, about_me, vk_acc, telegram_acc FROM users WHERE id = %s",
+                    (usr_id,))
         profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.fetchone()
 
         if vk_acc is None:
@@ -126,8 +123,8 @@ def change_user_data():
             vk_acc = "Не привязан"
         if telegram_acc is None:
             telegram_acc = "Не привязан"
-        return render_template("account/change_user_data.html", profile_pic=profile_pic, name=name, fav_player=fav_player,
-                               about_me=about_me, vk_acc=vk_acc, telegram_acc=telegram_acc)
+        return render_template("account/change_user_data.html", profile_pic=profile_pic, name=name,
+                               fav_player=fav_player, about_me=about_me, vk_acc=vk_acc, telegram_acc=telegram_acc)
 
     if request.method == 'POST':
         usr_id = current_user.id
@@ -141,7 +138,7 @@ def change_user_data():
                 for key in usr_input.keys():
                     if key in allowed_keys:
                         query = "UPDATE users SET %s = %s WHERE id = %s"
-                        cur.execute(query, (key,usr_input[key], usr_id))
+                        cur.execute(query, (key, usr_input[key], usr_id))
             conn.commit()
         except Exception:
             conn.rollback()

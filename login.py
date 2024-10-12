@@ -1,5 +1,5 @@
 from flask import redirect, render_template, request, url_for, session, Blueprint
-from flask_login import login_user, LoginManager, login_required, UserMixin, logout_user
+from flask_login import login_user, LoginManager, UserMixin
 from dbloader import connect_to_db
 from oauthlib.oauth2 import WebApplicationClient
 from helper import (GOOGLE_CLIENT_ID,
@@ -170,7 +170,7 @@ def callback():
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
         user_email = userinfo_response.json()["email"]
-        picture = userinfo_response.json()["picture"]
+        # picture = userinfo_response.json()["picture"] !! TODO
         username = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
