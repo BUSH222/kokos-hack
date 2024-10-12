@@ -268,7 +268,7 @@ def news():
         SELECT news.id,
                news.news_time AS date_created,
                COUNT(DISTINCT news_likes.post_id) AS like_count,
-               COUNT(DISTINCT news_comments.post_id) AS comment_count,
+               COUNT(news_comments.post_id) AS comment_count,
                news.title,
                news.tag AS tags,
                news.news_text AS text
@@ -308,32 +308,62 @@ def news():
         sql_params.append(date)
 
     # Execute the query
-    cur.execute(exec_string, tuple(sql_params))
+    cur.execute(exec_string, (sql_params, ))
     news_fields = ['id', 'date_created', 'like_count', 'comment_count', 'title', 'tags', 'text']
     items = [dict(zip(news_fields, i)) for i in cur.fetchall()]
 
     return render_template("news/news.html", data=items, user=user)
 
 
-@app.route('/news/view_story')
+@app.route('/view-story', methods=['GET', 'POST'])
 @login_required
 def view_story():
     if request.method == "GET":
-        cur.execute("""SELECT *
-                    FROM news
-                    WHERE product_name = %s""", (request.args.get('id'),))
-        items = cur.fetchall()
-        return render_template("news/view_story.html", items)
+        user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+        if current_user.is_authenticated:
+            user['logged_in'] = True
+            user['profile_picture_url'] = '/static/img/eye.png'
+        exec_string = """
+            SELECT news.id,
+                news.news_time AS date_created,
+                COUNT(DISTINCT news_likes.post_id) AS like_count,
+                COUNT(DISTINCT news_comments.post_id) AS comment_count,
+                news.title,
+                news.tag AS tags,
+                news.news_text AS text
+            FROM news
+            LEFT JOIN news_likes ON news.id = news_likes.post_id
+            LEFT JOIN news_comments ON news.id = news_comments.post_id
+            WHERE news.id = %s
+            GROUP BY news.id
+        """
+        cur.execute(exec_string, (request.args.get('id'), ))
+        news_fields = ['id', 'date_created', 'like_count', 'comment_count', 'title', 'tags', 'text']
+        items = dict(zip(news_fields, cur.fetchone()))
+        exec_string_2 = """
+            SELECT users.name,
+                users.profile_pic,
+                news_comments.comment_time,
+                news_comments.comment_text
+            FROM news_comments
+            JOIN users ON news_comments.user_id = users.id
+            WHERE news_comments.post_id = %s
+            ORDER BY news_comments.comment_time ASC
+                    """
+        news_fields2 = ['username', 'profile_picture_url', 'date_posted', 'text']
+        cur.execute(exec_string_2, (request.args.get('id'), ))
+        comments = [dict(zip(news_fields2, i)) for i in cur.fetchall()]
+        return render_template("news/view-story.html", data=items, user=user, comments=comments)
     if request.method == "POST":
-        usr_input = request.json
-        if usr_input["btn_type"] == "submit":
-            try:
-                cur.execute("""INSERT INTO news_comments (comment_time,post_id,user_id,comment_text)
-                VALUES (NOW(),%s,%s,%s)""", (request.args.get('id'), current_user.id, usr_input["comment_value"]))
-                conn.commit()
-            except Exception:
-                abort(500)
-                conn.rollback()
+        try:
+            cur.execute("""INSERT INTO news_comments (comment_time, post_id, user_id, comment_text)
+                            VALUES (NOW(),%s,%s,%s)""",
+                        (request.args.get('id'), current_user.id, request.form.get('comment')))
+            conn.commit()
+            return 'OK'
+        except Exception:
+            conn.rollback()
+            return "Error making comment"
 
 
 @app.route('/forum', methods=['GET', 'POST'])
@@ -346,51 +376,67 @@ def forum():
     i.e. tags,search,news_time etc.
     :return news.html OR if it gets an id option, returns one_new.html:
     """
-    if request.method == "GET":
-        exec_string = """SELECT * FROM news WHERE"""
-        filter_params = []
-        if request.args.get('search'):
-            if exec_string.split(' ')[0] != "AND":
-                exec_string += " AND "
-            exec_string += "WHERE title LIKE %s OR post_text LIKE %s"
-            filter_params.append(f"%{request.args.get('search')}%")
-            filter_params.append(f"%{request.args.get('search')}%")
-        if request.args.get('news_time'):
-            if exec_string.split(' ')[0] != "AND":
-                exec_string += " AND "
-            exec_string += "WHERE post_time = %s"
-            filter_params.append({request.args.get('news_time')})
-        if request.args.get('tags'):
-            if exec_string.split(' ')[0] != "AND":
-                exec_string += " AND "
-            exec_string += "WHERE tags LIKE %s"
-            filter_params.append(f"%{request.args.get('tags')}%")
-        if exec_string == """SELECT * FROM news WHERE""":
-            exec_string = """SELECT * FROM news"""
-        if request.args.get('pag'):
-            if request.args.get('pag') == "desc":
-                exec_string += " ORDER BY date DESC"
-            elif request.args.get('pag') == "asc":
-                exec_string += " ORDER BY date ASC"
+    user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+    if current_user.is_authenticated:
+        user['logged_in'] = True
+        user['profile_picture_url'] = '/static/img/eye.png'
 
-        if len(filter_params) != 0:
-            cur.execute(exec_string, filter_params)
-        else:
-            cur.execute(exec_string)
+    # Get search parameters
+    search_query = request.args.get('query', '').strip()
+    tags = request.args.get('tags', '').split(',') if request.args.get('tags') else []
+    date = request.args.get('date', None)
+    sort_order = request.args.get('sort', 'recent')  # Default to recent if not specified
 
-        items = cur.fetchall()
-        return render_template("forum/forum.html", items)
-    if request.method == "POST":
-        usr_input = request.json
-        if usr_input["btn_type"] == "find":
-            querry_str = 'forum?'
-            for key in usr_input.keys():
-                querry_str += f"{key}={usr_input[key]}&"
-            if querry_str[-1] == "&":
-                querry_str = querry_str[:-1]
-            return {'re': querry_str}
-        if "id" in usr_input.keys():
-            return {'re': f'forum/view_post?id={usr_input["id"]}'}
+    # Base SQL query
+    exec_string = """
+        SELECT forum.id,
+               forum.post_time AS date_created,
+               COUNT(DISTINCT forum_likes.post_id) AS like_count,
+               COUNT(DISTINCT forum_comments.post_id) AS comment_count,
+               forum.title,
+               forum.tag AS tags,
+               forum.forum_text AS text
+        FROM forum
+        LEFT JOIN forum_likes ON forum.id = forum_likes.post_id
+        LEFT JOIN forum_comments ON forum.id = forum_comments.post_id
+        WHERE 1=1
+    """
+    filters = []
+    if search_query:
+        filters.append("(forum.title ILIKE %s OR forum.forum_text ILIKE %s)")
+
+    if tags:
+        tag_filters = ' OR '.join(['forum.tag ILIKE %s'] * len(tags))
+        filters.append(f"({tag_filters})")
+    if date:
+        try:
+            datetime.strptime(date, '%Y-%m-%d')
+            print(date)
+            filters.append("DATE(forum.forum_time) = %s")
+        except ValueError:
+            pass  # Invalid date, skip the filter
+    if filters:
+        exec_string += " AND " + " AND ".join(filters)
+
+    # Sorting
+    if sort_order == 'top':
+        exec_string += " GROUP BY forum.id ORDER BY like_count DESC"
+    else:
+        exec_string += " GROUP BY forum.id ORDER BY forum.forum_time DESC"
+    sql_params = []
+    if search_query:
+        sql_params.extend([f"%{search_query}%", f"%{search_query}%"])
+    if tags:
+        sql_params.extend([f"%{tag}%" for tag in tags])
+    if date:
+        sql_params.append(date)
+
+    # Execute the query
+    cur.execute(exec_string, (sql_params, ))
+    forum_fields = ['id', 'date_created', 'author', 'like_count', 'comment_count', 'title', 'tags', 'text']
+    items = [dict(zip(forum_fields, i)) for i in cur.fetchall()]
+
+    return render_template("forum/forum.html", data=items, user=user)
 
 
 @app.route('/forum/view_post')

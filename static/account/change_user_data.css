@@ -17,20 +17,21 @@ body {
 
 body::-webkit-scrollbar {
     display: none;
-    width: 0;
-    background: transparent;
 }
 
+html::-webkit-scrollbar {
+    display: none;
+}
 
 .container {
-    max-width: 600px;
-    margin: 80px auto;
+    max-width: 600px; /* Keep this for larger screens */
+    width: 90%; /* Use percentage for smaller screens */
+    margin: 40px auto;
     background-color: #fff;
     padding: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 2px solid #ff4747;
     border-radius: 10px;
-    min-height: 100%;
 }
 
 h1 {
@@ -62,6 +63,13 @@ h1 {
     box-sizing: border-box;
     font-size: 14px;
     background-color: #f2f2f2;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="file"]:focus,
+.form-group textarea:focus {
+    border-color: #91e8b4;
+    outline: none;
 }
 
 .form-group textarea {
@@ -97,4 +105,31 @@ button[type="submit"]:hover {
     text-align: center;
     margin-top: 10px;
     font-size: 14px;
+}
+
+
+@media (max-width: 768px) {
+    .container {
+        margin: 20px 10px;
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+    }
+
+    button[type="submit"] {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        max-width: 100%;
+    }
 }
