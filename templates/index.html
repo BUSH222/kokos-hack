@@ -103,6 +103,7 @@
     </div>
 
     <div class="news-container">
+        <h3 class="team-info-header">Топ новостей</h3>
         <!-- news fields -->
         {% for item in data %}
         <div class="news-field">
@@ -137,23 +138,50 @@
         {% endfor %}
     </div>
 
+    <div class="shop-container">
+        <h4 class="team-info-header">Топ продаж</h4>
 
-    <!-- Bottom Bar -->
+        <!-- top sellers fields -->
+        {% for item in data %}
+        <div class="shop-field">
+            <div class="shop-title">
+                {{ item.title }}
+                <button class="buybutton">BUY NOW</button>
+            </div>
+            
+            <div class="shop-tags">
+                ₽ {{ item.price }}
+            </div>
+            <div class="shop-content">
+                <div class="shop-photo">
+                    <img src="{{ item.shop_photo_url }}" alt="Item Image">
+                </div>
+                <div class="shop-text">
+                    {{ item.text }}
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <!-- footer -->
     <div class="bottom-bar">
         <div class="bottom-bar-content">
-            <!-- Left side: Logo -->
+            <!-- feft side: Logo -->
             <div class="bottom-left">
                 <img src="/static/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
             </div>
 
-            <!-- Center: Links -->
+            <!-- center: Links -->
             <div class="bottom-center">
                 <a href="/help" class="footer-link">help</a>
                 <a href="/privacy" class="footer-link">privacy policy, legal</a>
                 <span class="footer-text">Developed by "MISIS Leaf Lovers" for "KOKOC hackathon"</span>
             </div>
 
-            <!-- Right side: Social Media -->
+            <!-- right side: Social media -->
             <div class="bottom-right">
                 <a href="https://vk.com/kokocgroup_ru" target="_blank">
                     <img src="/static/vk_icon.png" alt="VK" class="social-logo">

@@ -94,8 +94,7 @@ html, body {
 
 /* Game Page */
 .games-container {
-    padding: 100px 10%;
-    min-height: 100%;
+    padding: 100px 10% 0;
     margin: 0 auto;
 }
 
@@ -373,6 +372,127 @@ html, body {
 
 
 /* Bottom bar (footer) */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Main wrapper that ensures the footer stays at the bottom */
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures content + footer fills at least the height of the viewport */
+}
+
+/* Content area takes the remaining space, pushing footer to the bottom if necessary */
+.content {
+    flex: 1; /* Fills the remaining space in the viewport */
+    padding: 20px;
+}
+
+/* shop */
+.shop-container {
+    min-height: 100%;
+    margin: 0 auto;
+    padding: 20px 10%;
+}
+
+.shop-field {
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto; /* Centering the field */
+    border: 2px solid #ff4747;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+.shop-field:hover {
+    transform: scale(1.02);
+}
+
+.shop-title {
+    display: flex;
+    justify-content: space-between; /* Space between title and button */
+    align-items: center;            /* Vertically align title and button */
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    padding: 10px;                  /* Add some padding for better spacing */
+    background-color: #ffffff;
+    border-radius: 10px;
+}
+
+.shop-title span {
+    flex-grow: 1;                   /* Ensure title takes most of the space */
+    padding-right: 10px;            /* Add padding to create space between title and button */
+}
+
+.shop-tags {
+    font-size: 14px;
+    color: #777777;
+    margin-bottom: 20px;
+    padding-left:10px;
+}
+
+.tag {
+    text-transform: lowercase;
+    margin-right: 5px;
+}
+
+.shop-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch; /* Ensures both the image and text divs are the same height */
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.shop-photo {
+    margin-right: 20px;
+    flex: 0 0 35%; /* Fixed width for the photo */
+    height: auto; /* Let the image height adapt to its container */
+    border-radius: 30px;
+    overflow: hidden; /* Ensures the image won't overflow */
+}
+
+.shop-photo img {
+    width: 100%; /* Makes the image fill its container */
+    object-fit: cover; /* Ensures the image covers the entire space */
+}
+
+.shop-text {
+    flex: 1; /* Makes the text div fill the remaining width */
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    overflow-y: auto; /* Allows vertical scrolling if content is larger */
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    max-height: 100%; /* Limits height to ensure it's equal to the image */
+    word-wrap: break-word; /* Breaks long words to prevent overflow */
+    box-sizing: border-box; /* Ensures padding and border are included in width */
+}
+
+.shop-text::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #ff4747;
+    color: white;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Bottom bar (footer) */
 .bottom-bar {
     background-color: #ff4747;
     padding: 20px;
@@ -380,9 +500,8 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: fixed;
-    bottom: 0;
     z-index: 1000;
+    position: relative;
 }
 
 /* Flexbox layout for footer content */
