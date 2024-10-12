@@ -17,13 +17,10 @@ body {
 
 body::-webkit-scrollbar {
     display: none;
+    width: 0;
+    background: transparent;
 }
 
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
 
 .container {
     max-width: 600px;

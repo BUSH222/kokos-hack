@@ -320,8 +320,8 @@ def news():
 def view_story():
     if request.method == "GET":
         cur.execute("""SELECT *
-         FROM news
-         WHERE product_name = %s""", (request.args.get('id'),))
+                    FROM news
+                    WHERE product_name = %s""", (request.args.get('id'),))
         items = cur.fetchall()
         return render_template("news/view_story.html", items)
     if request.method == "POST":
