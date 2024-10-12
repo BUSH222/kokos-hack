@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кокос Групп ФК</title>
+    <link rel="stylesheet" href="static/index.css">
+</head>
+<body>
+    <!-- navigation bar -->
+    <div class="navbar">
+        <ul>
+            <div class="left-side">
+                <li>
+                    <a href="/">
+                        <img src="/static/logo.png" alt="Website Logo" class="logo">
+                    </a>
+                </li>
+            </div>
+
+            <div class="center">
+                <li><a href="/news">Новости</a></li>
+                <li><a href="/games">Игры</a></li>
+                <li><a href="/shop">Магазин</a></li>
+                <li><a href="/about">О клубе</a></li>
+                <li><a href="/forum">Форум</a></li>
+            </div>
+
+            <div class="right-side">
+                {% if user_logged_in %}
+                    <li>
+                        <a href="/account">
+                            <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                        </a>
+                    </li>
+                {% else %}
+                    <li><a href="/login">Войти</a></li>
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+    
+    <!-- game container -->
+    <div class="games-container">
+
+        <!-- current game section -->
+        <div class="current-game-row">
+            {% if current_game %}
+                <h2 class="live-indicator">В прямом эфире</h2>
+                <div class="game-row">
+                    <div class="teams">
+                        <div class="team1">
+                            <img src="{{ current_game.team1_logo_url }}" alt="{{ current_game.team1 }}" class="team-logo">
+                            <div class="team-name">{{ current_game.team1 }}</div>
+                        </div>
+                        <span class="vs">vs</span>
+                        <div class="team2">
+                            <img src="{{ current_game.team2_logo_url }}" alt="{{ current_game.team2 }}" class="team-logo">
+                            <div class="team-name">{{ current_game.team2 }}</div>
+                        </div>
+                    </div>
+                    <div class="datetime">
+                        {{ current_game.datetime }}
+                    </div>
+                    <div class="view-stats">
+                        <a href="/view-game?id={{ current_game.id }}" class="register-match">Смотреть</a>
+                    </div>
+                </div>
+            {% else %}
+                <h2 class="live-indicator">Ближайшая игра</h2>
+                <div class="next-game-row">
+                    <div class="teams">
+                        <div class="team1">
+                            <img src="{{ upcoming_game.team1_logo_url }}" alt="{{ upcoming_game.team1 }}" class="team-logo">
+                            <div class="team-name">{{ upcoming_game.team1 }}</div>
+                        </div>
+                        <span class="vs">vs</span>
+                        <div class="team2">
+                            <img src="{{ upcoming_game.team2_logo_url }}" alt="{{ upcoming_game.team2 }}" class="team-logo">
+                            <div class="team-name">{{ upcoming_game.team2 }}</div>
+                        </div>
+                    </div>
+                    <div class="datetime">
+                        {{ upcoming_game.datetime }}
+                    </div>
+                    <div class="view-stats">
+                        <a href="/order-ticket?id={{ upcoming_game.id }}" class="register-match">Заказать билет</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="team-info-row">
+        <h2 class="team-info-header">О клубе "Кокос групп ФК"</h2>
+        <div class="game-row">
+            <div class="team-info">
+                <p>
+                    "Кокос групп ФК" — это команда с большим энтузиазмом и любовью к футболу. Мы стремимся к победам, объединяя игроков и болельщиков на каждом этапе. Наш клуб всегда открыт для новых идей и поддерживает командный дух.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="news-container">
+        <h3 class="team-info-header">Топ новостей</h3>
+        <!-- news fields -->
+        {% for item in data %}
+        <div class="news-field">
+            <div class="news-header">
+                <div class="comment-user">
+                    <img src="/static/eye.png" alt="User Profile Picture" class="user-pfp">
+                    <span class="user-nickname">Admin</span>
+                    <span class="post-date">{{ item.date_created }}</span>
+                </div>
+
+                <!-- Positioning likes and comments section here -->
+                <div class="social-interaction">
+                    <div class="like-section">
+                        <img id="likeButton-{{ item.id }}" src="/static/heart_icon_empty.png" alt="Like" class="like-button" onclick="toggleLike('{{ item.id }}')">
+                        <span id="likeCount-{{ item.id }}" class="like-count">{{ item.like_count or 0 }}</span>
+                    </div>
+                    <div class="comment-section">
+                        <img id="commentButton-{{ item.id }}" src="/static/comments_icon.png" alt="Comment" class="comment-button" onclick="redirectToPost('{{ item.id }}')">
+                        <span id="commentCount-{{ item.id }}" class="comment-count">{{ item.comment_count or 0 }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="news-title">{{ item.title }}</div>
+            <div class="news-tags">{{ item.tags }}</div>
+            <div class="news-content">
+                <div class="news-photo">
+                    <img src="{{ item.news_photo_url }}" alt="News Image">
+                </div>
+                <div class="news-text">{{ item.text }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="shop-container">
+        <h4 class="team-info-header">Топ продаж</h4>
+
+        <!-- top sellers fields -->
+        {% for item in data %}
+        <div class="shop-field">
+            <div class="shop-title">
+                {{ item.title }}
+                <button class="buybutton">BUY NOW</button>
+            </div>
+            
+            <div class="shop-tags">
+                ₽ {{ item.price }}
+            </div>
+            <div class="shop-content">
+                <div class="shop-photo">
+                    <img src="{{ item.shop_photo_url }}" alt="Item Image">
+                </div>
+                <div class="shop-text">
+                    {{ item.text }}
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <!-- footer -->
+    <div class="bottom-bar">
+        <div class="bottom-bar-content">
+            <!-- feft side: Logo -->
+            <div class="bottom-left">
+                <img src="/static/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
+            </div>
+
+            <!-- center: Links -->
+            <div class="bottom-center">
+                <a href="/help" class="footer-link">help</a>
+                <a href="/privacy" class="footer-link">privacy policy, legal</a>
+                <span class="footer-text">Developed by "MISIS Leaf Lovers" for "KOKOC hackathon"</span>
+            </div>
+
+            <!-- right side: Social media -->
+            <div class="bottom-right">
+                <a href="https://vk.com/kokocgroup_ru" target="_blank">
+                    <img src="/static/vk_icon.png" alt="VK" class="social-logo">
+                </a>
+                <a href="https://t.me/kokocgroupru" target="_blank">
+                    <img src="/static/telegram_icon.png" alt="Telegram" class="social-logo">
+                </a>
+                <a href="https://www.youtube.com/@TVKokoc" target="_blank">
+                    <img src="/static/youtube_icon.png" alt="YouTube" class="social-logo">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function redirectToPost(postId) {
+            window.location.href = `/view-post?id=${postId}`;
+        }
+
+        function toggleLike(postId) {
+            const likeButton = document.getElementById('likeButton-' + postId);
+            const likeCountSpan = document.getElementById('likeCount-' + postId);
+            let currentCount = parseInt(likeCountSpan.innerText);
+
+            // Add a CSS class for animation
+            likeButton.classList.add('like-animation');
+
+            // Toggle the heart icon and like count
+            if (likeButton.src.includes("heart_icon_empty.png")) {
+                likeButton.src = "/static/heart_icon_filled.png";
+                currentCount += 1;
+            } else {
+                likeButton.src = "/static/heart_icon_empty.png";
+                currentCount -= 1;
+            }
+
+            // Update the like count display
+            likeCountSpan.innerText = currentCount;
+
+            // Remove animation class after it's done
+            setTimeout(() => {
+                likeButton.classList.remove('like-animation');
+            }, 300);
+        }
+    </script>
+
+</body>
+</html>
