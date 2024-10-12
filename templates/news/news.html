@@ -166,13 +166,34 @@
             }
         }
 
-        // search
         function performSearch() {
-            const searchQuery = document.getElementById('searchInput').value;
-            if (searchQuery) {
-                window.location.href = `/search?query=${encodeURIComponent(searchQuery)}`;
-            }
+            // Get the search query from the input
+            const searchQuery = document.getElementById('searchInput').value.trim();
+            
+            // Get the selected tags
+            const tags = Array.from(document.getElementsByClassName('tag')).map(tag => tag.textContent.trim().slice(0, -2)); // Remove the '×' at the end
+            
+            // Get the date from the date picker
+            const date = document.getElementById('datePicker').value;
+            
+            // Get the sort order (Top or Recent) from the dropdown
+            const sortOrder = document.getElementById('filterDropdown').value;
+
+            // Construct the query string
+            let queryString = '/news?';
+            if (searchQuery) queryString += `query=${encodeURIComponent(searchQuery)}&`;
+            if (tags.length > 0) queryString += `tags=${encodeURIComponent(tags.join(','))}&`;
+            if (date) queryString += `date=${encodeURIComponent(date)}&`;
+            if (sortOrder) queryString += `sort=${encodeURIComponent(sortOrder)}&`;
+
+            // Remove any trailing '&' or '?' from the query string
+            queryString = queryString.replace(/[&?]$/, '');
+
+            // Redirect to the constructed URL
+            window.location.href = queryString;
         }
+
+    
 
         document.getElementById('searchInput').addEventListener('keypress', function (event) {
             if (event.key === 'Enter') {

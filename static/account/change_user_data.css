@@ -19,23 +19,32 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 .container {
-    max-width: 800px;
-    margin: 100px auto; /* To account for fixed navbar */
+    max-width: 600px;
+    margin: 80px auto;
     background-color: #fff;
-    padding: 20px;
+    padding: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 2px solid #ff4747;
     border-radius: 10px;
+    min-height: 100%;
 }
 
 h1 {
     color: #ff4747;
     text-align: center;
+    font-size: 22px;
+    margin-bottom: 15px;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .form-group label {
@@ -43,27 +52,28 @@ h1 {
     font-weight: bold;
     margin-bottom: 5px;
     color: #ff4747;
+    font-size: 14px;
 }
 
 .form-group input[type="text"],
 .form-group input[type="file"],
 .form-group textarea {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     border: 2px solid #ff4747;
     border-radius: 5px;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 14px;
     background-color: #f2f2f2;
 }
 
 .form-group textarea {
     resize: vertical;
-    min-height: 100px;
+    min-height: 80px;
 }
 
 #profile_pic_preview {
-    max-width: 150px;
+    max-width: 100px;
     border-radius: 50%;
     display: block;
     margin: 10px auto;
@@ -72,11 +82,11 @@ h1 {
 button[type="submit"] {
     background-color: #ff4747;
     color: white;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     display: block;
     margin: 0 auto;
 }
@@ -89,4 +99,5 @@ button[type="submit"]:hover {
     color: red;
     text-align: center;
     margin-top: 10px;
+    font-size: 14px;
 }

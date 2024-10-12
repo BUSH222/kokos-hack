@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, url_for, redirect, abort, jso
 from flask_login import LoginManager, login_required, logout_user, current_user
 from oauthlib.oauth2 import WebApplicationClient
 from collections import deque
+from datetime import datetime
 import time
 import psutil
 import requests
@@ -228,76 +229,90 @@ def shop():
     return render_template("shop/shop.html", data=items, user=user)
 
 
-@app.route('/news', methods=['GET', 'POST'])
+@app.route('/news', methods=['GET'])
 def news():
     """
-    GET:contains all news items, but only names and photos so they can be placed in slides
-    parses info from db and places it back via jinja
-    POST:this b requests json that contains "find" field with "yes", after which it redirects
-    you to itself but with all search options that are inside json that comes with find field
-    i.e. tags,search,news_time etc.
-    :return news.html OR if it gets an id option, returns one_new.html:
-    """
-    if request.method == "GET":
-        user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
-        if current_user.is_authenticated:
-            user['logged_in'] = True
-            user['profile_picture_url'] = '/static/img/eye.png'
+    GET: Renders the news page with a list of filtered and sorted news items.
 
-        exec_string = """SELECT news.id,
-                        news.news_time,
-                        COUNT(news_likes.post_id) AS like_count,
-                        COUNT(news_comments.post_id) AS comment_count,
-                        news.title,
-                        news.tag,
-                        news.news_text
-                        FROM news
-                        LEFT JOIN news_likes ON news.id = news_likes.post_id
-                        LEFT JOIN news_comments ON news.id = news_comments.post_id
-                        GROUP BY news.id
-                        WHERE"""
-        filter_params = []
-        if request.args.get('search'):
-            if exec_string.split(' ')[0] != "AND":
-                exec_string += " AND "
-            exec_string += "WHERE title LIKE %s OR news_text LIKE %s"
-            filter_params.append(f"%{request.args.get('search')}%")
-            filter_params.append(f"%{request.args.get('search')}%")
-        if request.args.get('news_time'):
-            if exec_string.split(' ')[0] != "AND":
-                exec_string += " AND "
-            exec_string += "WHERE news_time = %s"
-            filter_params.append({request.args.get('news_time')})
-        if request.args.get('tags'):
-            if exec_string.split(' ')[0] != "AND":
-                exec_string += " AND "
-            exec_string += "WHERE tag LIKE %s"
-            filter_params.append(f"%{request.args.get('tag')}%")
-        if exec_string.endswith('WHERE'):
-            exec_string = exec_string[:-6]
-        if request.args.get('pag'):
-            if request.args.get('pag') == "desc":
-                exec_string += " ORDER BY date DESC"
-            elif request.args.get('pag') == "asc":
-                exec_string += " ORDER BY date ASC"
-        if len(filter_params) != 0:
-            cur.execute(exec_string, filter_params)
-        else:
-            cur.execute(exec_string)
-        news_fields = ['id', 'date_created', 'like_count', 'comment_count', 'title', 'tags', 'text']
-        items = [dict(zip(news_fields, i)) for i in cur.fetchall()]
-        return render_template("news/news.html", data=items, user=user)
-    if request.method == "POST":
-        usr_input = request.json
-        if usr_input["btn_type"] == "find":
-            querry_str = 'news?'
-            for key in usr_input.keys():
-                querry_str += f"{key}={usr_input[key]}&"
-            if querry_str[-1] == "&":
-                querry_str = querry_str[:-1]
-            return {'re': querry_str}
-        if "id" in usr_input.keys():
-            return {'re': f'news/view_story?id={usr_input["id"]}'}
+    Behavior:
+    - Retrieves news items from the database, applying filters and sorting based on the given query parameters.
+    - Filters news based on a search term in the title or content, specific tags, and a date if provided.
+    - Defaults to showing the most recent news if no filters are applied.
+    - Allows sorting by either the number of likes (for "top" posts) or by date (for "recent" posts).
+
+    Query Parameters:
+        query (str, optional): A search string to filter news by title or content.
+        tags (str, optional): A comma-separated list of tags to filter news by. Each tag can be up to 10 characters long.
+        date (str, optional): A specific date (in 'YYYY-MM-DD' format) to filter news items. Only news posted on or after the given date will be shown.
+        sort (str, optional): Determines the sorting order. Options are:
+            'recent': Sort news by the most recent posts (default).
+            'top': Sort news by the number of likes (most liked posts appear first).
+
+    Returns:
+        Rendered news template.
+    """
+
+    user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+    if current_user.is_authenticated:
+        user['logged_in'] = True
+        user['profile_picture_url'] = '/static/img/eye.png'
+
+    # Get search parameters
+    search_query = request.args.get('query', '').strip()
+    tags = request.args.get('tags', '').split(',') if request.args.get('tags') else []
+    date = request.args.get('date', None)
+    sort_order = request.args.get('sort', 'recent')  # Default to recent if not specified
+
+    # Base SQL query
+    exec_string = """
+        SELECT news.id,
+               news.news_time AS date_created,
+               COUNT(DISTINCT news_likes.post_id) AS like_count,
+               COUNT(DISTINCT news_comments.post_id) AS comment_count,
+               news.title,
+               news.tag AS tags,
+               news.news_text AS text
+        FROM news
+        LEFT JOIN news_likes ON news.id = news_likes.post_id
+        LEFT JOIN news_comments ON news.id = news_comments.post_id
+        WHERE 1=1
+    """
+    filters = []
+    if search_query:
+        filters.append(f"(news.title ILIKE %s OR news.news_text ILIKE %s)")
+
+    if tags:
+        tag_filters = ' OR '.join(['news.tag ILIKE %s'] * len(tags))
+        filters.append(f"({tag_filters})")
+    if date:
+        try:
+            datetime.strptime(date, '%Y-%m-%d')
+            print(date)
+            filters.append("DATE(news.news_time) = %s")
+        except ValueError:
+            pass  # Invalid date, skip the filter
+    if filters:
+        exec_string += " AND " + " AND ".join(filters)
+
+    # Sorting
+    if sort_order == 'top':
+        exec_string += " GROUP BY news.id ORDER BY like_count DESC"
+    else:
+        exec_string += " GROUP BY news.id ORDER BY news.news_time DESC"
+    sql_params = []
+    if search_query:
+        sql_params.extend([f"%{search_query}%", f"%{search_query}%"])
+    if tags:
+        sql_params.extend([f"%{tag}%" for tag in tags])
+    if date:
+        sql_params.append(date)
+
+    # Execute the query
+    cur.execute(exec_string, tuple(sql_params))
+    news_fields = ['id', 'date_created', 'like_count', 'comment_count', 'title', 'tags', 'text']
+    items = [dict(zip(news_fields, i)) for i in cur.fetchall()]
+
+    return render_template("news/news.html", data=items, user=user)
 
 
 @app.route('/news/view_story')
