@@ -348,8 +348,7 @@ def view_story():
             FROM news_comments
             JOIN users ON news_comments.user_id = users.id
             WHERE news_comments.post_id = %s
-            ORDER BY news_comments.comment_time ASC
-                    """
+            ORDER BY news_comments.comment_time DESC"""
         news_fields2 = ['username', 'profile_picture_url', 'date_posted', 'text']
         cur.execute(exec_string_2, (request.args.get('id'), ))
         comments = [dict(zip(news_fields2, i)) for i in cur.fetchall()]
@@ -393,9 +392,10 @@ def forum():
                forum.post_time AS date_created,
                COUNT(DISTINCT forum_likes.post_id) AS like_count,
                COUNT(DISTINCT forum_comments.post_id) AS comment_count,
+               forum.author
                forum.title,
                forum.tag AS tags,
-               forum.forum_text AS text
+               forum.post_text AS text
         FROM forum
         LEFT JOIN forum_likes ON forum.id = forum_likes.post_id
         LEFT JOIN forum_comments ON forum.id = forum_comments.post_id
@@ -403,7 +403,7 @@ def forum():
     """
     filters = []
     if search_query:
-        filters.append("(forum.title ILIKE %s OR forum.forum_text ILIKE %s)")
+        filters.append("(forum.title ILIKE %s OR forum.post_text ILIKE %s)")
 
     if tags:
         tag_filters = ' OR '.join(['forum.tag ILIKE %s'] * len(tags))
@@ -412,7 +412,7 @@ def forum():
         try:
             datetime.strptime(date, '%Y-%m-%d')
             print(date)
-            filters.append("DATE(forum.forum_time) = %s")
+            filters.append("DATE(forum.post_time) = %s")
         except ValueError:
             pass  # Invalid date, skip the filter
     if filters:
@@ -422,7 +422,7 @@ def forum():
     if sort_order == 'top':
         exec_string += " GROUP BY forum.id ORDER BY like_count DESC"
     else:
-        exec_string += " GROUP BY forum.id ORDER BY forum.forum_time DESC"
+        exec_string += " GROUP BY forum.id ORDER BY forum.post_time DESC"
     sql_params = []
     if search_query:
         sql_params.extend([f"%{search_query}%", f"%{search_query}%"])
