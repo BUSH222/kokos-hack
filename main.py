@@ -216,7 +216,6 @@ def shop():
     if current_user.is_authenticated:
         user['logged_in'] = True
         user['profile_picture_url'] = '/static/img/eye.png'
-    
     cur.execute("SELECT product_name, price, picture, description FROM shop")
     items_fields = ['title', 'price', 'news_photo_url', 'text']
     items = [dict(zip(items_fields, a)) for a in cur.fetchall()]
@@ -242,8 +241,9 @@ def news():
 
     Query Parameters:
         query (str, optional): A search string to filter news by title or content.
-        tags (str, optional): A comma-separated list of tags to filter news by. Each tag can be up to 10 characters long.
-        date (str, optional): A specific date (in 'YYYY-MM-DD' format) to filter news items. Only news posted on or after the given date will be shown.
+        tags (str, optional): A comma-separated list of tags to filter news by. Each tag can be up to 10 chars long.
+        date (str, optional): A specific date (in 'YYYY-MM-DD' format) to filter news items.
+            Only news posted on or after the given date will be shown.
         sort (str, optional): Determines the sorting order. Options are:
             'recent': Sort news by the most recent posts (default).
             'top': Sort news by the number of likes (most liked posts appear first).
@@ -279,7 +279,7 @@ def news():
     """
     filters = []
     if search_query:
-        filters.append(f"(news.title ILIKE %s OR news.news_text ILIKE %s)")
+        filters.append("(news.title ILIKE %s OR news.news_text ILIKE %s)")
 
     if tags:
         tag_filters = ' OR '.join(['news.tag ILIKE %s'] * len(tags))
