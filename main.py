@@ -201,39 +201,31 @@ def change_user_data():
             abort(304)
 
 
-@app.route('/shop', methods=['GET', 'POST'])
+@app.route('/shop', methods=['GET'])
 def shop():
     """
     GET:contains all shop items, but only names and photos so they can be placed in slides
     parses info from db and places it back via jinja
-    POST:expects ?search=string and makes new db request that is placed back in html form via jinja
+        expects ?search=string and makes new db request that is placed back in html form via jinja
     or redirects to itself with id and returns page of a certain item, when clicked
     So, lets get to it folks
     :return shop.html:
     """
-    if request.method == "GET":
-        user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
-        if current_user.is_authenticated:
-            user['logged_in'] = True
-            user['profile_picture_url'] = '/static/img/eye.png'
-        
-        cur.execute("SELECT product_name, price, picture, description FROM shop")
-        items_fields = ['title', 'price', 'news_photo_url', 'text']
+    user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+    if current_user.is_authenticated:
+        user['logged_in'] = True
+        user['profile_picture_url'] = '/static/img/eye.png'
+    
+    cur.execute("SELECT product_name, price, picture, description FROM shop")
+    items_fields = ['title', 'price', 'news_photo_url', 'text']
+    items = [dict(zip(items_fields, a)) for a in cur.fetchall()]
+    if request.args.get('query'):
+        cur.execute("""SELECT product_name, price, picture, description
+                        FROM shop
+                        WHERE LOWER(product_name) LIKE %s""", (f"%{request.args.get('query').lower()}%",))
         items = [dict(zip(items_fields, a)) for a in cur.fetchall()]
-        if request.args.get('query'):
-            cur.execute("""SELECT product_name, price, picture, description
-                            FROM shop
-                            WHERE LOWER(product_name) LIKE %s""", (f"%{request.args.get('query').lower()}%",))
-            items = [dict(zip(items_fields, a)) for a in cur.fetchall()]
-            return render_template("shop/shop.html", data=items, user=user)
-        print(items)
         return render_template("shop/shop.html", data=items, user=user)
-    if request.method == "POST":
-        usr_input = request.json
-        if usr_input['btn_type'] == "search":
-            return {'re': f'shop?search={usr_input["search"]}'}
-        if "id" in usr_input.keys():
-            return {'re': f'shop?id={usr_input["id"]}'}
+    return render_template("shop/shop.html", data=items, user=user)
 
 
 @app.route('/news', methods=['GET', 'POST'])
@@ -247,8 +239,14 @@ def news():
     :return news.html OR if it gets an id option, returns one_new.html:
     """
     if request.method == "GET":
+        user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+        if current_user.is_authenticated:
+            user['logged_in'] = True
+            user['profile_picture_url'] = '/static/img/eye.png'
+
         exec_string = """SELECT * FROM news WHERE"""
         filter_params = []
+        thing = ['date_created', 'like_count', 'comment_count', 'title', 'tags', 'text']
         if request.args.get('search'):
             if exec_string.split(' ')[0] != "AND":
                 exec_string += " AND "
@@ -272,14 +270,13 @@ def news():
                 exec_string += " ORDER BY date DESC"
             elif request.args.get('pag') == "asc":
                 exec_string += " ORDER BY date ASC"
-
+        print(exec_string)
         if len(filter_params) != 0:
             cur.execute(exec_string, filter_params)
         else:
             cur.execute(exec_string)
-
         items = cur.fetchall()
-        return render_template("news/news.html", items)
+        return render_template("news/news.html", data=items, user=user)
     if request.method == "POST":
         usr_input = request.json
         if usr_input["btn_type"] == "find":
