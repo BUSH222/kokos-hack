@@ -23,9 +23,11 @@ app.register_blueprint(app_login)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = token_urlsafe(16)
 
-config = []
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'app_login.login'
+
+config = []
+
 conn, cur = connect_to_db()
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
@@ -64,7 +66,7 @@ def load_user(user_id):
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('app_login.login'))
 
 
 @app.route("/")
