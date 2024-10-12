@@ -36,11 +36,6 @@ def load_user(user_id):
     return None
 
 
-@app_login.route('/')
-def index():
-    return render_template("login_with.html")
-
-
 @app_login.route('/login', methods=['GET', 'POST'])
 def login():
     """Choosing an entry method and logging in
@@ -80,7 +75,7 @@ def login():
                 scope=["openid", "email", "profile"], )
             return redirect(request_uri)
 
-    return render_template('login.html', change=change)
+    return render_template('login/login.html', change=change)
 
 
 @app_login.route('/login_yandex', methods=['GET', 'POST'])

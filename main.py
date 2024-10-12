@@ -80,7 +80,7 @@ def main_page():
                 ORDER BY ABS(TIMESTAMPDIFF(SECOND, your_timestamp, NOW())) ASC
                 LIMIT 1;""")
     closest_game = cur.fetchone()
-    return render_template("main_page.html", posts=top_three_posts, products=top_three_selling_posts,
+    return render_template("index/index.html", posts=top_three_posts, products=top_three_selling_posts,
                            closest_game=closest_game)
 
 
@@ -104,7 +104,7 @@ def account():
         usr_input = request.json
         if usr_input["btn_type"] == "change_user_data":
             return {'re': '/account/change_account_data'}
-    return render_template('/account/account.html', profile_pic=profile_pic, name=name, fav_player=fav_player,
+    return render_template('account/account.html', profile_pic=profile_pic, name=name, fav_player=fav_player,
                            about_me=about_me, telegram_acc=telegram_acc, vk_acc=vk_acc)
 
 
@@ -126,7 +126,7 @@ def change_user_data():
             vk_acc = "Не привязан"
         if telegram_acc is None:
             telegram_acc = "Не привязан"
-        return render_template("change_user_data.html", profile_pic=profile_pic, name=name, fav_player=fav_player,
+        return render_template("account/change_user_data.html", profile_pic=profile_pic, name=name, fav_player=fav_player,
                                about_me=about_me, vk_acc=vk_acc, telegram_acc=telegram_acc)
 
     if request.method == 'POST':
@@ -148,6 +148,7 @@ def change_user_data():
             print("БАЗЫ ДАЛИ ЗАЗЫ " * 5)
             abort(304)
 
+
 @app.route('/shop', methods=['GET', 'POST'])
 def shop():
     """
@@ -160,19 +161,13 @@ def shop():
     """
     if request.method == "GET":
         items = cur.execute("SELECT id,picture,product_name FROM shop").fetchall()
-        if request.args.get('id'):
-            cur.execute("""SELECT picture,product_name,description,price
-             FROM shop
-             WHERE id = %s""", (request.args.get('id'),))
-            items = cur.fetchall()
-            return render_template("item.html", items)
         if request.args.get('search'):
             cur.execute("""SELECT picture,product_name,
                             FROM shop
                             WHERE product_name LIKE %s""", (f"%{request.args.get('search')}%",))
             items = cur.fetchall()
-            return render_template("shop.html", items)
-        return render_template("shop.html", items)
+            return render_template("shop/shop.html", items)
+        return render_template("shop/shop.html", items)
     if request.method == "POST":
         usr_input = request.json
         if usr_input['btn_type'] == "search":
@@ -224,7 +219,7 @@ def news():
             cur.execute(exec_string)
 
         items = cur.fetchall()
-        return render_template("news.html", items)
+        return render_template("news/news.html", items)
     if request.method == "POST":
         usr_input = request.json
         if usr_input["btn_type"] == "find":
@@ -246,7 +241,7 @@ def view_story():
          FROM news
          WHERE product_name = %s""", (request.args.get('id'),))
         items = cur.fetchall()
-        return render_template("view_story.html", items)
+        return render_template("news/view_story.html", items)
     if request.method == "POST":
         usr_input = request.json
         if usr_input["btn_type"] == "submit":
@@ -302,7 +297,7 @@ def forum():
             cur.execute(exec_string)
 
         items = cur.fetchall()
-        return render_template("forum.html", items)
+        return render_template("forum/forum.html", items)
     if request.method == "POST":
         usr_input = request.json
         if usr_input["btn_type"] == "find":
@@ -324,7 +319,7 @@ def view_post():
          FROM news
          WHERE product_name = %s""", (request.args.get('id'),))
         items = cur.fetchall()
-        return render_template("view_post.html", items)
+        return render_template("forum/view_post.html", items)
     if request.method == "POST":
         usr_input = request.json
         if usr_input["btn_type"] == "submit":
@@ -341,7 +336,7 @@ def view_post():
 @login_required
 def new_post():
     if request.method == "GET":
-        return render_template("new_post.html")
+        return render_template("forum/new_post.html")
     if request.method == "POST":
         usr_input = request.json
         if usr_input["btn_type"] == "submit":
