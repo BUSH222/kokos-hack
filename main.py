@@ -212,14 +212,22 @@ def shop():
     :return shop.html:
     """
     if request.method == "GET":
-        items = cur.execute("SELECT id,picture,product_name FROM shop").fetchall()
-        if request.args.get('search'):
-            cur.execute("""SELECT picture,product_name,
+        user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+        if current_user.is_authenticated:
+            user['logged_in'] = True
+            user['profile_picture_url'] = '/static/img/eye.png'
+        
+        cur.execute("SELECT product_name, price, picture, description FROM shop")
+        items_fields = ['title', 'price', 'news_photo_url', 'text']
+        items = [dict(zip(items_fields, a)) for a in cur.fetchall()]
+        if request.args.get('query'):
+            cur.execute("""SELECT product_name, price, picture, description
                             FROM shop
-                            WHERE product_name LIKE %s""", (f"%{request.args.get('search')}%",))
-            items = cur.fetchall()
-            return render_template("shop/shop.html", items)
-        return render_template("shop/shop.html", items)
+                            WHERE LOWER(product_name) LIKE %s""", (f"%{request.args.get('query').lower()}%",))
+            items = [dict(zip(items_fields, a)) for a in cur.fetchall()]
+            return render_template("shop/shop.html", data=items, user=user)
+        print(items)
+        return render_template("shop/shop.html", data=items, user=user)
     if request.method == "POST":
         usr_input = request.json
         if usr_input['btn_type'] == "search":
