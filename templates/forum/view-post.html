@@ -27,7 +27,7 @@
             </div>
 
             <div class="right-side">
-                {% if user_logged_in %}
+                {% if user.logged_in %}
                     <li>
                         <a href="/account">
                             <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
@@ -91,8 +91,8 @@
                 {% for comment in comments %}
                 <div class="comment">
                     <div class="comment-user">
-                        <img src="{{ comment.user.profile_picture_url }}" alt="User Profile Picture" class="comment-pfp">
-                        <span class="comment-username">{{ comment.user.username }}</span>
+                        <img src="{{ comment.profile_picture_url }}" alt="User Profile Picture" class="comment-pfp">
+                        <span class="comment-username">{{ comment.username }}</span>
                         <span class="comment-date">{{ comment.date_posted }}</span>
                     </div>
                     <div class="comment-text">
@@ -168,6 +168,35 @@
             const commentSection = document.querySelector('.news-newcomment');
             commentSection.scrollIntoView({ behavior: 'smooth' });
         }
+        
+        function postComment() {
+            const commentText = document.getElementById('searchInput').value;
+            const urlParams = new URLSearchParams(window.location.search); // Get current URL parameters
+
+            fetch(`/view-post?${urlParams.toString()}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'comment': commentText
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data === 'OK') {
+                    location.reload();  // Refresh the page if the response is 'OK'
+                } else {
+                    alert(data);  // Alert the user if the response is not 'OK'
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while posting the comment.');
+            });
+        }
+
+        
     </script>
 </body>
 </html>

@@ -267,7 +267,7 @@ def news():
     exec_string = """
         SELECT news.id,
                news.news_time AS date_created,
-               COUNT(DISTINCT news_likes.post_id) AS like_count,
+               COUNT(news_likes.post_id) AS like_count,
                COUNT(news_comments.post_id) AS comment_count,
                news.title,
                news.tag AS tags,
@@ -326,8 +326,8 @@ def view_story():
         exec_string = """
             SELECT news.id,
                 news.news_time AS date_created,
-                COUNT(DISTINCT news_likes.post_id) AS like_count,
-                COUNT(DISTINCT news_comments.post_id) AS comment_count,
+                COUNT(news_likes.post_id) AS like_count,
+                COUNT(news_comments.post_id) AS comment_count,
                 news.title,
                 news.tag AS tags,
                 news.news_text AS text
@@ -390,9 +390,9 @@ def forum():
     exec_string = """
         SELECT forum.id,
                forum.post_time AS date_created,
-               COUNT(DISTINCT forum_likes.post_id) AS like_count,
-               COUNT(DISTINCT forum_comments.post_id) AS comment_count,
-               forum.author
+               forum.author,
+               COUNT(forum_likes.post_id) AS like_count,
+               COUNT(forum_comments.post_id) AS comment_count,
                forum.title,
                forum.tag AS tags,
                forum.post_text AS text
@@ -439,25 +439,54 @@ def forum():
     return render_template("forum/forum.html", data=items, user=user)
 
 
-@app.route('/forum/view_post')
+@app.route('/view-post', methods=['GET', 'POST'])
 @login_required
 def view_post():
     if request.method == "GET":
-        cur.execute("""SELECT *
-         FROM news
-         WHERE product_name = %s""", (request.args.get('id'),))
-        items = cur.fetchall()
-        return render_template("forum/view_post.html", items)
+        user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+        if current_user.is_authenticated:
+            user['logged_in'] = True
+            user['profile_picture_url'] = '/static/img/eye.png'
+        exec_string = """
+            SELECT forum.id,
+                forum.post_time AS date_created,
+                COUNT(forum_likes.post_id) AS like_count,
+                COUNT(forum_comments.post_id) AS comment_count,
+                forum.title,
+                forum.tag AS tags,
+                forum.post_text AS text
+            FROM forum
+            LEFT JOIN forum_likes ON forum.id = forum_likes.post_id
+            LEFT JOIN forum_comments ON forum.id = forum_comments.post_id
+            WHERE forum.id = %s
+            GROUP BY forum.id
+        """
+        cur.execute(exec_string, (request.args.get('id'), ))
+        news_fields = ['id', 'date_created', 'like_count', 'comment_count', 'title', 'tags', 'text']
+        items = dict(zip(news_fields, cur.fetchone()))
+        exec_string_2 = """
+            SELECT users.name,
+                users.profile_pic,
+                forum_comments.comment_time,
+                forum_comments.comment_text
+            FROM forum_comments
+            JOIN users ON forum_comments.user_id = users.id
+            WHERE forum_comments.post_id = %s
+            ORDER BY forum_comments.comment_time DESC"""
+        news_fields2 = ['username', 'profile_picture_url', 'date_posted', 'text']
+        cur.execute(exec_string_2, (request.args.get('id'), ))
+        comments = [dict(zip(news_fields2, i)) for i in cur.fetchall()]
+        return render_template("forum/view-post.html", data=items, user=user, comments=comments)
     if request.method == "POST":
-        usr_input = request.json
-        if usr_input["btn_type"] == "submit":
-            try:
-                cur.execute("""INSERT INTO forum_comments (comment_time,post_id,user_id,comment_text)
-                VALUES (NOW(),%s,%s,%s)""", (request.args.get('id'), current_user.id, usr_input["comment_value"]))
-                conn.commit()
-            except Exception:
-                abort(500)
-                conn.rollback()
+        try:
+            cur.execute("""INSERT INTO forum_comments (comment_time, post_id, user_id, comment_text)
+                            VALUES (NOW(),%s,%s,%s)""",
+                        (request.args.get('id'), current_user.id, request.form.get('comment')))
+            conn.commit()
+            return 'OK'
+        except Exception:
+            conn.rollback()
+            return "Error making comment"
 
 
 @app.route('/forum/new_post')
