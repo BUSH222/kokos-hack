@@ -10,7 +10,7 @@
     <div class="login-container">
         <div class="login-box">
             <h2 class="login-title">Войти в аккаунт</h2>
-            <form action="{{ url_for('login') }}" method="POST">
+            <form id="loginForm" action="javascript:void(0);">
                 <div class="input-group">
                     <label for="username">Имя пользователя</label>
                     <input type="text" id="username" name="username" required oninput="limitInputLength(this, 32)">
@@ -20,7 +20,7 @@
                     <div class="password-container">
                         <input type="password" id="password" name="password" required>
                         <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password')">
-                            <img src="/static/eye.png" alt="Toggle Password Visibility" class="eye-icon">
+                            <img src="/static/img/eye.png" alt="Toggle Password Visibility" class="eye-icon">
                         </button>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                     <a href="login_yandex">
                         <img src="/static/img/yandex_icon.png" alt="Yandex" class="social-icon">
                     </a>
-                    <a href="{{ url_for('login_google') }}">
+                    <a href="/login_gmail">
                         <img src="/static/img/google_icon.png" alt="Google" class="social-icon">
                     </a>
                     <a href="#">
@@ -66,6 +66,28 @@
                 input.value = input.value.slice(0, maxLength);
             }
         }
+
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData();
+            formData.append("username", document.getElementById("username").value);
+            formData.append("password", document.getElementById("password").value);
+
+            fetch('/login', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data === 'OK') {
+                    window.location.href = '/account';
+                } else {
+                    alert('Invalid username or password');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
     </script>
 </body>
 </html>

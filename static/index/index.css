@@ -8,7 +8,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
     color: #ff4747;
-    background: url('/static/background.png') no-repeat center center fixed;
+    background: url('/static/img/background.png') no-repeat center center fixed;
     background-size: cover;
     scrollbar-width: none;
     height: 100%;

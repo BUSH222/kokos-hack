@@ -27,7 +27,7 @@
             </div>
 
             <div class="right-side">
-                {% if user_logged_in %}
+                {% if user.logged_in %}
                     <li>
                         <a href="/account">
                             <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
@@ -71,12 +71,12 @@
                 <div class="next-game-row">
                     <div class="teams">
                         <div class="team1">
-                            <img src="{{ upcoming_game.team1_logo_url }}" alt="{{ upcoming_game.team1 }}" class="team-logo">
+                            <!-- <img src="{{ upcoming_game.team1_logo_url }}" alt="{{ upcoming_game.team1 }}" class="team-logo"> -->
                             <div class="team-name">{{ upcoming_game.team1 }}</div>
                         </div>
                         <span class="vs">vs</span>
                         <div class="team2">
-                            <img src="{{ upcoming_game.team2_logo_url }}" alt="{{ upcoming_game.team2 }}" class="team-logo">
+                            <!-- <img src="{{ upcoming_game.team2_logo_url }}" alt="{{ upcoming_game.team2 }}" class="team-logo"> -->
                             <div class="team-name">{{ upcoming_game.team2 }}</div>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
         <div class="game-row">
             <div class="team-info">
                 <p>
-                    "Кокос групп ФК" — это команда с большим энтузиазмом и любовью к футболу. Мы стремимся к победам, объединяя игроков и болельщиков на каждом этапе. Наш клуб всегда открыт для новых идей и поддерживает командный дух.
+                    "Кокос групп ФК" — это команда с большим энтузиазмом и любовью к футболу. Мы стремимся к победам, объединяя игроков и болельщиков на каждом этапе. Наш клуб всегда открыт для новых идей и поддерживает командный дух. Кокос групп ФК" — это команда с большим энтузиазмом и любовью к футболу. Мы стремимся к победам, объединяя игроков и болельщиков на каждом этапе. Наш клуб всегда открыт для новых идей и поддерживает командный дух. Кокос групп ФК" — это команда с большим энтузиазмом и любовью к футболу. Мы стремимся к победам, объединяя игроков и болельщиков на каждом этапе. Наш клуб всегда открыт для новых идей и поддерживает командный дух.
                 </p>
             </div>
         </div>
@@ -105,7 +105,7 @@
     <div class="news-container">
         <h3 class="team-info-header">Топ новостей</h3>
         <!-- news fields -->
-        {% for item in data %}
+        {% for item in posts %}
         <div class="news-field">
             <div class="news-header">
                 <div class="comment-user">
@@ -142,7 +142,7 @@
         <h4 class="team-info-header">Топ продаж</h4>
 
         <!-- top sellers fields -->
-        {% for item in data %}
+        {% for item in products %}
         <div class="shop-field">
             <div class="shop-title">
                 {{ item.title }}

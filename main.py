@@ -69,15 +69,60 @@ def logout():
 
 @app.route("/")
 def main_page():
-    top_three_posts = cur.execute("SELECT * FROM forum").fetchone()
-    top_three_selling_posts = cur.execute("SELECT * FROM forum ORDER BY sales DESC")
-    cur.execute("""SELECT your_timestamp
-                FROM your_table
-                ORDER BY ABS(TIMESTAMPDIFF(SECOND, your_timestamp, NOW())) ASC
-                LIMIT 1;""")
-    closest_game = cur.fetchone()
+    """Renders the template for the main page and fills it with data.
+
+    Args:
+        None
+
+    Returns:
+        index.html (str) - index.html template
+        posts: (list(dict)) - top 3 posts to be rendered on index
+            The dicts have the following keys:
+                'id', 'post_time', 'like_count', 'comment_count', 'title', 'tags', 'text'
+        products: (list(dict)) - top 3 most sold products to be rendered on index
+            The dicts have the following keys:
+                'team1', 'team2', 'datetime', 'id'
+        upcoming_game: (dict) - next game of the football club
+            The dict has the following keys:
+                'team1', 'team2', 'datetime', 'id'
+        user: (dict) - user data for the navbar
+            The dict has the following keys:
+                'logged_in', 'profile_picture_url'
+    """
+
+    cur.execute("""SELECT news.id,
+                news.news_time,
+                COUNT(news_likes.post_id) AS like_count,
+                COUNT(news_comments.post_id) AS comment_count,
+                news.title,
+                news.tag,
+                news.news_text
+                FROM news
+                LEFT JOIN news_likes ON news.id = news_likes.post_id
+                LEFT JOIN news_comments ON news.id = news_comments.post_id
+                GROUP BY news.id
+                ORDER BY news.news_time
+                LIMIT 3;""")
+    top_three_posts_fields = ['id', 'post_time', 'like_count', 'comment_count', 'title', 'tags', 'text']
+    rows = cur.fetchall()
+    top_three_posts = [dict(zip(top_three_posts_fields, i)) for i in rows]
+    cur.execute("SELECT product_name, price, description, picture FROM shop ORDER BY sales DESC LIMIT 3")
+    fields_shop = ['title', 'price', 'text', 'shop_photo_url']
+    top_three_selling_posts = [dict(zip(fields_shop, i)) for i in cur.fetchall()]
+
+    cur.execute("""SELECT team1_name, team2_name, game_start_time, id
+                FROM games
+                ORDER BY ABS(EXTRACT(EPOCH FROM (game_start_time - NOW()))) ASC
+                LIMIT 1;
+                """)
+    closest_game_fields = ['team1', 'team2', 'datetime', 'id']
+    closest_game = dict(zip(closest_game_fields, cur.fetchone()))
+    user = {'logged_in': False, 'profile_picture_url': None}
+    if current_user.is_authenticated:
+        user['logged_in'] = True
+        user['profile_picture_url'] = '/static/img/eye.png'
     return render_template("index/index.html", posts=top_three_posts, products=top_three_selling_posts,
-                           closest_game=closest_game)
+                           upcoming_game=closest_game, user=user)
 
 
 @app.route('/account', methods=['GET', 'POST'])
@@ -101,8 +146,12 @@ def account():
         usr_input = request.json
         if usr_input["btn_type"] == "change_user_data":
             return {'re': '/account/change_account_data'}
+    user = {'logged_in': False, 'profile_picture_url': None}
+    if current_user.is_authenticated:
+        user['logged_in'] = True
+        user['profile_picture_url'] = '/static/img/eye.png'
     return render_template('account/account.html', profile_pic=profile_pic, name=name, fav_player=fav_player,
-                           about_me=about_me, telegram_acc=telegram_acc, vk_acc=vk_acc)
+                           about_me=about_me, telegram_acc=telegram_acc, vk_acc=vk_acc, user=user)
 
 
 @app.route('/account/change_account_data', methods=['POST', 'GET'])
