@@ -49,14 +49,20 @@
                     <img src="{{data.user_pfp}}" alt="User Profile Picture" class="user-pfp">
                     <span class="user-nickname">{{data.username}}</span>
                     <span class="post-date">{{ data.date_created }}</span>
-
-                    <!-- like button -->
-                    <img id="likeButton" src="/static/heart_icon_empty.png" alt="Like" class="like-button" onclick="toggleLike()">
-
-                    <!-- comment button -->
-                    <img id="commentButton" src="/static/comments_icon.png" alt="Comment" class="comment-button" onclick="scrollToComment()">
-                    
                 </div>
+
+                <!-- Positioning likes and comments section here -->
+                <div class="social-interaction">
+                    <div class="like-section">
+                        <img id="likeButton-{{ data.id }}" src="/static/heart_icon_empty.png" alt="Like" class="like-button" onclick="toggleLike('{{ data.id }}')">
+                        <span id="likeCount-{{ data.id }}" class="like-count">{{ data.like_count or 0 }}</span>
+                    </div>
+                    <div class="comment-section">
+                        <img id="commentButton-{{ data.id }}" src="/static/comments_icon.png" alt="Comment" class="comment-button" onclick="redirectToPost('{{ data.id }}')">
+                        <span id="commentCount-{{ data.id }}" class="comment-count">{{ data.comment_count or 0 }}</span>
+                    </div>
+                </div>
+
             </div>
             <div class="news-title">
                 {{ data.title }}
@@ -131,21 +137,27 @@
     </div>
 
     <script>
-        // Function to toggle the like button between empty and filled states
-        function toggleLike() {
-            const likeButton = document.getElementById('likeButton');
-            
-            // Add a CSS class that triggers the animation
+        function toggleLike(postId) {
+            const likeButton = document.getElementById('likeButton-' + postId);
+            const likeCountSpan = document.getElementById('likeCount-' + postId);
+            let currentCount = parseInt(likeCountSpan.innerText);
+
+            // Add a CSS class for animation
             likeButton.classList.add('like-animation');
 
-            // Toggle the heart image
+            // Toggle the heart icon and like count
             if (likeButton.src.includes("heart_icon_empty.png")) {
                 likeButton.src = "/static/heart_icon_filled.png";
+                currentCount += 1;
             } else {
                 likeButton.src = "/static/heart_icon_empty.png";
+                currentCount -= 1;
             }
 
-            // Remove the animation class after the animation ends
+            // Update the like count display
+            likeCountSpan.innerText = currentCount;
+
+            // Remove animation class after it's done
             setTimeout(() => {
                 likeButton.classList.remove('like-animation');
             }, 300);

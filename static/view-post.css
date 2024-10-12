@@ -116,6 +116,31 @@ body::-webkit-scrollbar {
     margin-left: 10px;
 }
 
+.like-section, .comment-section {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    flex-direction: column;
+}
+
+.like-count, .comment-count {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #777;
+    align-items: center;
+}
+
+.social-interaction {
+    position: absolute;
+    top: 10px;  /* Adjust the distance from the top of the post field */
+    right: 10px;  /* Adjust the distance from the right edge */
+    display: flex;              /* Align items in a row */
+    flex-direction: row;        /* Change to row layout */
+    align-items: center;        /* Center align items vertically */
+    z-index: 10;
+    gap: 10px;                  /* Add space between like and comment sections */
+}
+
 /* Search Bar */
 .news-newcomment {
     display: flex;
