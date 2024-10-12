@@ -1,75 +1,74 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html> -->
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Основная информация пользователя</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-        }
-        .profile-pic img {
-            max-width: 100px;
-            display: block;
-            margin-bottom: 10px;
-        }
-        .info {
-            margin-bottom: 15px;
-        }
-        .info label {
-            font-weight: bold;
-        }
-        .info p {
-            margin: 5px 0;
-        }
-    </style>
+    <title>Account Page</title>
+    <link rel="stylesheet" href="/static/account/account.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Основная информация пользователя</h1>
-        <div class="profile-pic">
-            <label for="profile_pic">Фото профиля:</label>
-            <img src="{{ profile_pic }}" alt="Фото профиля" id="profile_pic">
+<body class="no-scroll">
+    <!-- navigation bar -->
+    <div class="navbar">
+        <ul>
+            <div class="left-side">
+                <li>
+                    <a href="/">
+                        <img src="/static/img/logo.png" alt="Website Logo" class="logo">
+                    </a>
+                </li>
+            </div>
+            
+            <div class="center">
+                <li><a href="/news">Новости</a></li>
+                <li><a href="/games">Игры</a></li>
+                <li><a href="/shop">Магазин</a></li>
+                <li><a href="/about">О клубе</a></li>
+                <li><a href="/forum">Форум</a></li>
+            </div>
+            
+            <div class="right-side">
+                {% if user_logged_in %}
+                    <li>
+                        <a href="/account">
+                            <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                        </a>
+                    </li>
+                {% else %}
+                    <li><a href="/login">Войти</a></li>
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+
+    <div class="account-container">
+        <div class="left-side">
+            <div class="profile-pic">
+                <img src="{{ user.profile_picture_url }}" alt="User Profile Picture">
+            </div>
+            <div class="username">{{ user.nickname }}</div>
+            <textarea class="about-user" readonly>{{ user.about }}</textarea>
+            <div class="social-links">
+                <a href="{{ user.telegram_url }}"><img src="{{ url_for('static', filename='telegram_icon.png') }}" alt="Telegram">@{{ user.telegram_handle }}</a>
+                <a href="{{ user.vk_url }}"><img src="{{ url_for('static', filename='vk_icon.png') }}" alt="VK">@{{ user.vk_handle }}</a>
+            </div>
+            <button class="edit-profile-btn">Редактировать профиль</button>
         </div>
-        <div class="info">
-            <label for="name">Имя:</label>
-            <p id="name">{{ name }}</p>
+        
+        <div class="right-side">
+            <!-- fav player field -->
+            <div class="fav-player-field">
+                {% if fav_player_img %}
+                    <img src="{{ fav_player_img }}" alt="Favorite Player">
+                {% else %}
+                    <div class="fav-player-placeholder">Выберите любимого игрока</div>
+                {% endif %}
+            </div>
+            
+            <!-- select fav player button -->
+            <button class="fav-player-btn">Любимый игрок</button>
         </div>
-        <div class="info">
-            <label for="fav_player">Любимый игрок:</label>
-            <p id="fav_player">{{ fav_player }}</p>
-        </div>
-        <div class="info">
-            <label for="about_me">Обо мне:</label>
-            <p id="about_me">{{ about_me }}</p>
-        </div>
-        <div class="info">
-            <label for="vk_acc">VK аккаунт:</label>
-            <p id="vk_acc">{{ vk_acc }}</p>
-        </div>
-        <div class="info">
-            <label for="telegram_acc">Telegram аккаунт:</label>
-            <p id="telegram_acc">{{ telegram_acc }}</p>
-        </div>
-        <form method="POST" action="/account/change_account_data">
-            <input type="hidden" name="btn_type" value="change_user_data">
-            <button type="submit">Изменить данные</button>
-        </form>
+        
     </div>
 </body>
+<script src="/static/account/account.js"></script>
 </html>

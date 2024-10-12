@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="/static/login.css">
+    <link rel="stylesheet" href="/static/login_password/login.css">
 </head>
 <body>
     <div class="login-container">
@@ -30,14 +30,14 @@
             <div class="social-login">
                 <h3 class="login-title">Войти с помощью:</h3>
                 <div class="social-icons">
-                    <a href="{{ url_for('login_yandex') }}">
-                        <img src="{{ url_for('static', filename='yandex_icon.png') }}" alt="Yandex" class="social-icon">
+                    <a href="login_yandex">
+                        <img src="/static/img/yandex_icon.png" alt="Yandex" class="social-icon">
                     </a>
                     <a href="{{ url_for('login_google') }}">
-                        <img src="{{ url_for('static', filename='google_icon.png') }}" alt="Google" class="social-icon">
+                        <img src="/static/img/google_icon.png" alt="Google" class="social-icon">
                     </a>
                     <a href="#">
-                        <img src="{{ url_for('static', filename='vk_icon.png') }}" alt="VK" class="social-icon">
+                        <img src="/static/img/vk_icon.png" alt="VK" class="social-icon">
                     </a>
                 </div>
             </div>
@@ -45,7 +45,7 @@
             <!-- registration btn -->
             <div class="register-section">
                 <p class="register-text">Ещё не зарегистрированы?</p>
-                <a href="{{ url_for('register') }}" class="register-btn">Зарегистрироваться</a>
+                <a href="register" class="register-btn">Зарегистрироваться</a>
             </div>
         </div>
     </div>

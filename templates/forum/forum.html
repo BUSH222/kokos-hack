@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Форум</title>
-    <link rel="stylesheet" href="/static/forum.css">
+    <link rel="stylesheet" href="/static/forum/forum.css">
 </head>
 <body>
     <!-- navigation bar -->
@@ -13,7 +13,7 @@
             <div class="left-side">
                 <li>
                     <a href="/">
-                        <img src="/static/logo.png" alt="Website Logo" class="logo">
+                        <img src="/static/img/logo.png" alt="Website Logo" class="logo">
                     </a>
                 </li>
             </div>
@@ -62,7 +62,7 @@
             </select>
         
             <!-- Search Button -->
-            <button id="searchButton" onclick="performSearch()">Найти</button>
+            <button id="searchButton" onclick="send_to_server('find')">Найти</button>
         </div>        
         
 
@@ -71,7 +71,7 @@
         <div class="news-field">
             <div class="news-header">
                 <div class="comment-user">
-                    <img src="/static/eye.png" alt="User Profile Picture" class="user-pfp">
+                    <img src="/static/img/eye.png" alt="User Profile Picture" class="user-pfp">
                     <span class="user-nickname">Admin</span>
                     <span class="post-date">{{ item.date_created }}</span>
                 </div>
@@ -79,11 +79,11 @@
                 <!-- Positioning likes and comments section here -->
                 <div class="social-interaction">
                     <div class="like-section">
-                        <img id="likeButton-{{ item.id }}" src="/static/heart_icon_empty.png" alt="Like" class="like-button" onclick="toggleLike('{{ item.id }}')">
+                        <img id="likeButton-{{ item.id }}" src="/static/img/heart_icon_empty.png" alt="Like" class="like-button" onclick="toggleLike('{{ item.id }}')">
                         <span id="likeCount-{{ item.id }}" class="like-count">{{ item.like_count or 0 }}</span>
                     </div>
                     <div class="comment-section">
-                        <img id="commentButton-{{ item.id }}" src="/static/comments_icon.png" alt="Comment" class="comment-button" onclick="redirectToPost('{{ item.id }}')">
+                        <img id="commentButton-{{ item.id }}" src="/static/img/comments_icon.png" alt="Comment" class="comment-button" onclick="redirectToPost('{{ item.id }}')">
                         <span id="commentCount-{{ item.id }}" class="comment-count">{{ item.comment_count or 0 }}</span>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
         <div class="bottom-bar-content">
             <!-- Left side: Logo -->
             <div class="bottom-left">
-                <img src="/static/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
+                <img src="/static/img/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
             </div>
 
             <!-- Center: Links -->
@@ -122,13 +122,13 @@
             <!-- Right side: Social Media -->
             <div class="bottom-right">
                 <a href="https://vk.com/kokocgroup_ru" target="_blank">
-                    <img src="/static/vk_icon.png" alt="VK" class="social-logo">
+                    <img src="/static/img/vk_icon.png" alt="VK" class="social-logo">
                 </a>
                 <a href="https://t.me/kokocgroupru" target="_blank">
-                    <img src="/static/telegram_icon.png" alt="Telegram" class="social-logo">
+                    <img src="/static/img/telegram_icon.png" alt="Telegram" class="social-logo">
                 </a>
                 <a href="https://www.youtube.com/@TVKokoc" target="_blank">
-                    <img src="/static/youtube_icon.png" alt="YouTube" class="social-logo">
+                    <img src="/static/img/youtube_icon.png" alt="YouTube" class="social-logo">
                 </a>
             </div>
         </div>
@@ -151,10 +151,10 @@
 
             // Toggle the heart icon and like count
             if (likeButton.src.includes("heart_icon_empty.png")) {
-                likeButton.src = "/static/heart_icon_filled.png";
+                likeButton.src = "/static/img/heart_icon_filled.png";
                 currentCount += 1;
             } else {
-                likeButton.src = "/static/heart_icon_empty.png";
+                likeButton.src = "/static/img/heart_icon_empty.png";
                 currentCount -= 1;
             }
 
@@ -220,4 +220,5 @@
     </script>
     
 </body>
+<script src="/static/forum/forum.js"></script>
 </html>

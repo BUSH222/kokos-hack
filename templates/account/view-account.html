@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Page</title>
-    <link rel="stylesheet" href="/static/account.css">
+    <link rel="stylesheet" href="/static/account/account.css">
 </head>
 <body class="no-scroll">
     <!-- navigation bar -->
@@ -13,7 +13,7 @@
             <div class="left-side">
                 <li>
                     <a href="/">
-                        <img src="/static/logo.png" alt="Website Logo" class="logo">
+                        <img src="/static/img/logo.png" alt="Website Logo" class="logo">
                     </a>
                 </li>
             </div>
@@ -48,10 +48,9 @@
             <div class="username">{{ user.nickname }}</div>
             <textarea class="about-user" readonly>{{ user.about }}</textarea>
             <div class="social-links">
-                <a href="{{ user.telegram_url }}"><img src="{{ url_for('static', filename='telegram_icon.png') }}" alt="Telegram">@{{ user.telegram_handle }}</a>
-                <a href="{{ user.vk_url }}"><img src="{{ url_for('static', filename='vk_icon.png') }}" alt="VK">@{{ user.vk_handle }}</a>
+                <a href="{{ user.telegram_url }}"><img src="/static/img/telegram_icon.png" alt="Telegram">@{{ user.telegram_handle }}</a>
+                <a href="{{ user.vk_url }}"><img src="/static/img/vk_icon.png" alt="VK">@{{ user.vk_handle }}</a>
             </div>
-            <button class="edit-profile-btn">Редактировать профиль</button>
         </div>
         
         <div class="right-side">
@@ -63,9 +62,7 @@
                     <div class="fav-player-placeholder">Выберите любимого игрока</div>
                 {% endif %}
             </div>
-            
-            <!-- select fav player button -->
-            <button class="fav-player-btn">Любимый игрок</button>
+
         </div>
         
     </div>

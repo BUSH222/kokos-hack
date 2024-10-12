@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Новости</title>
-    <link rel="stylesheet" href="/static/view-post.css">
+    <link rel="stylesheet" href="/static/forum/view-post.css">
 </head>
 <body>
     <!-- navigation bar -->
@@ -13,7 +13,7 @@
             <div class="left-side">
                 <li>
                     <a href="/">
-                        <img src="/static/logo.png" alt="Website Logo" class="logo">
+                        <img src="/static/img/logo.png" alt="Website Logo" class="logo">
                     </a>
                 </li>
             </div>
@@ -54,11 +54,11 @@
                 <!-- Positioning likes and comments section here -->
                 <div class="social-interaction">
                     <div class="like-section">
-                        <img id="likeButton-{{ data.id }}" src="/static/heart_icon_empty.png" alt="Like" class="like-button" onclick="toggleLike('{{ data.id }}')">
+                        <img id="likeButton-{{ data.id }}" src="/static/img/heart_icon_empty.png" alt="Like" class="like-button" onclick="toggleLike('{{ data.id }}')">
                         <span id="likeCount-{{ data.id }}" class="like-count">{{ data.like_count or 0 }}</span>
                     </div>
                     <div class="comment-section">
-                        <img id="commentButton-{{ data.id }}" src="/static/comments_icon.png" alt="Comment" class="comment-button" onclick="redirectToPost('{{ data.id }}')">
+                        <img id="commentButton-{{ data.id }}" src="/static/img/comments_icon.png" alt="Comment" class="comment-button" onclick="redirectToPost('{{ data.id }}')">
                         <span id="commentCount-{{ data.id }}" class="comment-count">{{ data.comment_count or 0 }}</span>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
         <div class="bottom-bar-content">
             <!-- Left side: Logo -->
             <div class="bottom-left">
-                <img src="/static/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
+                <img src="/static/img/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
             </div>
 
             <!-- Center: Links -->
@@ -124,13 +124,13 @@
             <!-- Right side: Social Media -->
             <div class="bottom-right">
                 <a href="https://vk.com/kokocgroup_ru" target="_blank">
-                    <img src="/static/vk_icon.png" alt="VK" class="social-logo">
+                    <img src="/static/img/vk_icon.png" alt="VK" class="social-logo">
                 </a>
                 <a href="https://t.me/kokocgroupru" target="_blank">
-                    <img src="/static/telegram_icon.png" alt="Telegram" class="social-logo">
+                    <img src="/static/img/telegram_icon.png" alt="Telegram" class="social-logo">
                 </a>
                 <a href="https://www.youtube.com/@TVKokoc" target="_blank">
-                    <img src="/static/youtube_icon.png" alt="YouTube" class="social-logo">
+                    <img src="/static/img/youtube_icon.png" alt="YouTube" class="social-logo">
                 </a>
             </div>
         </div>
@@ -147,10 +147,10 @@
 
             // Toggle the heart icon and like count
             if (likeButton.src.includes("heart_icon_empty.png")) {
-                likeButton.src = "/static/heart_icon_filled.png";
+                likeButton.src = "/static/img/heart_icon_filled.png";
                 currentCount += 1;
             } else {
-                likeButton.src = "/static/heart_icon_empty.png";
+                likeButton.src = "/static/img/heart_icon_empty.png";
                 currentCount -= 1;
             }
 
