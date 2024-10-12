@@ -48,8 +48,8 @@
             <div class="username">{{ user.nickname }}</div>
             <textarea class="about-user" readonly>{{ user.about }}</textarea>
             <div class="social-links">
-                <a href="{{ user.telegram_url }}"><img src="{{ url_for('static', filename='telegram_icon.png') }}" alt="Telegram">@{{ user.telegram_handle }}</a>
-                <a href="{{ user.vk_url }}"><img src="{{ url_for('static', filename='vk_icon.png') }}" alt="VK">@{{ user.vk_handle }}</a>
+                <a href="{{ user.telegram_url }}"><img src="/static/img/telegram_icon.png" alt="Telegram">{{ user.telegram_url }}</a>
+                <a href="{{ user.vk_url }}"><img src="/static/img/vk_icon.png" alt="VK">{{ user.vk_url }}</a>
             </div>
             <button class="edit-profile-btn">Редактировать профиль</button>
         </div>
@@ -57,8 +57,8 @@
         <div class="right-side">
             <!-- fav player field -->
             <div class="fav-player-field">
-                {% if fav_player_img %}
-                    <img src="{{ fav_player_img }}" alt="Favorite Player">
+                {% if user.fav_player_img %}
+                    <img src="{{ user.fav_player_img }}" alt="Favorite Player">
                 {% else %}
                     <div class="fav-player-placeholder">Выберите любимого игрока</div>
                 {% endif %}

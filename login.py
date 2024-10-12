@@ -102,7 +102,7 @@ def yandex_callback():
     if user_data:
         user = User(*user_data)
         login_user(user)
-        return redirect(url_for('.account'))
+        return redirect(url_for('account'))
     else:
         cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) \
                     RETURNING id, name, password, email', (user_name, unique_id, user_email))
@@ -110,7 +110,7 @@ def yandex_callback():
         new_user_data = cur.fetchone()
         new_user = User(*new_user_data)
         login_user(new_user)
-        return redirect(url_for('.account'))
+        return redirect(url_for('account'))
 
 
 @app_login.route('/login_gmail', methods=['GET', 'POST'])

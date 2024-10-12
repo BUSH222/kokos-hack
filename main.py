@@ -119,7 +119,7 @@ def main_page():
                 """)
     closest_game_fields = ['team1', 'team2', 'datetime', 'id']
     closest_game = dict(zip(closest_game_fields, cur.fetchone()))
-    user = {'logged_in': False, 'profile_picture_url': None}
+    user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
         user['logged_in'] = True
         user['profile_picture_url'] = '/static/img/eye.png'
@@ -133,12 +133,12 @@ def account():
     """
     An endpoint with all of a user data.
     """
-    profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = '', '', '', '', '', ''
+    name, fav_player, about, vk_acc, telegram_acc = '', '', '', '', ''
     if request.method == 'GET':
         usr_id = current_user.id
-        cur.execute("SELECT profile_pic, name, fav_player, about_me, vk_acc, telegram_acc FROM users WHERE id = %s",
+        cur.execute("SELECT name, fav_player, about_me, vk_acc, telegram_acc FROM users WHERE id = %s",
                     (usr_id,))
-        profile_pic, name, fav_player, about_me, vk_acc, telegram_acc = cur.fetchone()
+        name, fav_player, about, vk_acc, telegram_acc = cur.fetchone()
 
         if vk_acc is None:
             vk_acc = "Не привязан"
@@ -148,12 +148,16 @@ def account():
         usr_input = request.json
         if usr_input["btn_type"] == "change_user_data":
             return {'re': '/account/change_account_data'}
-    user = {'logged_in': False, 'profile_picture_url': None}
+
+    user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png',
+            'nickname': name, 'about': about, 'fav_player_img': fav_player,
+            'telegram_url': telegram_acc, 'vk_url': vk_acc}
+
     if current_user.is_authenticated:
         user['logged_in'] = True
         user['profile_picture_url'] = '/static/img/eye.png'
-    return render_template('account/account.html', profile_pic=profile_pic, name=name, fav_player=fav_player,
-                           about_me=about_me, telegram_acc=telegram_acc, vk_acc=vk_acc, user=user)
+
+    return render_template('account/account.html', user=user)
 
 
 @app.route('/account/change_account_data', methods=['POST', 'GET'])
