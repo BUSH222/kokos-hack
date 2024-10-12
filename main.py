@@ -271,7 +271,8 @@ def news():
                COUNT(news_comments.post_id) AS comment_count,
                news.title,
                news.tag AS tags,
-               news.news_text AS text
+               news.news_text AS text,
+               news.picture
         FROM news
         LEFT JOIN news_likes ON news.id = news_likes.post_id
         LEFT JOIN news_comments ON news.id = news_comments.post_id
@@ -309,7 +310,8 @@ def news():
 
     # Execute the query
     cur.execute(exec_string, (sql_params, ))
-    news_fields = ['id', 'date_created', 'like_count', 'comment_count', 'title', 'tags', 'text']
+    news_fields = ['id', 'date_created', 'like_count', 'comment_count',
+                   'title', 'tags', 'text', 'news_photo_url']
     items = [dict(zip(news_fields, i)) for i in cur.fetchall()]
 
     return render_template("news/news.html", data=items, user=user)
@@ -330,7 +332,8 @@ def view_story():
                 COUNT(news_comments.post_id) AS comment_count,
                 news.title,
                 news.tag AS tags,
-                news.news_text AS text
+                news.news_text AS text,
+                news.picture
             FROM news
             LEFT JOIN news_likes ON news.id = news_likes.post_id
             LEFT JOIN news_comments ON news.id = news_comments.post_id
@@ -338,7 +341,8 @@ def view_story():
             GROUP BY news.id
         """
         cur.execute(exec_string, (request.args.get('id'), ))
-        news_fields = ['id', 'date_created', 'like_count', 'comment_count', 'title', 'tags', 'text']
+        news_fields = ['id', 'date_created', 'like_count', 'comment_count',
+                       'title', 'tags', 'text', 'news_photo_url']
         items = dict(zip(news_fields, cur.fetchone()))
         exec_string_2 = """
             SELECT users.name,
@@ -395,7 +399,8 @@ def forum():
                COUNT(forum_comments.post_id) AS comment_count,
                forum.title,
                forum.tag AS tags,
-               forum.post_text AS text
+               forum.post_text AS text,
+               forum.picture
         FROM forum
         LEFT JOIN forum_likes ON forum.id = forum_likes.post_id
         LEFT JOIN forum_comments ON forum.id = forum_comments.post_id
@@ -433,7 +438,8 @@ def forum():
 
     # Execute the query
     cur.execute(exec_string, (sql_params, ))
-    forum_fields = ['id', 'date_created', 'author', 'like_count', 'comment_count', 'title', 'tags', 'text']
+    forum_fields = ['id', 'date_created', 'author', 'like_count', 'comment_count',
+                    'title', 'tags', 'text', 'news_photo_url']
     items = [dict(zip(forum_fields, i)) for i in cur.fetchall()]
 
     return render_template("forum/forum.html", data=items, user=user)
@@ -454,7 +460,8 @@ def view_post():
                 COUNT(forum_comments.post_id) AS comment_count,
                 forum.title,
                 forum.tag AS tags,
-                forum.post_text AS text
+                forum.post_text AS text,
+                forum.picture
             FROM forum
             LEFT JOIN forum_likes ON forum.id = forum_likes.post_id
             LEFT JOIN forum_comments ON forum.id = forum_comments.post_id
@@ -462,7 +469,8 @@ def view_post():
             GROUP BY forum.id
         """
         cur.execute(exec_string, (request.args.get('id'), ))
-        news_fields = ['id', 'date_created', 'like_count', 'comment_count', 'title', 'tags', 'text']
+        news_fields = ['id', 'date_created', 'like_count', 'comment_count',
+                       'title', 'tags', 'text', 'news_photo_url']
         items = dict(zip(news_fields, cur.fetchone()))
         exec_string_2 = """
             SELECT users.name,
@@ -489,22 +497,37 @@ def view_post():
             return "Error making comment"
 
 
-@app.route('/forum/new_post')
+@app.route('/new-post', methods=['GET', 'POST'])
 @login_required
 def new_post():
     if request.method == "GET":
-        return render_template("forum/new_post.html")
-    if request.method == "POST":
-        usr_input = request.json
-        if usr_input["btn_type"] == "submit":
-            try:
-                cur.execute("""INSERT INTO forum (post_time,author,tags,title,post_text)
-                VALUES (NOW(),%s,%s,%s,%s)""", (current_user.name, usr_input["tags"],
-                            usr_input["title"], usr_input["post_text"]))
-                conn.commit()
-            except Exception:
-                abort(500)
-                conn.rollback()
+        user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+        if current_user.is_authenticated:
+            user['logged_in'] = True
+            user['profile_picture_url'] = '/static/img/eye.png'
+        return render_template("forum/new-post.html", user=user)
+    elif request.method == "POST":
+        usr_input = request.form
+        file = request.files['post-image']
+        try:
+            file_name = 'forum/' + token_urlsafe(16) + '.' + file.filename.split('.')[-1]
+            target_url = 'http://localhost:5001/upload_assets'
+            files = {'file': (file_name, file.stream, file.content_type)}
+            data = {'img_name': file_name}
+            picurl = 'http://localhost:5001/assets/'+file_name
+
+            requests.post(target_url, files=files, data=data)
+
+            cur.execute("""INSERT INTO forum (post_time, author, tag, title, post_text, picture)
+                        VALUES (NOW(),%s,%s,%s,%s,%s)""",
+                        (current_user.id, usr_input["tags"],
+                         usr_input["post-title"], usr_input["post-content"], picurl))
+            conn.commit()
+
+            return 'OK'
+        except Exception as e:
+            conn.rollback()
+            return f'Error, {e}'
 
 
 @app.route('/main_server_status', methods=['GET'])
