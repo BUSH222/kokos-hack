@@ -221,7 +221,7 @@
 
             posts.forEach(post => {
                 const postId = post.getAttribute('data-post-id');
-                const destination = 'ne';  // or 'news' depending on context
+                const destination = 'news';  // or 'news' depending on context
 
                 // Fetch likes and is_liked status via AJAX
                 fetch(`/like?dest=${destination}&id=${postId}`)
