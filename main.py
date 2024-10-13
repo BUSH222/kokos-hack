@@ -671,6 +671,88 @@ def games():
                            )
 
 
+@app.route('/like', methods=['GET', 'POST'])
+@limiter.exempt
+@login_required
+def like():
+    if request.method == 'GET' and request.args:
+        uid = current_user.id
+        destination = request.args.get('dest')  # forum or news
+        post_id = request.args.get('id')
+        if destination == "news":
+            query = """
+                SELECT EXISTS (
+                    SELECT 1 FROM news_likes
+                    WHERE post_id = %s AND user_id = %s
+                );
+            """
+            query_total = "SELECT COUNT(*) FROM news_likes WHERE post_id = %s"
+        elif destination == "forum":
+            query = """
+                SELECT EXISTS (
+                    SELECT 1 FROM forum_likes
+                    WHERE post_id = %s AND user_id = %s
+                );
+            """
+            query_total = "SELECT COUNT(*) FROM forum_likes WHERE post_id = %s"
+        cur.execute(query, (post_id, uid))
+        post_isliked = cur.fetchone()[0]
+        cur.execute(query_total, (post_id, ))
+        post_totallikes = cur.fetchone()[0]
+        return jsonify({'likes': post_totallikes, 'is_liked': post_isliked})
+
+    elif request.method == 'POST' and request.args:
+        uid = current_user.id
+        destination = request.args.get('dest')
+        assert destination in ['news', 'forum']
+        post_id = request.args.get('id')
+        if destination == "news":
+            check_query = "SELECT 1 FROM news_likes WHERE post_id = %s AND user_id = %s"
+            insert_query = "INSERT INTO news_likes (post_id, user_id) VALUES (%s, %s)"
+            delete_query = "DELETE FROM news_likes WHERE post_id = %s AND user_id = %s"
+        elif destination == "forum":
+            check_query = "SELECT 1 FROM forum_likes WHERE post_id = %s AND user_id = %s"
+            insert_query = "INSERT INTO forum_likes (post_id, user_id) VALUES (%s, %s)"
+            delete_query = "DELETE FROM forum_likes WHERE post_id = %s AND user_id = %s"
+
+        cur.execute(check_query, (post_id, uid))
+        is_liked = cur.fetchone()
+
+        if is_liked:
+            cur.execute(delete_query, (post_id, uid))
+            message = "Like removed"
+        else:
+            cur.execute(insert_query, (post_id, uid))
+            message = "Like added"
+        conn.commit()
+        # Return the updated total number of likes
+        cur.execute("SELECT COUNT(*) FROM {}_likes WHERE post_id = %s".format(destination), (post_id,))
+        total_likes = cur.fetchone()[0]
+
+        return jsonify({'message': message, 'likes': total_likes})
+    else:
+        abort(403)
+
+
+@app.route('/about')
+def about_page():
+    user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+    if current_user.is_authenticated:
+        user['logged_in'] = True
+        user['profile_picture_url'] = '/static/img/eye.png'
+    return render_template('/about/about.html', user=user)
+
+
+@app.route('/team-members')
+def team_page():
+    user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+    if current_user.is_authenticated:
+        user['logged_in'] = True
+        user['profile_picture_url'] = '/static/img/eye.png'
+    return render_template('/about/team-members.html', user=user)
+
+
+
 if __name__ == "__main__":
     app.run(port=5000, debug=True, ssl_context=('certificate.pem', 'private_key.pem'))
     cur.close()

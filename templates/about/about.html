@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О клубе</title>
+    <link rel="stylesheet" href="/static/about/about.css">
+</head>
+<body>
+    <!-- navigation bar -->
+    <div class="navbar">
+        <ul>
+            <div class="left-side">
+                <li>
+                    <a href="/">
+                        <img src="/static/img/logo.png" alt="Website Logo" class="logo">
+                    </a>
+                </li>
+            </div>
+
+            <div class="center">
+                <li><a href="/news">Новости</a></li>
+                <li><a href="/games">Игры</a></li>
+                <li><a href="/shop">Магазин</a></li>
+                <li><a href="/about">О клубе</a></li>
+                <li><a href="/forum">Форум</a></li>
+            </div>
+
+            <div class="right-side">
+                {% if user.logged_in %}
+                    <li>
+                        <a href="/account">
+                            <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                        </a>
+                    </li>
+                {% else %}
+                    <li><a href="/login">Войти</a></li>
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+
+    <!-- About Section -->
+    <div class="about-container">
+        <h1 class="about-header">О клубе "Кокос групп ФК"</h1>
+        <div class="about-content">
+            <p>Здесь вы можете узнать информацию о клубе "Кокос групп ФК". Мы стремимся к развитию и успеху как на футбольном поле, так и за его пределами. Наш клуб объединяет игроков, тренеров и болельщиков, чтобы создать незабываемую атмосферу и поддерживать дух футбола. Здесь вы можете узнать информацию о клубе "Кокос групп ФК". Мы стремимся к развитию и успеху как на футбольном поле, так и за его пределами. Наш клуб объединяет игроков, тренеров и болельщиков, чтобы создать незабываемую атмосферу и поддерживать дух футбола. Здесь вы можете узнать информацию о клубе "Кокос групп ФК". Мы стремимся к развитию и успеху как на футбольном поле, так и за его пределами. Наш клуб объединяет игроков, тренеров и болельщиков, чтобы создать незабываемую атмосферу и поддерживать дух футбола. Здесь вы можете узнать информацию о клубе "Кокос групп ФК". Мы стремимся к развитию и успеху как на футбольном поле, так и за его пределами. Наш клуб объединяет игроков, тренеров и болельщиков, чтобы создать незабываемую атмосферу и поддерживать дух футбола. Здесь вы можете узнать информацию о клубе "Кокос групп ФК". Мы стремимся к развитию и успеху как на футбольном поле, так и за его пределами. Наш клуб объединяет игроков, тренеров и болельщиков, чтобы создать незабываемую атмосферу и поддерживать дух футбола.</p>
+        </div>
+        <a href="/team_members" class="team-button">Состав клуба</a>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="bottom-bar">
+        <div class="bottom-bar-content">
+            <!-- Left side: Logo -->
+            <div class="bottom-left">
+                <img src="/static/img/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
+            </div>
+
+            <!-- Center: Links -->
+            <div class="bottom-center">
+                <a href="/help" class="footer-link">help</a>
+                <a href="/privacy" class="footer-link">privacy policy, legal</a>
+                <span class="footer-text">Developed by "MISIS Leaf Lovers" for "KOKOC hackathon"</span>
+            </div>
+
+            <!-- Right side: Social Media -->
+            <div class="bottom-right">
+                <a href="https://vk.com/kokocgroup_ru" target="_blank">
+                    <img src="/static/img/vk_icon.png" alt="VK" class="social-logo">
+                </a>
+                <a href="https://t.me/kokocgroupru" target="_blank">
+                    <img src="/static/img/telegram_icon.png" alt="Telegram" class="social-logo">
+                </a>
+                <a href="https://www.youtube.com/@TVKokoc" target="_blank">
+                    <img src="/static/img/youtube_icon.png" alt="YouTube" class="social-logo">
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
