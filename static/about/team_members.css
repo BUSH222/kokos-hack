@@ -153,13 +153,12 @@ html, body {
 
 .member-row::after {
     content: '';
-    width: 2px;
     background-color: #ff4747;
     height: 40px;
-    position: absolute; /* Position it absolutely */
-    left: 50%; /* Center it */
-    transform: translateX(-50%); /* Adjust position */
-    top: 50%; /* Center vertically */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 50%;
 }
 
 .member-picture {
@@ -186,14 +185,6 @@ html, body {
     font-size: 18px;
     text-align: center;
     color: #ff4747;
-}
-
-/* Dividers */
-.member-divider {
-    width: 2px;
-    background-color: #ff4747;
-    height: 40px;
-    margin: 0 10px;
 }
 
 /* Bottom bar (footer) */

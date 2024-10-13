@@ -81,7 +81,7 @@ def register():
             new_user_data = cur.fetchone()
             new_user = User(*new_user_data)
             login_user(new_user)
-            return 'ОК'  # redirect(url_for('account'))
+            return 'OK'  # redirect(url_for('account'))
         else:
             return 'Пароли не совпадают'
 

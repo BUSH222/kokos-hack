@@ -63,14 +63,14 @@
             formData.append("password", document.getElementById("password").value);
             formData.append("confirm_password", document.getElementById("confirm_password").value);
 
-            fetch('/login', {
+            fetch('/register', {
                 method: 'POST',
                 body: formData,
             })
             .then(response => response.text())
             .then(data => {
                 if (data === 'OK') {
-                    window.location.href = '/account';                
+                    window.location.href = '/account';          
                 }
                 if (data === 'Логин занят') {
                     alert('Имя пользователя уже занято');

@@ -1034,6 +1034,18 @@ def team_page():
     return render_template('/about/team_members.html', user=user, data=data)
 
 
+@app.route('/order-ticket')
+def order_ticket():
+    if not request.args.get('id'):
+        return redirect(url_for('games'))
+    user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+    if current_user.is_authenticated:
+        user['logged_in'] = True
+        user['profile_picture_url'] = '/static/img/eye.png'
+
+    return render_template('/games/order-ticket.html', user=user)
+
+
 if __name__ == "__main__":
     app.run(port=5000, debug=True, ssl_context=('certificate.pem', 'private_key.pem'))
     cur.close()
