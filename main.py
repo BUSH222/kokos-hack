@@ -177,7 +177,7 @@ def account():
 @login_required
 def change_user_data():
     """
-    GET: Renders the account page
+    GET: Renders the account page 
     Behavior:
     - Parses user info and places it in textlines that send change info on button click
     Returns:
@@ -208,13 +208,14 @@ def change_user_data():
             if usr_input["btn_type"] == "submit":
                 for key in usr_input.keys():
                     if key in allowed_keys:
-                        query = "UPDATE users SET %s = %s WHERE id = %s"
-                        cur.execute(query, (key, usr_input[key], usr_id))
+                        query = f"UPDATE users SET {key} = %s WHERE id = %s"
+                        cur.execute(query, (usr_input[key], usr_id,))
             conn.commit()
+            return jsonify({"change_data": "Success!"})
         except Exception:
             conn.rollback()
             print("БАЗЫ ДАЛИ ЗАЗЫ " * 5)
-            abort(304)
+            abort(500)
 
 
 @app.route('/shop', methods=['GET'])

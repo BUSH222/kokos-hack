@@ -21,7 +21,8 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('response').innerText = `Response from Flask: ${JSON.stringify(data)}`;
+                alert(data['change_data'])
+                window.location.href = '/account'
             })
             .catch((error) => console.error('Error:', error));
         }
