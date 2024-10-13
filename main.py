@@ -43,18 +43,12 @@ GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configura
 google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
-
-# def allowed_file(filename):
-#     return '.' in filename and \
-#         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
 request_timestamps = deque()
 
 
 @app.before_request
 def track_requests():
-    """Track the timestamp of each request."""
+    """Track the timestamp of each request. Update"""
     global request_timestamps
     current_time = time.time()
     request_timestamps.append(current_time)
@@ -64,6 +58,23 @@ def track_requests():
 
 @login_manager.user_loader
 def load_user(user_id):
+    """
+    Load a user from the database based on the user ID.
+
+    This function is called by Flask-Login to retrieve a user's
+    information from the database when the user is authenticated.
+    Args:
+        user_id (int): The ID of the user to load.
+
+    Returns:
+        User or None:
+            - Returns an instance of the User class with the user's details
+              if the user is found.
+            - Returns None if the user does not exist.
+
+    Raises:
+        Exception: May raise an exception if the database query fails.
+    """
     cur.execute("SELECT id, name, password, email FROM users WHERE id = %s", (user_id,))
     user_data = cur.fetchone()
     print(user_data)
@@ -75,33 +86,35 @@ def load_user(user_id):
 @app.route('/logout')
 @login_required
 def logout():
+    """Logs the user out and redirects them to the login page."""
     logout_user()
     return redirect(url_for('app_login.login'))
 
 
 @app.route("/")
 def main_page():
-    """Renders the template for the main page and fills it with data.
-
-    Args:
-        None
-
-    Returns:
-        index.html (str) - index.html template
-        posts: (list(dict)) - top 3 posts to be rendered on index
-            The dicts have the following keys:
-                'id', 'post_time', 'like_count', 'comment_count', 'title', 'tags', 'text'
-        products: (list(dict)) - top 3 most sold products to be rendered on index
-            The dicts have the following keys:
-                'team1', 'team2', 'datetime', 'id'
-        upcoming_game: (dict) - next game of the football club
-            The dict has the following keys:
-                'team1', 'team2', 'datetime', 'id'
-        user: (dict) - user data for the navbar
-            The dict has the following keys:
-                'logged_in', 'profile_picture_url'
     """
+    Displays the main page of the application.
 
+    This endpoint retrieves and renders the top three news posts,
+    the top three selling products, and the closest upcoming game.
+
+    GET:
+        Retrieves data for the main page, including:
+            - The top three news posts with their like and comment counts.
+            - The top three selling products from the shop.
+            - The closest upcoming game.
+
+        Returns:
+            str: Renders the "index/index.html" template with the following context:
+                - posts (list[dict]): A list of the top three news posts.
+                - products (list[dict]): A list of the top three selling products.
+                - upcoming_game (dict): Details of the closest upcoming game.
+                - user (dict): Information about the logged-in user status.
+
+    Raises:
+        HTTPException: May raise an error if the database queries fail.
+    """
     cur.execute("""SELECT news.id,
                 news.news_time,
                 COUNT(news_likes.post_id) AS like_count,
@@ -141,11 +154,29 @@ def main_page():
 @login_required
 def account():
     """
-    GET: Renders the account page
-    Behavior:
-    - Redirects to change user data on button click
-    Returns:
-        Rendered account template.
+    Handles user account information display and updates.
+
+    This endpoint allows users to view their account details and initiate changes to their data.
+
+    GET:
+        Retrieves the account information of the logged-in user.
+
+        Returns:
+            str: Renders the "account/account.html" template with the user's details.
+
+    POST:
+        Processes requests for changing user data.
+
+        Args:
+            request.json (dict):
+                - btn_type (str): The type of button pressed; expected to be "change_user_data"
+                  to initiate a redirect for updating user information.
+
+        Returns:
+            jsonify: A JSON response indicating where to redirect for user data changes.
+
+    Raises:
+        HTTPException: May raise an error if the request fails or the user is unauthorized.
     """
     name, fav_player, about, vk_acc, telegram_acc, points = '', '', '', '', '', 0
     if request.method == 'GET':
@@ -176,11 +207,36 @@ def account():
 @login_required
 def change_user_data():
     """
-    GET: Renders the account page
-    Behavior:
-    - Parses user info and places it in textlines that send change info on button click
-    Returns:
-        Rendered news template.
+    Allows users to view and update their account data.
+
+    This endpoint handles both GET and POST requests for managing user account information.
+    Users can retrieve their current profile data or update specific fields based on user input.
+
+    GET:
+        Retrieves the current account data for the logged-in user.
+
+        Returns:
+            str: Renders the "account/change_user_data.html" template with the user's
+            profile information.
+
+    POST:
+        Updates the user's account data based on the provided JSON input.
+
+        Args:
+            request.json (dict):
+                - profile_pic (str): The URL of the user's profile picture.
+                - name (str): The user's name.
+                - fav_player (str): The user's favorite player.
+                - about_me (str): A brief description about the user.
+                - vk_acc (str): The user's VK account link.
+                - telegram_acc (str): The user's Telegram account link.
+                - btn_type (str): Indicates the type of button pressed; should be "submit" for updates.
+
+        Returns:
+            jsonify: A JSON response indicating the success or failure of the update.
+
+        Raises:
+            HTTPException: If there is an error during the database update, a 500 error will be raised.
     """
     allowed_keys = ['profile_pic', 'name', 'fav_player', 'about_me', 'vk_acc', 'telegram_acc']
     # profile_pic, name, fav_player, about_me, vk_acc, telegram_acc, error = '' * 6
@@ -220,12 +276,25 @@ def change_user_data():
 @app.route('/shop', methods=['GET'])
 def shop():
     """
-    GET:contains all shop items, but only names and photos so they can be placed in slides
-    parses info from db and places it back via jinja
-        expects ?search=string and makes new db request that is placed back in html form via jinja
-    or redirects to itself with id and returns page of a certain item, when clicked
-    So, lets get to it folks
-    :return shop.html:
+    Retrieves and displays a list of products available in the shop.
+
+    This endpoint handles GET requests to fetch products from the shop database.
+    Users can search for products by name using a query parameter. The results
+    include product details such as name, price, picture, and description.
+
+    GET:
+        Retrieves a list of products with optional filtering by name.
+
+        Args:
+            request.args (ImmutableMultiDict):
+                - query (str): The search term to filter products by their names.
+
+        Returns:
+            str: Renders the "shop/shop.html" template with the list of products
+            available in the shop along with user information.
+
+    Notes:
+        If a search query is provided, only products matching the query will be returned.
     """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
@@ -246,27 +315,29 @@ def shop():
 @app.route('/news', methods=['GET'])
 def news():
     """
-    GET: Renders the news page with a list of filtered and sorted news items.
+    Retrieves and displays a list of news articles based on search parameters.
 
-    Behavior:
-    - Retrieves news items from the database, applying filters and sorting based on the given query parameters.
-    - Filters news based on a search term in the title or content, specific tags, and a date if provided.
-    - Defaults to showing the most recent news if no filters are applied.
-    - Allows sorting by either the number of likes (for "top" posts) or by date (for "recent" posts).
+    This endpoint handles GET requests to fetch news articles, which can be filtered by search query, tags,
+    and date. The results can be sorted based on either the most recent articles or the articles with the
+    highest like count.
 
-    Query Parameters:
-        query (str, optional): A search string to filter news by title or content.
-        tags (str, optional): A comma-separated list of tags to filter news by. Each tag can be up to 10 chars long.
-        date (str, optional): A specific date (in 'YYYY-MM-DD' format) to filter news items.
-            Only news posted on or after the given date will be shown.
-        sort (str, optional): Determines the sorting order. Options are:
-            'recent': Sort news by the most recent posts (default).
-            'top': Sort news by the number of likes (most liked posts appear first).
+    GET:
+        Retrieves a list of news articles with optional filtering and sorting.
 
-    Returns:
-        Rendered news template.
+        Args:
+            request.args (ImmutableMultiDict):
+                - query (str): The search term to filter news articles by title or text.
+                - tags (str): A comma-separated string of tags to filter news articles.
+                - date (str): The date to filter news articles (format: YYYY-MM-DD).
+                - sort (str): The sorting order, either 'recent' or 'top' (default is 'recent').
+
+        Returns:
+            str: Renders the "news/news.html" template with the filtered and sorted list of news articles
+            along with user information.
+
+    Raises:
+        ValueError: If the provided date is not in the correct format when filtering news articles.
     """
-
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
         user['logged_in'] = True
@@ -335,6 +406,39 @@ def news():
 @app.route('/view-story', methods=['GET', 'POST'])
 @login_required
 def view_story():
+    """
+    Displays a specific news story and its comments, and allows users to add comments.
+
+    This endpoint handles both GET and POST requests. On a GET request, it retrieves the details of a specific
+    news story, including the number of likes and comments, as well as the comments associated with that story.
+    On a POST request, it allows users to add a comment to the story.
+
+    GET:
+        Retrieves and displays the specified news story along with its comments.
+
+        Args:
+            request.args (ImmutableMultiDict):
+                - id (int): The ID of the news story to be viewed.
+
+        Returns:
+            str: Renders the "news/view-story.html" template with the story data, user information, and comments.
+
+    POST:
+        Submits a comment for the specified news story.
+
+        Args:
+            request.args (ImmutableMultiDict):
+                - id (int): The ID of the news story to comment on.
+            request.form (ImmutableMultiDict):
+                - comment (str): The text of the comment being submitted.
+
+        Returns:
+            str: A confirmation message ('OK') if the comment is added successfully, or an error message if
+            there is an issue with the submission or database operation.
+
+    Raises:
+        Exception: If any error occurs during the database transaction when inserting a comment.
+    """
     if request.method == "GET":
         user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
         if current_user.is_authenticated:
@@ -387,12 +491,27 @@ def view_story():
 @app.route('/forum', methods=['GET', 'POST'])
 def forum():
     """
-    GET:contains all news items, but only names and photos so they can be placed in slides
-    parses info from db and places it back via jinja
-    POST:this b requests json that contains "btn_type" field with "find", after which it redirects
-    you to itself but with all search options that are inside json that comes with find field
-    i.e. tags,search,news_time etc.
-    :return news.html OR if it gets an id option, returns one_new.html:
+    Displays a list of forum posts with options to filter and sort.
+
+    This endpoint handles GET requests to display forum posts. Users can filter posts based on search queries,
+    tags, and dates, as well as sort the results by recent posts or the number of likes.
+
+    GET:
+        Retrieves and displays forum posts based on search parameters.
+
+        Args:
+            request.args (ImmutableMultiDict):
+                - query (str): The search term to filter posts by title or content.
+                - tags (str): A comma-separated list of tags to filter posts by.
+                - date (str): The date (YYYY-MM-DD) to filter posts by creation date.
+                - sort (str): The sorting order for the results ('recent' or 'top'). Defaults to 'recent'.
+
+        Returns:
+            str: Renders the "forum/forum.html" template with the filtered and sorted list of forum posts
+            and user information.
+
+    Raises:
+        Exception: If any error occurs during the database transaction or if invalid date format is provided.
     """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
@@ -463,6 +582,39 @@ def forum():
 @app.route('/view-post', methods=['GET', 'POST'])
 @login_required
 def view_post():
+    """
+    Displays a specific forum post and its comments, and allows users to add comments.
+
+    This endpoint handles both GET and POST requests. On a GET request, it retrieves the details of a specific
+    forum post, including the number of likes and comments, as well as the comments associated with that post.
+    On a POST request, it allows users to add a comment to the post.
+
+    GET:
+        Retrieves and displays the specified forum post along with its comments.
+
+        Args:
+            request.args (ImmutableMultiDict):
+                - id (int): The ID of the post to be viewed.
+
+        Returns:
+            str: Renders the "forum/view-post.html" template with the post data, user information, and comments.
+
+    POST:
+        Submits a comment for the specified forum post.
+
+        Args:
+            request.args (ImmutableMultiDict):
+                - id (int): The ID of the post to comment on.
+            request.form (ImmutableMultiDict):
+                - comment (str): The text of the comment being submitted.
+
+        Returns:
+            str: A confirmation message ('OK') if the comment is added successfully, or an error message if
+            there is an issue with the submission or database operation.
+
+    Raises:
+        Exception: If any error occurs during the database transaction when inserting a comment.
+    """
     if request.method == "GET":
         user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
         if current_user.is_authenticated:
@@ -515,6 +667,37 @@ def view_post():
 @app.route('/new-post', methods=['GET', 'POST'])
 @login_required
 def new_post():
+    """
+    Allows authenticated users to create and submit new forum posts.
+
+    This endpoint handles both GET and POST requests for creating a new forum post. Users must be logged in to
+    access this route. On a successful POST request, the new post is inserted into the database, and an image file
+    associated with the post is uploaded.
+
+    GET:
+        Displays the new post creation form.
+
+        Returns:
+            str: Renders the "forum/new-post.html" template with user information.
+
+    POST:
+        Submits the new forum post and associated image.
+
+        Args:
+            request.form (ImmutableMultiDict):
+                - tags (str): Tags associated with the post.
+                - post-title (str): The title of the new post.
+                - post-content (str): The content of the new post.
+            request.files (FileStorage):
+                - post-image (FileStorage): The image file to be uploaded with the post.
+
+        Returns:
+            str: A confirmation message ('OK') if the post is created successfully, or an error message if
+            there is an issue with the submission or database operation.
+
+    Raises:
+        Exception: If any error occurs during the database transaction or file upload.
+    """
     if request.method == "GET":
         user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
         if current_user.is_authenticated:
@@ -548,6 +731,38 @@ def new_post():
 @app.route('/new-story', methods=['GET', 'POST'])
 @login_required
 def new_story():
+    """
+    Allows admins to create and submit new stories.
+
+    This endpoint handles both GET and POST requests for creating a new story. Only users with admin privileges
+    can access this route. Admin verification is done by checking the user's role in the database. On a successful
+    POST request, the new story is inserted into the database, and an image file associated with the story is uploaded.
+
+    GET:
+        Displays the new story creation form.
+
+        Returns:
+            str: Renders the "news/new-story.html" template.
+
+    POST Request:
+        Submits the new story and associated image.
+
+        Args:
+            request.form (ImmutableMultiDict):
+                - tags (str): Tags associated with the story.
+                - post-title (str): The title of the new story.
+                - post-content (str): The content of the new story.
+            request.files (FileStorage):
+                - post-image (FileStorage): The image file to be uploaded with the story.
+
+        Returns:
+            str: A confirmation message ('OK') if the story is created successfully, or an error message if
+            there is an issue with the submission or database operation.
+
+    Raises:
+        403: If the user is not an admin.
+        Exception: If any error occurs during the database transaction or file upload.
+    """
     try:
         cur.execute('SELECT role FROM users WHERE id = %s', (current_user.id, ))
         if '5' not in cur.fetchone()[0]:
@@ -560,7 +775,7 @@ def new_story():
         if current_user.is_authenticated:
             user['logged_in'] = True
             user['profile_picture_url'] = '/static/img/eye.png'
-        return render_template("forum/new-post.html", user=user)
+        return render_template("news/new-story.html", user=user)
     elif request.method == "POST":
         usr_input = request.form
         file = request.files['post-image']
@@ -603,6 +818,26 @@ def main_server_status():
 
 @app.route('/games', methods=['GET'])
 def games():
+    """
+    Retrieves and displays game information including current, upcoming, and past games.
+
+    This endpoint processes GET requests to provide information about the current game, the next upcoming game,
+    and a list of past games. The results can be filtered based on a search query and a specific date.
+
+    Args:
+        - query (str, optional): A search term to filter past games by team names or game names.
+        - date (str, optional): A specific date (YYYY-MM-DD) to filter past games by their start time.
+
+    Returns:
+        str: Renders the 'games/games.html' template with the following context:
+            - current_game (dict or None): Information about the current game, if any.
+            - upcoming_game (dict or None): Information about the next upcoming game, if any.
+            - games (list of dict): A list of past games matching the search criteria and date.
+            - user (dict): A dictionary containing user login status and profile picture URL.
+
+    Raises:
+        Exception: If any database query fails or if there is an issue rendering the template.
+    """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
         user['logged_in'] = True
@@ -681,8 +916,40 @@ def games():
 @limiter.exempt
 @login_required
 def like():
-    print('BRUH')
-    print(request.args)
+    """
+    Handles 'like' functionality for news and forum posts.
+
+    This endpoint allows users to either fetch the like status and total number of likes for a specific post (GET)
+    or to add/remove a like on a post (POST). The user must be logged in to access this route.
+
+    GET:
+        Retrieves whether the current user has liked the post and the total number of likes on the post.
+
+        Args (request.args):
+            dest (str): The type of post to interact with. Can be either 'forum' or 'news'.
+            id (int): The ID of the post.
+
+        Returns:
+            dict: A JSON object containing:
+                - likes (int): Total number of likes for the post.
+                - is_liked (bool): Whether the current user has liked the post.
+
+    POST:
+        Adds or removes a like for a specific post based on the current like status.
+
+        Args (request.args):
+            dest (str): The type of post to interact with. Can be either 'forum' or 'news'.
+            id (int): The ID of the post.
+
+        Returns:
+            dict: A JSON object containing:
+                - message (str): A success message, either "Like added" or "Like removed".
+                - likes (int): The updated total number of likes for the post.
+
+    Raises:
+        AssertionError: If the 'dest' parameter is not 'news' or 'forum'.
+        403: If the request method is neither GET nor POST or if required arguments are missing.
+    """
     if request.method == 'GET' and request.args:
         uid = current_user.id
         destination = request.args.get('dest')  # forum or news
@@ -746,11 +1013,7 @@ def like():
 
 @app.route('/about')
 def about_page():
-    """
-    GET: Renders the about page with a list of filtered and sorted news items.
-    Returns:
-        Rendered about template.
-    """
+    """Renders the about page template."""
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
         user['logged_in'] = True
@@ -760,19 +1023,15 @@ def about_page():
 
 @app.route('/team-members')
 def team_page():
-    """
-    GET: Renders the team_members page
-    Returns:
-        Rendered team_membres template.
-    """
+    """Renders the team members page template."""
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
         user['logged_in'] = True
         user['profile_picture_url'] = '/static/img/eye.png'
-    cur.execute("SELECT name, description, position, join_time FROM team_members")
-    new_keys = ['name', 'description', 'position', 'join_time']
-    items = dict(zip(new_keys, cur.fetchone()))
-    return render_template('/about/team-members.html', user=user, data=items)
+    cur.execute("SELECT picture_url, name, player_num, position, description FROM team_members")
+    new_keys = ['picture_url', 'name', 'num', 'position', 'description']
+    data = [dict(zip(new_keys, i)) for i in cur.fetchall()]
+    return render_template('/about/team_members.html', user=user, data=data)
 
 
 if __name__ == "__main__":

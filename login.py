@@ -63,6 +63,31 @@ def login():
     return render_template('login_password/login.html')
 
 
+@app_login.route('/register', methods=['GET', 'POST'])
+def register():
+    """Register a new user."""
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        confirm_password = request.form["confirm_password"]
+
+        cur.execute('SELECT 1 FROM users WHERE name = %s', (username,))
+        if cur.fetchone() is not None:
+            return 'Логин занят'
+        elif confirm_password == password:
+            cur.execute("INSERT INTO users (name, password) VALUES (%s, %s) \
+                        RETURNING id, name, password, email", (username, password,))
+            conn.commit()
+            new_user_data = cur.fetchone()
+            new_user = User(*new_user_data)
+            login_user(new_user)
+            return 'ОК'  # redirect(url_for('account'))
+        else:
+            return 'Пароли не совпадают'
+
+    return render_template('login_password/register.html')
+
+
 @app_login.route('/login_yandex', methods=['GET', 'POST'])
 def login_yandex():
     """Get authorization code Yandex sent back to you"""
@@ -96,6 +121,7 @@ def yandex_callback():
     user_name = user_info.get('display_name', 'absent')
     unique_id = user_info.get('id', 'absent')
     user_email = user_info.get('default_email', 'absent')
+    user_email = user_info.get('default_avatar_id', 'absent')
 
     cur.execute("SELECT id, name, password, email FROM users WHERE name = %s", (user_name,))
     user_data = cur.fetchone()

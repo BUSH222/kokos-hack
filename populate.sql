@@ -86,14 +86,14 @@ VALUES
 ('2024-10-05 15:00:00', 'User John Doe logged in.'),
 ('2024-10-12 18:00:00', 'User Jane Smith purchased a ticket.');
 
-INSERT INTO team_members (join_time, name, description, position) VALUES
-('2022-01-15 10:30:00', 'John Doe', 'A dynamic player with excellent strategy skills.', 'Forward'),
-('2022-02-10 09:20:00', 'Emily Carter', 'Team leader with years of experience in competitive matches.', 'Captain'),
-('2022-03-05 11:45:00', 'Michael Smith', 'Known for his speed and agility on the field.', 'Midfielder'),
-('2022-04-22 14:10:00', 'Sarah Johnson', 'A top-tier defender, providing solid defense for the team.', 'Defender'),
-('2022-05-13 13:00:00', 'James Williams', 'A dedicated player, always pushing his limits.', 'Goalkeeper'),
-('2022-06-17 16:30:00', 'Jessica Brown', 'Versatile player with a strong work ethic.', 'Midfielder'),
-('2022-07-09 10:50:00', 'Chris Davis', 'Expert in long-range shots and tactical play.', 'Striker'),
-('2022-08-19 15:15:00', 'Sophia Miller', 'Provides great energy to the team with her quick thinking.', 'Forward'),
-('2022-09-23 12:40:00', 'David Wilson', 'Specializes in assisting and setting up plays.', 'Midfielder'),
-('2022-10-05 11:25:00', 'Olivia Taylor', 'A key asset in defense, known for her tackling ability.', 'Defender');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES
+('https://example.com/img1.png', 'John Doe', '7', 'Forward', 'A fast and skilled forward with great finishing.'),
+('https://example.com/img2.png', 'Jane Smith', '10', 'Midfielder', 'A creative midfielder with excellent vision and passing skills.'),
+('https://example.com/img3.png', 'Chris Lee', '4', 'Defender', 'A solid defender with excellent tackling ability.'),
+('https://example.com/img4.png', 'Kelly Green', '11', 'Forward', 'A dynamic winger with great dribbling and pace.'),
+('https://example.com/img5.png', 'Alex White', '1', 'Goalkeeper', 'An agile goalkeeper with sharp reflexes.'),
+('https://example.com/img6.png', 'Sam Black', '5', 'Midfielder', 'A box-to-box midfielder with incredible stamina.'),
+('https://example.com/img7.png', 'Pat Brown', '8', 'Defender', 'A tough-tackling center-back with leadership skills.'),
+('https://example.com/img8.png', 'Jordan Blue', '9', 'Forward', 'A clinical finisher and an aerial threat.'),
+('https://example.com/img9.png', 'Taylor Gray', '2', 'Defender', 'A full-back known for overlapping runs.'),
+('https://example.com/img10.png', 'Morgan Red', '6', 'Midfielder', 'A defensive midfielder with great positioning.');

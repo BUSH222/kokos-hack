@@ -110,8 +110,9 @@ CREATE TABLE IF NOT EXISTS logs(
 
 CREATE TABLE IF NOT EXISTS team_members(
     id SERIAL PRIMARY KEY,
-    join_time TIMESTAMP,
+    picture_url TEXT,
     name TEXT,
-    description TEXT,
-    position TEXT
+    player_num TEXT,
+    position TEXT,
+    description TEXT
 );

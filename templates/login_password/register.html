@@ -37,7 +37,7 @@
             </div>
             
     
-            <button type="submit" class="registration-btn">Зарегистрироваться</button>
+            <button type="submit" class="registration-btn" onclick="submitPassword()">Зарегистрироваться</button>
         </div>
     </div>
 
@@ -56,6 +56,33 @@
             if (input.value.length > maxLength) {
                 input.value = input.value.slice(0, maxLength);
             }
+        }
+        function submitPassword() {
+            const formData = new FormData();
+            formData.append("username", document.getElementById("username").value);
+            formData.append("password", document.getElementById("password").value);
+            formData.append("confirm_password", document.getElementById("confirm_password").value);
+
+            fetch('/login', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data === 'OK') {
+                    window.location.href = '/account';                
+                }
+                if (data === 'Логин занят') {
+                    alert('Имя пользователя уже занято');
+                }
+                if (data === 'Пароли не совпадают') {
+                    alert('Пароли не совпадают');
+                }
+                // else {
+                //     alert('Пароли не совпадают');
+                // }
+            })
+            .catch(error => console.error('Error:', error));
         }
     </script>
 </body>

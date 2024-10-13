@@ -101,61 +101,99 @@ html, body {
     overflow: visible;
 }
 
-.team-picture {
-    width: 400px;
-    height: 400px;
-    object-fit: cover;
-    border-radius: 15px;
-    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
-    transition: transform 0.3s ease;
-    transform-origin: center;
+/* Team Members Page */
+.team-members-container {
+    padding: 100px 10%;
+    min-height: 100%;
 }
 
-.team-picture:hover {
-    transform: scale(1.02);
-}
-
-
-/* About team container */
-.about-container {
-    padding: 120px 10%;
-    min-height: 10vh;
-    margin: 0 auto;
+.members-table {
     display: flex;
     flex-direction: column;
+    gap: 10px;
+}
+
+.team-header {
+    text-align: center;
+    font-size: 24px;
+    color: #ff4747;
+    margin-bottom: 20px;
+}
+
+.members-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.member-row {
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border: 2px solid #ff4747;
+    border-radius: 15px;
+    background-color: #f2f2f2;
+    transition: all 0.3s ease;
+    width: 95%;
+    max-width: 1200px;
+    margin: 10px auto;
+}
+
+.member-row > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.member-row:hover {
+    transform: scale(1.01);
+}
+
+.member-row::after {
+    content: '';
+    width: 2px;
+    background-color: #ff4747;
+    height: 40px;
+    position: absolute; /* Position it absolutely */
+    left: 50%; /* Center it */
+    transform: translateX(-50%); /* Adjust position */
+    top: 50%; /* Center vertically */
+}
+
+.member-picture {
+    flex: 1;
     text-align: center;
 }
 
-.about-header {
+.member-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.member-name {
+    flex: 2;
+    font-size: 18px;
+    text-align: center;
     color: #ff4747;
-    font-size: 32px;
-    font-weight: bold;
-    margin-top: 10px;
 }
 
-.about-content {
-    background-color: #ffffff;
-    border: 2px solid #ff4747;
-    border-radius: 15px;
-    padding: 20px;
-    max-width: 1200px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.member-number {
+    flex: 1;
+    font-size: 18px;
+    text-align: center;
+    color: #ff4747;
 }
 
-.team-button {
+/* Dividers */
+.member-divider {
+    width: 2px;
     background-color: #ff4747;
-    color: #f2f2f2;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 15px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-.team-button:hover {
-    background-color: #d63b3b;
+    height: 40px;
+    margin: 0 10px;
 }
 
 /* Bottom bar (footer) */
