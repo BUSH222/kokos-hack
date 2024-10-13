@@ -67,7 +67,7 @@
 
         <!-- news fields -->
         {% for item in data %}
-        <div class="news-field">
+        <div class="news-field" data-post-id="{{ item.id }}">
             <div class="news-header">
                 <div class="comment-user">
                     <img src="/static/img/eye.png" alt="User Profile Picture" class="user-pfp">
@@ -133,31 +133,11 @@
         function redirectToPost(postId) {
             window.location.href = `/view-story?id=${postId}`;
         }
-
+    
         function toggleLike(postId) {
             const likeButton = document.getElementById('likeButton-' + postId);
             const likeCountSpan = document.getElementById('likeCount-' + postId);
             let currentCount = parseInt(likeCountSpan.innerText);
-
-            // Add a CSS class for animation
-            likeButton.classList.add('like-animation');
-
-            // Toggle the heart icon and like count
-            if (likeButton.src.includes("heart_icon_empty.png")) {
-                likeButton.src = "/static/img/heart_icon_filled.png";
-                currentCount += 1;
-            } else {
-                likeButton.src = "/static/img/heart_icon_empty.png";
-                currentCount -= 1;
-            }
-
-            // Update the like count display
-            likeCountSpan.innerText = currentCount;
-
-            // Remove animation class after it's done
-            setTimeout(() => {
-                likeButton.classList.remove('like-animation');
-            }, 300);
         }
 
         function limitInputLength(input, maxLength) {
@@ -165,7 +145,8 @@
                 input.value = input.value.slice(0, maxLength);
             }
         }
-
+    
+        // search
         function performSearch() {
             // Get the search query from the input
             const searchQuery = document.getElementById('searchInput').value.trim();
@@ -192,25 +173,23 @@
             // Redirect to the constructed URL
             window.location.href = queryString;
         }
-
     
-
         document.getElementById('searchInput').addEventListener('keypress', function (event) {
             if (event.key === 'Enter') {
                 performSearch();
             }
         });
-
+    
         document.addEventListener('DOMContentLoaded', function() {
             const tagInput = document.getElementById('tagInput');
             const tagContainer = document.getElementById('tagContainer');
-
+    
             tagInput.addEventListener('keydown', function(event) {
                 if (event.key === ' ') {
                     event.preventDefault(); // Prevent space from being added to input
                     const tagValue = tagInput.value.trim(); // Get input value and remove extra spaces
                     
-                    var tagCount = document.getElementsByClassName('tag').length;
+                    var tagCount = document.getElementsByClassName('tag').length
                     if (tagValue && tagValue.length <= 10 && tagCount < 3) {
                         // Create tag element
                         const tag = document.createElement('span');
@@ -219,10 +198,10 @@
                         
                         // Append tag to the container
                         tagContainer.insertBefore(tag, tagInput);
-
+    
                         // Clear the input field
                         tagInput.value = '';
-
+    
                         // Add remove functionality to the tag
                         tag.querySelector('.remove-tag').addEventListener('click', function() {
                             tag.remove();
@@ -231,6 +210,82 @@
                 }
             });
         });
+
+        // Load likes on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLikes();
+        });
+
+        function loadLikes() {
+            const posts = document.querySelectorAll('.news-field');  // Assuming each post is a 'news-field' div
+
+            posts.forEach(post => {
+                const postId = post.getAttribute('data-post-id');
+                const destination = 'ne';  // or 'news' depending on context
+
+                // Fetch likes and is_liked status via AJAX
+                fetch(`/like?dest=${destination}&id=${postId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const likeCountElement = document.getElementById(`likeCount-${postId}`);
+                        const likeButtonElement = document.getElementById(`likeButton-${postId}`);
+
+                        likeCountElement.innerText = data.likes;
+
+                        if (data.is_liked) {
+                            likeButtonElement.src = "/static/img/heart_icon_filled.png";
+                        } else {
+                            likeButtonElement.src = "/static/img/heart_icon_empty.png";
+                        }
+                    })
+                    .catch(error => console.error('Error loading likes:', error));
+            });
+        }
+
+        // Toggle like when user clicks the like button
+        function toggleLike(postId) {
+            const likeButton = document.getElementById(`likeButton-${postId}`);
+            const likeCountSpan = document.getElementById(`likeCount-${postId}`);
+            let currentCount = parseInt(likeCountSpan.innerText);
+
+            // Add a CSS class for animation
+            likeButton.classList.add('like-animation');
+           
+
+            // Toggle the heart icon and send a like/unlike request
+            if (likeButton.src.includes("heart_icon_empty.png")) {
+                likeButton.src = "/static/img/heart_icon_filled.png";
+                currentCount += 1;
+                sendLikeRequest(postId, 'POST');
+            } else {
+                likeButton.src = "/static/img/heart_icon_empty.png";
+                currentCount -= 1;
+                sendLikeRequest(postId, 'POST');
+            }
+
+            setTimeout(() => {
+                likeButton.classList.remove('like-animation');
+            }, 300);
+
+            // Update the like count display
+            likeCountSpan.innerText = currentCount;
+        }
+
+        // Send like/unlike request
+        function sendLikeRequest(postId, method) {
+            const destination = 'news';  // or 'news' depending on context
+            const url = `/like?dest=${destination}&id=${postId}`;
+
+            fetch(url, {
+                method: method
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Failed to like/unlike post');
+                }
+            })
+            .catch(error => console.error('Error during like/unlike request:', error));
+        }
     </script>
 </body>
 </html>

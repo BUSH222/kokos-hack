@@ -1,0 +1,218 @@
+* {
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #ff4747;
+    background: url('/static/img/background.png') no-repeat center center fixed;
+    background-size: cover;
+    scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+html, body {
+    height: 100%;
+}
+
+/* navbar */
+.navbar {
+    background-color: #ff4747;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 999;
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.navbar .left-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .right-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar li {
+    margin: 0 20px;
+    padding: 10px 0;
+}
+
+.navbar a {
+    color: #f2f2f2;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.navbar a:hover {
+    color: #91e8b4;
+}
+
+.navbar .center {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.navbar .center li {
+    margin: 0 30px;
+}
+
+.logo {
+    height: 40px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.profile-pic-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* pictures */
+.team-pictures {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    overflow: visible;
+}
+
+.team-picture {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 15px;
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+    transition: transform 0.3s ease;
+    transform-origin: center;
+}
+
+.team-picture:hover {
+    transform: scale(1.02);
+}
+
+
+/* About team container */
+.about-container {
+    padding: 120px 10%;
+    min-height: 10vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.about-header {
+    color: #ff4747;
+    font-size: 32px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.about-content {
+    background-color: #ffffff;
+    border: 2px solid #ff4747;
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 1200px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-button {
+    background-color: #ff4747;
+    color: #f2f2f2;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 15px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.team-button:hover {
+    background-color: #d63b3b;
+}
+
+/* Bottom bar (footer) */
+.bottom-bar {
+    background-color: #ff4747;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    position: relative;
+}
+
+/* Flexbox layout for footer content */
+.bottom-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    max-width: 1200px;
+}
+
+/* KOKOS logo styling */
+.kokos-logo {
+    height: 40px;
+}
+
+/* Footer links */
+.footer-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 20px;
+    font-size: 16px;
+}
+
+.footer-text {
+    color: #ffffff;
+    font-size: 14px;
+    margin-left: 30px;
+}
+
+.footer-link:hover {
+    color: #91e8b4;
+}
+
+/* Footer sections */
+.bottom-left,
+.bottom-center,
+.bottom-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Social media icons */
+.social-logo {
+    height: 30px;
+    margin-left: 15px;
+}

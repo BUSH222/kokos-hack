@@ -147,13 +147,12 @@ def account():
     Returns:
         Rendered account template.
     """
-    name, fav_player, about, vk_acc, telegram_acc = '', '', '', '', ''
+    name, fav_player, about, vk_acc, telegram_acc, points = '', '', '', '', '', 0
     if request.method == 'GET':
         usr_id = current_user.id
         cur.execute("SELECT name, fav_player, about_me, vk_acc, telegram_acc, points FROM users WHERE id = %s",
                     (usr_id,))
-        a_fields = ['name', 'fav_player', 'about', 'vk_acc', ' telegram_acc', 'points']
-        items = dict(zip(a_fields, cur.fetchone()))
+        name, fav_player, about, vk_acc, telegram_acc, points = cur.fetchone()
         if vk_acc is None:
             vk_acc = "Не привязан"
         if telegram_acc is None:
@@ -165,8 +164,8 @@ def account():
         if current_user.is_authenticated:
             user['logged_in'] = True
             user['profile_picture_url'] = '/static/img/eye.png'
-
-        return render_template('account/account.html', user=user, data=items)
+        print(points)  # TODO
+        return render_template('account/account.html', user=user)
     if request.method == 'POST':
         usr_input = request.json
         if usr_input["btn_type"] == "change_user_data":
@@ -177,7 +176,7 @@ def account():
 @login_required
 def change_user_data():
     """
-    GET: Renders the account page 
+    GET: Renders the account page
     Behavior:
     - Parses user info and places it in textlines that send change info on button click
     Returns:
