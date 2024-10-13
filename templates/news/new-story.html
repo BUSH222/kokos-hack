@@ -117,6 +117,37 @@
                 }
             });
         });
+
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from reloading the page
+
+            const formData = new FormData(this);
+
+            // Collect tags
+            const tags = [];
+            document.querySelectorAll('.tag').forEach(tag => {
+                tags.push(tag.textContent.replace(' ×', '')); // Remove the '×' from each tag
+            });
+            formData.append('tags', tags.join(' ')); // Add tags as a comma-separated string
+
+            fetch('/new-story', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data === 'OK') {
+                    window.location.href = '/news'; // Redirect to /forum on success
+                } else {
+                    alert(data); // Show error message if response is not 'OK'
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the post.');
+            });
+        });
+
     </script>
 </body>
 </html>

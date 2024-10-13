@@ -5,6 +5,8 @@ from flask_login import LoginManager, login_required, logout_user, current_user
 from oauthlib.oauth2 import WebApplicationClient
 from collections import deque
 from datetime import datetime
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import time
 import psutil
 import requests
@@ -23,6 +25,13 @@ app = Flask(__name__)
 app.register_blueprint(app_login)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = token_urlsafe(16)
+
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app,
+    default_limits=["5 per second"],
+    storage_uri="memory://",
+)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'app_login.login'
@@ -530,6 +539,46 @@ def new_post():
             return f'Error, {e}'
 
 
+@app.route('/new-story', methods=['GET', 'POST'])
+@login_required
+def new_story():
+    try:
+        cur.execute('SELECT role FROM users WHERE id = %s', (current_user.id, ))
+        if '5' not in cur.fetchone()[0]:
+            abort(403)
+    except Exception as e:
+        return f'Error verifying user: {e}'
+
+    if request.method == "GET":
+        user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+        if current_user.is_authenticated:
+            user['logged_in'] = True
+            user['profile_picture_url'] = '/static/img/eye.png'
+        return render_template("forum/new-post.html", user=user)
+    elif request.method == "POST":
+        usr_input = request.form
+        file = request.files['post-image']
+        try:
+            file_name = 'news/' + token_urlsafe(16) + '.' + file.filename.split('.')[-1]
+            target_url = 'http://localhost:5001/upload_assets'
+            files = {'file': (file_name, file.stream, file.content_type)}
+            data = {'img_name': file_name}
+            picurl = 'http://localhost:5001/assets/'+file_name
+
+            requests.post(target_url, files=files, data=data)
+
+            cur.execute("""INSERT INTO forum (post_time, author, tag, title, post_text, picture)
+                        VALUES (NOW(),%s,%s,%s,%s,%s)""",
+                        (current_user.id, usr_input["tags"],
+                         usr_input["post-title"], usr_input["post-content"], picurl))
+            conn.commit()
+
+            return 'OK'
+        except Exception as e:
+            conn.rollback()
+            return f'Error, {e}'
+
+
 @app.route('/main_server_status', methods=['GET'])
 def main_server_status():
     """
@@ -544,6 +593,82 @@ def main_server_status():
     return jsonify({'ram': psutil.virtual_memory().percent,
                     'cpu': psutil.cpu_percent(),
                     'rpm': len(request_timestamps)})
+
+
+@app.route('/games', methods=['GET'])
+def games():
+    user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+    if current_user.is_authenticated:
+        user['logged_in'] = True
+        user['profile_picture_url'] = '/static/img/eye.png'
+
+    current_time = datetime.now()
+
+    current_game_query = """
+        SELECT id, team1_name, team2_name, game_start_time
+        FROM games
+        WHERE game_start_time <= %s AND game_end_time >= %s
+        ORDER BY game_start_time DESC
+        LIMIT 1;
+    """
+    cur.execute(current_game_query, (current_time, current_time))
+    game_fields = ['id', 'team1', 'team2', 'datetime']
+    current_game_data = cur.fetchone()
+    if current_game_data:
+        current_game = dict(zip(game_fields, current_game_data))
+    else:
+        current_game = None
+
+    upcoming_game_query = """
+        SELECT id, team1_name, team2_name, game_start_time
+        FROM games
+        WHERE game_start_time > %s
+        ORDER BY game_start_time ASC
+        LIMIT 1;
+    """
+    cur.execute(upcoming_game_query, (current_time,))
+    upcoming_game_data = cur.fetchone()
+
+    if upcoming_game_data:
+        upcoming_game = dict(zip(game_fields, upcoming_game_data))
+    else:
+        upcoming_game = None
+
+    past_games_query = """
+    SELECT id, team1_name, team2_name, game_start_time
+    FROM games
+    WHERE game_end_time < %s
+    """
+    query_params = [current_time]
+    # If 'query' parameter is present, add search condition
+    if request.args.get('query'):
+        search_term = f"%{request.args.get('query')}%"
+        past_games_query += """
+            AND (team1_name ILIKE %s OR team2_name ILIKE %s OR game_name ILIKE %s)
+        """
+        query_params.extend([search_term, search_term, search_term])
+
+    # If 'date' parameter is present, match the game_start_time date
+    if request.args.get('date'):
+        game_date = request.args.get('date')  # Expected format: 'YYYY-MM-DD'
+        past_games_query += " AND DATE(game_start_time) = %s"
+        query_params.append(game_date)
+
+    # Execute the query with dynamic parameters
+    past_games_query += " ORDER BY game_end_time DESC"
+    cur.execute(past_games_query, tuple(query_params))
+    games_data = cur.fetchall()
+    if games_data:
+        games = [dict(zip(game_fields, i)) for i in games_data]
+    else:
+        games = []
+    # Render template with game data
+    return render_template("games/games.html",
+                           current_game=current_game,
+                           upcoming_game=upcoming_game,
+                           games=games,
+                           user=user
+                           )
 
 
 if __name__ == "__main__":

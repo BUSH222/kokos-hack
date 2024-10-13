@@ -28,7 +28,7 @@
             </div>
 
             <div class="right-side">
-                {% if user_logged_in %}
+                {% if user.logged_in %}
                     <li>
                         <a href="/account">
                             <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
@@ -45,7 +45,7 @@
     <div class="games-container">
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Найти игру">
-            <input type="date">
+            <input type="date" id="datePicker">
             <button onclick="performSearch()">Найти</button>
         </div>
 
@@ -56,12 +56,10 @@
                 <div class="game-row">
                     <div class="teams">
                         <div class="team1">
-                            <img src="{{ current_game.team1_logo_url }}" alt="{{ current_game.team1 }}" class="team-logo">
                             <div class="team-name">{{ current_game.team1 }}</div>
                         </div>
                         <span class="vs">vs</span>
                         <div class="team2">
-                            <img src="{{ current_game.team2_logo_url }}" alt="{{ current_game.team2 }}" class="team-logo">
                             <div class="team-name">{{ current_game.team2 }}</div>
                         </div>
                     </div>
@@ -77,12 +75,10 @@
                 <div class="next-game-row">
                     <div class="teams">
                         <div class="team1">
-                            <img src="{{ upcoming_game.team1_logo_url }}" alt="{{ upcoming_game.team1 }}" class="team-logo">
                             <div class="team-name">{{ upcoming_game.team1 }}</div>
                         </div>
                         <span class="vs">vs</span>
                         <div class="team2">
-                            <img src="{{ upcoming_game.team2_logo_url }}" alt="{{ upcoming_game.team2 }}" class="team-logo">
                             <div class="team-name">{{ upcoming_game.team2 }}</div>
                         </div>
                     </div>
@@ -104,12 +100,10 @@
             <div class="game-row">
                 <div class="teams">
                     <div class="team1">
-                        <img src="{{ game.team1_logo_url }}" alt="{{ game.team1 }}" class="team-logo">
                         <div class="team-name">{{ game.team1 }}</div>
                     </div>
                     <span class="vs">vs</span>
                     <div class="team2">
-                        <img src="{{ game.team2_logo_url }}" alt="{{ game.team2 }}" class="team-logo">
                         <div class="team-name">{{ game.team2 }}</div>
                     </div>
                 </div>
@@ -158,9 +152,15 @@
         // search
         function performSearch() {
             const searchQuery = document.getElementById('searchInput').value;
+            const date = document.getElementById('datePicker').value;
+            let queryString = '/games?'
             if (searchQuery) {
-                window.location.href = `/search?query=${encodeURIComponent(searchQuery)}`;
+                queryString += `query=${encodeURIComponent(searchQuery)}`;
             }
+            if (date) {
+                queryString += `date=${encodeURIComponent(date)}`;
+            }
+            window.location.href = queryString
         }
 
         document.getElementById('searchInput').addEventListener('keypress', function (event) {
