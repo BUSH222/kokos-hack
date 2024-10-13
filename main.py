@@ -736,6 +736,11 @@ def like():
 
 @app.route('/about')
 def about_page():
+    """
+    GET: Renders the about page with a list of filtered and sorted news items.
+    Returns:
+        Rendered about template.
+    """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
         user['logged_in'] = True
@@ -745,12 +750,18 @@ def about_page():
 
 @app.route('/team-members')
 def team_page():
+    """
+    GET: Renders the team_members page
+    Returns:
+        Rendered team_membres template.
+    """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
         user['logged_in'] = True
         user['profile_picture_url'] = '/static/img/eye.png'
+    cur.execute("SELECT name,description,position,join_time FROM team_members")
+    team_infp
     return render_template('/about/team-members.html', user=user)
-
 
 
 if __name__ == "__main__":

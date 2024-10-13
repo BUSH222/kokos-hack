@@ -107,3 +107,11 @@ CREATE TABLE IF NOT EXISTS logs(
     log_time TIMESTAMP,
     log_text TEXT
 );
+
+CREATE TABLE IF NOT EXISTS team_members(
+    id SERIAL PRIMARY KEY,
+    join_time TIMESTAMP,
+    name TEXT,
+    description TEXT,
+    position TEXT
+);

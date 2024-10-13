@@ -91,6 +91,24 @@ html, body {
     object-fit: cover;
 }
 
+/* pictures */
+.team-pictures {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Space between images */
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.team-picture {
+    width: 300px; /* Adjust width as needed */
+    height: 200px; /* Adjust height as needed */
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
 /* About team container */
 .about-container {
     padding: 120px 10%;
