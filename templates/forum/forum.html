@@ -62,13 +62,13 @@
             </select>
         
             <!-- Search Button -->
-            <button id="searchButton" onclick="send_to_server('find')">Найти</button>
+            <button id="searchButton" onclick="performSearch">Найти</button>
         </div>        
         
 
         <!-- news fields -->
         {% for item in data %}
-        <div class="news-field">
+        <div class="news-field" data-post-id="{{ item.id }}">
             <div class="news-header">
                 <div class="comment-user">
                     <img src="/static/img/eye.png" alt="User Profile Picture" class="user-pfp">
@@ -133,9 +133,6 @@
             </div>
         </div>
     </div>
-
-
-
     <script>
         function redirectToPost(postId) {
             window.location.href = `/view-post?id=${postId}`;
@@ -146,25 +143,7 @@
             const likeCountSpan = document.getElementById('likeCount-' + postId);
             let currentCount = parseInt(likeCountSpan.innerText);
 
-            // Add a CSS class for animation
-            likeButton.classList.add('like-animation');
-
-            // Toggle the heart icon and like count
-            if (likeButton.src.includes("heart_icon_empty.png")) {
-                likeButton.src = "/static/img/heart_icon_filled.png";
-                currentCount += 1;
-            } else {
-                likeButton.src = "/static/img/heart_icon_empty.png";
-                currentCount -= 1;
-            }
-
-            // Update the like count display
-            likeCountSpan.innerText = currentCount;
-
-            // Remove animation class after it's done
-            setTimeout(() => {
-                likeButton.classList.remove('like-animation');
-            }, 300);
+            
         }
     
         function limitInputLength(input, maxLength) {
@@ -188,7 +167,7 @@
             const sortOrder = document.getElementById('filterDropdown').value;
 
             // Construct the query string
-            let queryString = '/news?';
+            let queryString = '/forum?';
             if (searchQuery) queryString += `query=${encodeURIComponent(searchQuery)}&`;
             if (tags.length > 0) queryString += `tags=${encodeURIComponent(tags.join(','))}&`;
             if (date) queryString += `date=${encodeURIComponent(date)}&`;
@@ -237,6 +216,85 @@
                 }
             });
         });
+
+        // Load likes on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLikes();
+        });
+
+        function loadLikes() {
+            const posts = document.querySelectorAll('.news-field');  // Assuming each post is a 'news-field' div
+
+            posts.forEach(post => {
+                const postId = post.getAttribute('data-post-id');
+                const destination = 'forum';  // or 'news' depending on context
+
+                // Fetch likes and is_liked status via AJAX
+                fetch(`/like?dest=${destination}&id=${postId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const likeCountElement = document.getElementById(`likeCount-${postId}`);
+                        const likeButtonElement = document.getElementById(`likeButton-${postId}`);
+
+                        likeCountElement.innerText = data.likes;
+
+                        if (data.is_liked) {
+                            likeButtonElement.src = "/static/img/heart_icon_filled.png";
+                        } else {
+                            likeButtonElement.src = "/static/img/heart_icon_empty.png";
+                        }
+                    })
+                    .catch(error => console.error('Error loading likes:', error));
+            });
+        }
+
+        // Toggle like when user clicks the like button
+        function toggleLike(postId) {
+            const likeButton = document.getElementById(`likeButton-${postId}`);
+            const likeCountSpan = document.getElementById(`likeCount-${postId}`);
+            let currentCount = parseInt(likeCountSpan.innerText);
+
+            // Add a CSS class for animation
+            likeButton.classList.add('like-animation');
+           
+
+            // Toggle the heart icon and send a like/unlike request
+            if (likeButton.src.includes("heart_icon_empty.png")) {
+                likeButton.src = "/static/img/heart_icon_filled.png";
+                currentCount += 1;
+                sendLikeRequest(postId, 'POST');
+            } else {
+                likeButton.src = "/static/img/heart_icon_empty.png";
+                currentCount -= 1;
+                sendLikeRequest(postId, 'POST');
+            }
+
+            setTimeout(() => {
+                likeButton.classList.remove('like-animation');
+            }, 300);
+
+            // Update the like count display
+            likeCountSpan.innerText = currentCount;
+        }
+
+        // Send like/unlike request
+        function sendLikeRequest(postId, method) {
+            const destination = 'forum';  // or 'news' depending on context
+            const url = `/like?dest=${destination}&id=${postId}`;
+
+            fetch(url, {
+                method: method
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Failed to like/unlike post');
+                }
+            })
+            .catch(error => console.error('Error during like/unlike request:', error));
+        }
+    </script>
+
+    
     </script>
     
 </body>

@@ -141,40 +141,47 @@ def main_page():
 @login_required
 def account():
     """
-    An endpoint with all of a user data.
+    GET: Renders the account page
+    Behavior:
+    - Redirects to change user data on button click
+    Returns:
+        Rendered account template.
     """
     name, fav_player, about, vk_acc, telegram_acc = '', '', '', '', ''
     if request.method == 'GET':
         usr_id = current_user.id
-        cur.execute("SELECT name, fav_player, about_me, vk_acc, telegram_acc FROM users WHERE id = %s",
+        cur.execute("SELECT name, fav_player, about_me, vk_acc, telegram_acc, points FROM users WHERE id = %s",
                     (usr_id,))
-        name, fav_player, about, vk_acc, telegram_acc = cur.fetchone()
-
+        a_fields = ['name', 'fav_player', 'about', 'vk_acc', ' telegram_acc', 'points']
+        items = dict(zip(a_fields, cur.fetchone()))
         if vk_acc is None:
             vk_acc = "Не привязан"
         if telegram_acc is None:
             telegram_acc = "Не привязан"
+
+        user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png',
+                'nickname': name, 'about': about, 'fav_player_img': fav_player,
+                'telegram_url': telegram_acc, 'vk_url': vk_acc}
+        if current_user.is_authenticated:
+            user['logged_in'] = True
+            user['profile_picture_url'] = '/static/img/eye.png'
+
+        return render_template('account/account.html', user=user, data=items)
     if request.method == 'POST':
         usr_input = request.json
         if usr_input["btn_type"] == "change_user_data":
-            return {'re': '/account/change_account_data'}
-
-    user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png',
-            'nickname': name, 'about': about, 'fav_player_img': fav_player,
-            'telegram_url': telegram_acc, 'vk_url': vk_acc}
-
-    if current_user.is_authenticated:
-        user['logged_in'] = True
-        user['profile_picture_url'] = '/static/img/eye.png'
-
-    return render_template('account/account.html', user=user)
+            return jsonify({'re': '/account/change_account_data'})
 
 
 @app.route('/account/change_account_data', methods=['POST', 'GET'])
 @login_required
 def change_user_data():
     """
-    An endpoint parses user info from db than puts it inside text windows for editing.
+    GET: Renders the account page
+    Behavior:
+    - Parses user info and places it in textlines that send change info on button click
+    Returns:
+        Rendered news template.
     """
     allowed_keys = ['profile_pic', 'name', 'fav_player', 'about_me', 'vk_acc', 'telegram_acc']
     # profile_pic, name, fav_player, about_me, vk_acc, telegram_acc, error = '' * 6
@@ -197,7 +204,6 @@ def change_user_data():
         usr_input["telegram_acc"] = usr_input["telegram_acc"].replace(' ', '')
         if "@" not in usr_input["telegram_acc"]:
             usr_input["telegram_acc"] = "@" + usr_input["telegram_acc"]
-
         try:
             if usr_input["btn_type"] == "submit":
                 for key in usr_input.keys():
@@ -318,7 +324,7 @@ def news():
         sql_params.append(date)
 
     # Execute the query
-    cur.execute(exec_string, (sql_params, ))
+    cur.execute(exec_string, tuple(sql_params))
     news_fields = ['id', 'date_created', 'like_count', 'comment_count',
                    'title', 'tags', 'text', 'news_photo_url']
     items = [dict(zip(news_fields, i)) for i in cur.fetchall()]
@@ -446,7 +452,7 @@ def forum():
         sql_params.append(date)
 
     # Execute the query
-    cur.execute(exec_string, (sql_params, ))
+    cur.execute(exec_string, tuple(sql_params))
     forum_fields = ['id', 'date_created', 'author', 'like_count', 'comment_count',
                     'title', 'tags', 'text', 'news_photo_url']
     items = [dict(zip(forum_fields, i)) for i in cur.fetchall()]
@@ -675,6 +681,8 @@ def games():
 @limiter.exempt
 @login_required
 def like():
+    print('BRUH')
+    print(request.args)
     if request.method == 'GET' and request.args:
         uid = current_user.id
         destination = request.args.get('dest')  # forum or news
@@ -696,9 +704,11 @@ def like():
             """
             query_total = "SELECT COUNT(*) FROM forum_likes WHERE post_id = %s"
         cur.execute(query, (post_id, uid))
-        post_isliked = cur.fetchone()[0]
+        post_isliked = cur.fetchone()
+        post_isliked = post_isliked[0] if post_isliked is not None else False
         cur.execute(query_total, (post_id, ))
-        post_totallikes = cur.fetchone()[0]
+        post_totallikes = cur.fetchone()
+        post_totallikes = post_totallikes[0] if post_totallikes is not None else 0
         return jsonify({'likes': post_totallikes, 'is_liked': post_isliked})
 
     elif request.method == 'POST' and request.args:
@@ -759,9 +769,10 @@ def team_page():
     if current_user.is_authenticated:
         user['logged_in'] = True
         user['profile_picture_url'] = '/static/img/eye.png'
-    cur.execute("SELECT name,description,position,join_time FROM team_members")
-    team_infp
-    return render_template('/about/team-members.html', user=user)
+    cur.execute("SELECT name, description, position, join_time FROM team_members")
+    new_keys = ['name', 'description', 'position', 'join_time']
+    items = dict(zip(new_keys, cur.fetchone()))
+    return render_template('/about/team-members.html', user=user, data=items)
 
 
 if __name__ == "__main__":

@@ -57,7 +57,7 @@
                 <input type="text" id="telegram_acc" name="telegram_acc" value="{{ telegram_acc }}">
             </div>
             <div class="form-group error" id="error">{{ error }}</div>
-            <button type="submit">Сохранить</button>
+            <button type="submit" onclick="send_to_server('submit')">Сохранить</button>
         </form>
         <p id="response"></p>
     </div>

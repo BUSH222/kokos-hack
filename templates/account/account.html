@@ -52,7 +52,7 @@
                 <a href="{{ user.vk_url }}"><img src="/static/img/vk_icon.png" alt="VK">{{ user.vk_url }}</a>
             </div>
                 <a href="/account/change_account_data">
-                    <button class="edit-profile-btn">Редактировать профиль</button>
+                    <button class="edit-profile-btn" onclick='send_to_server("change_user_data")'>Редактировать профиль</button>
                 </a>
         </div>
         
