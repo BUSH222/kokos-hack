@@ -27,7 +27,7 @@
             </div>
 
             <div class="right-side">
-                {% if user_logged_in %}
+                {% if user.logged_in %}
                     <li>
                         <a href="/account">
                             <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">

@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>О клубе</title>
-    <link rel="stylesheet" href="/static/about/about.css">
+    <title>Состав клуба</title>
+    <link rel="stylesheet" href="/static/team/team.css">
 </head>
 <body>
-    <!-- navigation bar -->
+    <!-- Navigation Bar -->
     <div class="navbar">
         <ul>
             <div class="left-side">
@@ -17,7 +17,6 @@
                     </a>
                 </li>
             </div>
-
             <div class="center">
                 <li><a href="/news">Новости</a></li>
                 <li><a href="/games">Игры</a></li>
@@ -25,7 +24,6 @@
                 <li><a href="/about">О клубе</a></li>
                 <li><a href="/forum">Форум</a></li>
             </div>
-
             <div class="right-side">
                 {% if user.logged_in %}
                     <li>
@@ -40,30 +38,39 @@
         </ul>
     </div>
 
-    <!-- Header -->
-    <div class="about-container">
-        <h1 class="about-header">Состав клуба</h1>
+    <!-- Team Members Container -->
+    <div class="team-members-container">
+        <h1 class="team-header">Состав клуба</h1>
+
+        <!-- Members Table -->
+        <div class="members-table">
+            {% for member in members %}
+            <div class="member-row">
+                <div class="member-picture">
+                    <img src="{{ member.picture_url }}" alt="{{ member.name }}" class="member-img">
+                </div>
+                <div class="member-name">
+                    {{ member.name }}
+                </div>
+                <div class="member-number">
+                    #{{ member.number }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
-    <!-- Members -->
-     
-
-    <!-- Bottom Bar -->
+    <!-- Footer -->
     <div class="bottom-bar">
         <div class="bottom-bar-content">
-            <!-- Left side: Logo -->
             <div class="bottom-left">
                 <img src="/static/img/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
             </div>
-
-            <!-- Center: Links -->
             <div class="bottom-center">
                 <a href="/help" class="footer-link">help</a>
                 <a href="/privacy" class="footer-link">privacy policy, legal</a>
                 <span class="footer-text">Developed by "MISIS Leaf Lovers" for "KOKOC hackathon"</span>
             </div>
-
-            <!-- Right side: Social Media -->
             <div class="bottom-right">
                 <a href="https://vk.com/kokocgroup_ru" target="_blank">
                     <img src="/static/img/vk_icon.png" alt="VK" class="social-logo">
