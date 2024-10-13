@@ -77,7 +77,6 @@ def load_user(user_id):
     """
     cur.execute("SELECT id, name, password, email FROM users WHERE id = %s", (user_id,))
     user_data = cur.fetchone()
-    print(user_data)
     if user_data:
         return User(*user_data)
     return None
@@ -142,10 +141,14 @@ def main_page():
                 """)
     closest_game_fields = ['team1', 'team2', 'datetime', 'id']
     closest_game = dict(zip(closest_game_fields, cur.fetchone()))
+
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
+        cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
         user['logged_in'] = True
-        user['profile_picture_url'] = '/static/img/eye.png'
+        profile_pic = cur.fetchone()[0]
+        if profile_pic:
+            user['profile_picture_url'] = profile_pic
     return render_template("index/index.html", posts=top_three_posts, products=top_three_selling_posts,
                            upcoming_game=closest_game, user=user)
 
@@ -181,9 +184,10 @@ def account():
     name, fav_player, about, vk_acc, telegram_acc, points = '', '', '', '', '', 0
     if request.method == 'GET':
         usr_id = current_user.id
-        cur.execute("SELECT name, fav_player, about_me, vk_acc, telegram_acc, points FROM users WHERE id = %s",
+        cur.execute("""SELECT name, fav_player, about_me, vk_acc, telegram_acc, points, profile_pic
+                    FROM users WHERE id = %s""",
                     (usr_id,))
-        name, fav_player, about, vk_acc, telegram_acc, points = cur.fetchone()
+        name, fav_player, about, vk_acc, telegram_acc, points, profile_pic = cur.fetchone()
         if vk_acc is None:
             vk_acc = "Не привязан"
         if telegram_acc is None:
@@ -194,7 +198,10 @@ def account():
                 'telegram_url': telegram_acc, 'vk_url': vk_acc}
         if current_user.is_authenticated:
             user['logged_in'] = True
-            user['profile_picture_url'] = '/static/img/eye.png'
+            if profile_pic:
+                user['profile_picture_url'] = profile_pic  # '/static/img/default_pfp.png'
+            else:
+                user['profile_picture_url'] = '/static/img/default_pfp.png'
         print(points)  # TODO
         return render_template('account/account.html', user=user)
     if request.method == 'POST':
@@ -255,7 +262,21 @@ def change_user_data():
 
     if request.method == 'POST':
         usr_id = current_user.id
-        usr_input = request.json
+        usr_input = request.form.to_dict()
+
+        file = request.files.get('profile_pic')
+        try:
+            file_name = 'account/' + token_urlsafe(16) + '.' + file.filename.split('.')[-1]
+            target_url = 'http://localhost:5001/upload_assets'
+            files = {'file': (file_name, file.stream, file.content_type)}
+            data = {'img_name': file_name}
+            full_file_name = 'http://localhost:5001/assets/'+file_name
+            requests.post(target_url, files=files, data=data)
+            cur.execute('UPDATE users SET profile_pic = %s WHERE id = %s', (full_file_name, usr_id))
+        except Exception as e:
+            print(e)
+            abort(500)
+
         usr_input["telegram_acc"] = usr_input["telegram_acc"].replace(' ', '')
         if "@" not in usr_input["telegram_acc"]:
             usr_input["telegram_acc"] = "@" + usr_input["telegram_acc"]
@@ -298,8 +319,11 @@ def shop():
     """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
+        cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
         user['logged_in'] = True
-        user['profile_picture_url'] = '/static/img/eye.png'
+        profile_pic = cur.fetchone()[0]
+        if profile_pic:
+            user['profile_picture_url'] = profile_pic
     cur.execute("SELECT product_name, price, picture, description FROM shop")
     items_fields = ['title', 'price', 'news_photo_url', 'text']
     items = [dict(zip(items_fields, a)) for a in cur.fetchall()]
@@ -340,8 +364,11 @@ def news():
     """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
+        cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
         user['logged_in'] = True
-        user['profile_picture_url'] = '/static/img/eye.png'
+        profile_pic = cur.fetchone()[0]
+        if profile_pic:
+            user['profile_picture_url'] = profile_pic
 
     # Get search parameters
     search_query = request.args.get('query', '').strip()
@@ -374,7 +401,6 @@ def news():
     if date:
         try:
             datetime.strptime(date, '%Y-%m-%d')
-            print(date)
             filters.append("DATE(news.news_time) = %s")
         except ValueError:
             pass  # Invalid date, skip the filter
@@ -442,8 +468,11 @@ def view_story():
     if request.method == "GET":
         user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
         if current_user.is_authenticated:
+            cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
             user['logged_in'] = True
-            user['profile_picture_url'] = '/static/img/eye.png'
+            profile_pic = cur.fetchone()[0]
+            if profile_pic:
+                user['profile_picture_url'] = profile_pic
         exec_string = """
             SELECT news.id,
                 news.news_time AS date_created,
@@ -515,8 +544,11 @@ def forum():
     """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
+        cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
         user['logged_in'] = True
-        user['profile_picture_url'] = '/static/img/eye.png'
+        profile_pic = cur.fetchone()[0]
+        if profile_pic:
+            user['profile_picture_url'] = profile_pic
 
     # Get search parameters
     search_query = request.args.get('query', '').strip()
@@ -550,7 +582,6 @@ def forum():
     if date:
         try:
             datetime.strptime(date, '%Y-%m-%d')
-            print(date)
             filters.append("DATE(forum.post_time) = %s")
         except ValueError:
             pass  # Invalid date, skip the filter
@@ -615,11 +646,13 @@ def view_post():
     Raises:
         Exception: If any error occurs during the database transaction when inserting a comment.
     """
-    if request.method == "GET":
-        user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
-        if current_user.is_authenticated:
-            user['logged_in'] = True
-            user['profile_picture_url'] = '/static/img/eye.png'
+    user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+    if current_user.is_authenticated:
+        cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
+        user['logged_in'] = True
+        profile_pic = cur.fetchone()[0]
+        if profile_pic:
+            user['profile_picture_url'] = profile_pic
         exec_string = """
             SELECT forum.id,
                 forum.post_time AS date_created,
@@ -701,8 +734,11 @@ def new_post():
     if request.method == "GET":
         user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
         if current_user.is_authenticated:
+            cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
             user['logged_in'] = True
-            user['profile_picture_url'] = '/static/img/eye.png'
+            profile_pic = cur.fetchone()[0]
+            if profile_pic:
+                user['profile_picture_url'] = profile_pic
         return render_template("forum/new-post.html", user=user)
     elif request.method == "POST":
         usr_input = request.form
@@ -773,8 +809,11 @@ def new_story():
     if request.method == "GET":
         user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
         if current_user.is_authenticated:
+            cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
             user['logged_in'] = True
-            user['profile_picture_url'] = '/static/img/eye.png'
+            profile_pic = cur.fetchone()[0]
+            if profile_pic:
+                user['profile_picture_url'] = profile_pic
         return render_template("news/new-story.html", user=user)
     elif request.method == "POST":
         usr_input = request.form
@@ -840,8 +879,11 @@ def games():
     """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
+        cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
         user['logged_in'] = True
-        user['profile_picture_url'] = '/static/img/eye.png'
+        profile_pic = cur.fetchone()[0]
+        if profile_pic:
+            user['profile_picture_url'] = profile_pic
 
     current_time = datetime.now()
 
@@ -1016,8 +1058,11 @@ def about_page():
     """Renders the about page template."""
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
+        cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
         user['logged_in'] = True
-        user['profile_picture_url'] = '/static/img/eye.png'
+        profile_pic = cur.fetchone()[0]
+        if profile_pic:
+            user['profile_picture_url'] = profile_pic
     return render_template('/about/about.html', user=user)
 
 
@@ -1026,8 +1071,11 @@ def team_page():
     """Renders the team members page template."""
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
+        cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
         user['logged_in'] = True
-        user['profile_picture_url'] = '/static/img/eye.png'
+        profile_pic = cur.fetchone()[0]
+        if profile_pic:
+            user['profile_picture_url'] = profile_pic
     cur.execute("SELECT picture_url, name, player_num, position, description FROM team_members")
     new_keys = ['picture_url', 'name', 'num', 'position', 'description']
     data = [dict(zip(new_keys, i)) for i in cur.fetchall()]
@@ -1040,8 +1088,11 @@ def order_ticket():
         return redirect(url_for('games'))
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
     if current_user.is_authenticated:
+        cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
         user['logged_in'] = True
-        user['profile_picture_url'] = '/static/img/eye.png'
+        profile_pic = cur.fetchone()[0]
+        if profile_pic:
+            user['profile_picture_url'] = profile_pic
 
     return render_template('/games/order-ticket.html', user=user)
 

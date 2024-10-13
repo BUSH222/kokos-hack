@@ -121,7 +121,12 @@ def yandex_callback():
     user_name = user_info.get('display_name', 'absent')
     unique_id = user_info.get('id', 'absent')
     user_email = user_info.get('default_email', 'absent')
-    user_email = user_info.get('default_avatar_id', 'absent')
+    user_pic = user_info.get('default_avatar_id', 'absent')
+
+    if user_pic:
+        user_pic_url = f"https://avatars.yandex.net/get-yapic/{user_pic}/islands-200"
+    else:
+        user_pic_url = "https://avatars.yandex.net/get-yapic/"
 
     cur.execute("SELECT id, name, password, email FROM users WHERE name = %s", (user_name,))
     user_data = cur.fetchone()
@@ -130,8 +135,9 @@ def yandex_callback():
         login_user(user)
         return redirect(url_for('account'))
     else:
-        cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) \
-                    RETURNING id, name, password, email', (user_name, unique_id, user_email))
+        cur.execute('INSERT INTO users(name, password, email, profile_pic) \
+                    VALUES (%s, %s, %s, %s) RETURNING id, name, password, email, profile_pic',
+                    (user_name, unique_id, user_email, user_pic_url))
         conn.commit()
         new_user_data = cur.fetchone()
         new_user = User(*new_user_data)
@@ -169,7 +175,7 @@ def callback():
         token_url,
         headers=headers,
         data=body,
-        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
+        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET)
     )
 
     # Parse the tokens!
@@ -181,7 +187,7 @@ def callback():
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
         user_email = userinfo_response.json()["email"]
-        # picture = userinfo_response.json()["picture"] !! TODO
+        picture = userinfo_response.json()["picture"]
         username = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
@@ -191,15 +197,18 @@ def callback():
     if user_data:
         user = User(*user_data)
         login_user(user)
-        return redirect(url_for('.account'))
+        return redirect(url_for('account'))
     else:
-        cur.execute('INSERT INTO users(name, password, email) VALUES (%s, %s, %s) \
-                    RETURNING id, name, password, email', (username, unique_id, user_email))
+        cur.execute(
+            'INSERT INTO users(name, password, email, profile_pic) VALUES (%s, %s, %s, %s) '
+            'RETURNING id, name, password, email',
+            (username, unique_id, user_email, picture)
+        )
         conn.commit()
         new_user_data = cur.fetchone()
         new_user = User(*new_user_data)
         login_user(new_user)
-        return redirect(url_for('.account'))
+        return redirect(url_for('account'))
 
 
 if __name__ == '__main__':

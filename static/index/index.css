@@ -170,9 +170,10 @@ html, body {
 
 /* Team logos and names */
 .team1, .team2 {
-    display: flex;
+    margin: 10px;
     flex-direction: row;
     align-items: center;
+    flex: 0 1 auto;
 }
 
 .team-logo {

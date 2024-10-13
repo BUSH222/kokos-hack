@@ -194,14 +194,14 @@ body::-webkit-scrollbar {
     overflow: hidden;
     padding: 10px;
     width: 100%;
-    max-width: 1200px; /* Make the container wider to accommodate hover */
-    margin: 0 auto; /* Center the container */
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .teams, .datetime, .view-stats {
     font-size: 18px;
     color: #ff4747;
-    flex: 1;
+    flex: 1; /* this */
     text-align: center;
 }
 
@@ -217,16 +217,10 @@ body::-webkit-scrollbar {
 
 /* Team logos and names */
 .team1, .team2 {
-    display: flex;
+    margin: 10px;
     flex-direction: row;
     align-items: center;
-}
-
-.team-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-    margin-right: 10px;
+    flex: 0 1 auto;
 }
 
 .team-name {

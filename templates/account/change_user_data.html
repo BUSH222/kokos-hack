@@ -5,37 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/account/change_user_data.css">
     <title>Изменение данных пользователя</title>
-    <script>
-        function sendData() {
-            const data = {
-                telegram_acc: document.getElementById('telegram_acc').value,
-                btn_type: "submit"
-            };
-
-            fetch('/account/change_account_data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data['change_data'])
-                window.location.href = '/account'
-            })
-            .catch((error) => console.error('Error:', error));
-        }
-    </script>
 </head>
 <body>
     <div class="container">
         <h1>Изменение данных пользователя</h1>
-        <form id="userForm" onsubmit="event.preventDefault(); sendData();">
+        <form id="userForm" onsubmit="event.preventDefault();">
             <div class="form-group">
                 <label for="profile_pic">Фото профиля</label>
                 <img id="profile_pic_preview" src="{{ profile_pic }}" alt="Фото профиля">
-                <input type="file" id="profile_pic" name="profile_pic" accept="image/*" onchange="previewImage(event)">
+                <input type="file" id="profile_pic" name="profile_pic" accept="image/*">
             </div>
             <div class="form-group">
                 <label for="name">Имя</label>
