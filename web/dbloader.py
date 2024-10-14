@@ -10,7 +10,7 @@ import psycopg2
 from psycopg2 import sql
 import logging
 
-dinamic_host = 'db'
+dinamic_host = 'localhost'
 
 
 def connect_to_db(db_name='kokos', postgres_pwd='12345678', host=dinamic_host, port='5432'):
