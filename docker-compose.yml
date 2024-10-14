@@ -8,20 +8,18 @@ services:
       - "5000:5000"
     depends_on:
       - db
-    # environment:
-    #   DATABASE_URL: postgresql://postgres:password@db:5432/mydatabase
     command: python main.py
 
   db:
-    image: postgres:16.4
+    image: postgres:13
     container_name: db
     # restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345678
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: kokos
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     volumes:
       - ./pg_data:/var/lib/postgresql/data
 
@@ -35,3 +33,23 @@ services:
       - "8080:80"
     depends_on:
       - db
+
+  assets_contain:
+    build: ./assets_contain
+    container_name: assets_contain
+    # restart: unless-stopped
+    ports:
+      - "5001:5001"
+    depends_on:
+      - db
+    command: python assets_delivery.py
+  
+  admin_panel:
+    build: ./admin_panel
+    container_name: assets_contain
+    # restart: unless-stopped
+    ports:
+      - "5002:5002"
+    depends_on:
+      - db
+    command: python admin_app.py

@@ -17,3 +17,4 @@ YANDEX_CLIENT_SECRET = environ.get("YANDEX_CLIENT_SECRET", None)
 YANDEX_REDIRECT_URI = environ.get("YANDEX_REDIRECT_URI", None)
 
 APPROVED_EMAILS = json.loads(environ.get("APPROVED_EMAILS", '[]'))
+
