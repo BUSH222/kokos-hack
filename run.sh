@@ -1,8 +1,8 @@
 #!/bin/bash
 
-python3 main.py &
+python3 web/main.py &
 
-python3 asset_delivery/asset_delivery.py &
+python3 assets_contain/asset_delivery/asset_delivery.py &
 
 python3 admin_panel/admin_app.py &
 
