@@ -554,9 +554,6 @@ def forum():
     """
     Displays a list of forum posts with options to filter and sort.
 
-    This endpoint handles GET requests to display forum posts. Users can filter posts based on search queries,
-    tags, and dates, as well as sort the results by recent posts or the number of likes.
-
     GET:
         Retrieves and displays forum posts based on search parameters.
 
@@ -569,12 +566,13 @@ def forum():
 
         Returns:
             str: Renders the "forum/forum.html" template with the filtered and sorted list of forum posts
-            and user information.
+            and user information, including the profile picture.
 
     Raises:
         Exception: If any error occurs during the database transaction or if invalid date format is provided.
     """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
+    
     if current_user.is_authenticated:
         cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
         user['logged_in'] = True
@@ -588,11 +586,12 @@ def forum():
     date = request.args.get('date', None)
     sort_order = request.args.get('sort', 'recent')  # Default to recent if not specified
 
-    # Base SQL query
+    # Base SQL query with user name and profile picture included
     exec_string = """
         SELECT forum.id,
                forum.post_time AS date_created,
-               forum.author,
+               users.name AS author_name,
+               users.profile_pic AS author_profile_pic,
                COUNT(forum_likes.post_id) AS like_count,
                COUNT(forum_comments.post_id) AS comment_count,
                forum.title,
@@ -602,6 +601,7 @@ def forum():
         FROM forum
         LEFT JOIN forum_likes ON forum.id = forum_likes.post_id
         LEFT JOIN forum_comments ON forum.id = forum_comments.post_id
+        LEFT JOIN users ON forum.author = users.id
         WHERE 1=1
     """
     filters = []
@@ -622,9 +622,10 @@ def forum():
 
     # Sorting
     if sort_order == 'top':
-        exec_string += " GROUP BY forum.id ORDER BY like_count DESC"
+        exec_string += " GROUP BY forum.id, users.name, users.profile_pic ORDER BY like_count DESC"
     else:
-        exec_string += " GROUP BY forum.id ORDER BY forum.post_time DESC"
+        exec_string += " GROUP BY forum.id, users.name, users.profile_pic ORDER BY forum.post_time DESC"
+    
     sql_params = []
     if search_query:
         sql_params.extend([f"%{search_query}%", f"%{search_query}%"])
@@ -635,11 +636,12 @@ def forum():
 
     # Execute the query
     cur.execute(exec_string, tuple(sql_params))
-    forum_fields = ['id', 'date_created', 'author', 'like_count', 'comment_count',
+    forum_fields = ['id', 'date_created', 'author', 'author_profile_pic', 'like_count', 'comment_count',
                     'title', 'tags', 'text', 'news_photo_url']
     items = [dict(zip(forum_fields, i)) for i in cur.fetchall()]
 
     return render_template("forum/forum.html", data=items, user=user)
+
 
 
 @app.route('/view-post', methods=['GET', 'POST'])

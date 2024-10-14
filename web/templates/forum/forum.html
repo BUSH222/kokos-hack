@@ -71,8 +71,8 @@
         <div class="news-field" data-post-id="{{ item.id }}">
             <div class="news-header">
                 <div class="comment-user">
-                    <img src="/static/img/eye.png" alt="User Profile Picture" class="user-pfp">
-                    <span class="user-nickname">Admin</span>
+                    <img src="{{item.author_profile_pic}}" class="user-pfp">
+                    <span class="user-nickname">{{ item.author }}</span>
                     <span class="post-date">{{ item.date_created }}</span>
                 </div>
 

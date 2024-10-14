@@ -96,119 +96,6 @@ body::-webkit-scrollbar {
     margin: 0 auto;
 }
 
-/* Search Bar */
-.search-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Distribute the elements evenly */
-    width: 100%; /* Full width of the container */
-    box-sizing: border-box; /* Include padding/border in width calculations */
-    margin-bottom: 20px;
-}
-
-/* Input fields (Search, Tag, Date Picker) */
-.search-bar input[type="text"],
-.search-bar input[type="date"],
-.search-bar select,
-.search-bar button {
-    padding: 10px;
-    border: 2px solid #ff4747;
-    border-radius: 10px;
-    box-sizing: border-box;
-}
-
-/* Search Input */
-.search-bar input#searchInput {
-    flex: 2;
-    margin-right: 10px;
-}
-
-/* Tag Input Container */
-.tag-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px; /* Gap between tags */
-    flex: 2; /* Takes up similar width to search input */
-    margin-right: 10px;
-    padding: 10px;
-    border: 2px solid #ff4747;
-    border-radius: 10px;
-    box-sizing: border-box;
-    min-height: 35px; /* Ensures container size stays consistent */
-}
-
-/* Tag Input */
-.tag-container input[type="text"] {
-    border: none;
-    flex: 1;
-    outline: none;
-    margin: 0;
-    padding: 0;
-}
-
-/* Individual Tags */
-.tag {
-    display: inline-flex;
-    align-items: center; /* This vertically centers the content */
-    background-color: #f0f0f0;
-    border-radius: 5px;
-    padding: 5px 10px;
-    font-size: 14px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-}
-
-
-#tagInput {
-    border: none; /* Removes the input border */
-    outline: none; /* Ensures no outline appears on focus */
-    flex-grow: 1; /* Allows it to grow and take up remaining space */
-    padding: 5px;
-    font-size: 14px;
-}
-
-.tag .remove-tag {
-    margin-left: 10px;
-    cursor: pointer;
-}
-
-/* Smaller Date Picker */
-.search-bar input[type="date"] {
-    flex: 1;
-    width: 150px; /* Smaller width */
-    margin-right: 10px;
-}
-
-/* Smaller Dropdown */
-.search-bar select {
-    flex: 1;
-    width: 120px; /* Smaller width */
-    margin-right: 10px;
-}
-
-/* Search Button */
-.search-bar button {
-    padding: 10px 20px; /* Add more padding to the button */
-    background-color: #ff4747;
-    color: white;
-    cursor: pointer;
-    border: none;
-}
-
-.search-bar button:hover {
-    background-color: #d63b3b;
-}
-
-/* Focus state for input fields */
-.search-bar input[type="text"]:focus,
-.search-bar input[type="date"]:focus,
-.search-bar select:focus {
-    outline: none;
-    border-color: #91e8b4;
-}
-
-
-
 .nav-link {
     margin: 0 30px;
     text-decoration: none;
@@ -226,7 +113,7 @@ body::-webkit-scrollbar {
 .post-container {
     max-width: 800px;
     width: 60%;
-    margin: 100px auto; /* Adds space for the fixed navbar */
+    margin: 100px auto;
     background-color: #fff;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -276,27 +163,14 @@ body::-webkit-scrollbar {
     background-color: #d63b3b;
 }
 
-/* General styling */
-html, body {
-    height: 100vh; /* Ensures the body stretches to the full viewport height */
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
-    color: #ff4747;
-    background: url('/static/background.png') no-repeat center center fixed;
-    background-size: cover;
-}
-
-/* Wrapper that ensures footer stays at the bottom */
 .main-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100%; /* Ensures content + footer fills the height of the viewport */
+    min-height: 100%;
 }
 
 .content {
-    flex: 1; /* Fills the remaining space, pushing footer to the bottom */
+    flex: 1;
     padding: 20px;
 }
 
@@ -327,96 +201,12 @@ html, body {
 /* Main post container */
 .post-container {
     max-width: 800px;
-    margin: 100px auto; /* Adds space for the fixed navbar */
+    margin: 100px auto;
+    width: 100%;
     background-color: #fff;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 2px solid #ff4747;
     border-radius: 10px;
-}
-
-/* Bottom bar (footer) */
-.bottom-bar {
-    background-color: #ff4747;
-    padding: 20px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-    position: relative;
-}
-
-/* Flexbox layout for footer content */
-.bottom-bar-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 80%;
-    max-width: 1200px;
-}
-
-/* KOKOS logo styling */
-.kokos-logo {
-    height: 40px;
-}
-
-/* Footer links */
-.footer-link {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: bold;
-    margin: 0 20px;
-    font-size: 16px;
-}
-
-.footer-text {
-    color: #ffffff;
-    font-size: 14px;
-    margin-left: 30px;
-}
-
-.footer-link:hover {
-    color: #91e8b4;
-}
-
-/* Footer sections */
-.bottom-left,
-.bottom-center,
-.bottom-right {
-    display: flex;
-    align-items: center;
-}
-
-/* Social media icons */
-.social-logo {
-    height: 30px;
-    margin-left: 15px;
-}
-
-.floating-help-plus {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    background-color: #ff4747;
-    border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 1000;
-}
-
-.floating-help-plus a {
-    text-decoration: none;
-    color: white;
-    font-size: 30px;
-    font-weight: bold;
-}
-
-.floating-help-plus:hover {
-    background-color: #d93b3b;
+    flex: 1;
 }
