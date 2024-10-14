@@ -86,14 +86,43 @@ VALUES
 ('2024-10-05 15:00:00', 'User John Doe logged in.'),
 ('2024-10-12 18:00:00', 'User Jane Smith purchased a ticket.');
 
-INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES
-('https://example.com/img1.png', 'John Doe', '7', 'Forward', 'A fast and skilled forward with great finishing.'),
-('https://example.com/img2.png', 'Jane Smith', '10', 'Midfielder', 'A creative midfielder with excellent vision and passing skills.'),
-('https://example.com/img3.png', 'Chris Lee', '4', 'Defender', 'A solid defender with excellent tackling ability.'),
-('https://example.com/img4.png', 'Kelly Green', '11', 'Forward', 'A dynamic winger with great dribbling and pace.'),
-('https://example.com/img5.png', 'Alex White', '1', 'Goalkeeper', 'An agile goalkeeper with sharp reflexes.'),
-('https://example.com/img6.png', 'Sam Black', '5', 'Midfielder', 'A box-to-box midfielder with incredible stamina.'),
-('https://example.com/img7.png', 'Pat Brown', '8', 'Defender', 'A tough-tackling center-back with leadership skills.'),
-('https://example.com/img8.png', 'Jordan Blue', '9', 'Forward', 'A clinical finisher and an aerial threat.'),
-('https://example.com/img9.png', 'Taylor Gray', '2', 'Defender', 'A full-back known for overlapping runs.'),
-('https://example.com/img10.png', 'Morgan Red', '6', 'Midfielder', 'A defensive midfielder with great positioning.');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Авдеев Павел Александрович.jpg', 'Авдеев Павел Александрович', '1', 'Defender', 'Strong in defense');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Азембловский Никита Дмитриевич.jpg', 'Азембловский Никита Дмитриевич', '2', 'Midfielder', 'Skilled midfielder');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Алисеевич Георгий Константинович.jpg', 'Алисеевич Георгий Константинович', '3', 'Forward', 'Quick attacker');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Васёв Николай Владимирович.jpg', 'Васёв Николай Владимирович', '4', 'Goalkeeper', 'Tall and agile');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Власов Виктор Валерьевич.jpg', 'Власов Виктор Валерьевич', '5', 'Defender', 'Strong in defense');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Гончаров Павел Александрович.jpg', 'Гончаров Павел Александрович', '6', 'Midfielder', 'Skilled midfielder');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Гусев Константин Алексеевич.jpg', 'Гусев Константин Алексеевич', '7', 'Forward', 'Quick attacker');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Домрачев Иван Леонидович.jpg', 'Домрачев Иван Леонидович', '8', 'Goalkeeper', 'Tall and agile');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Елизаров Никита Алексеевич.jpg', 'Елизаров Никита Алексеевич', '9', 'Defender', 'Strong in defense');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Жежа Павел Викторович.jpeg', 'Жежа Павел Викторович', '10', 'Midfielder', 'Skilled midfielder');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Зыбин Александр Сергеевич.jpg', 'Зыбин Александр Сергеевич', '11', 'Forward', 'Quick attacker');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Иванов Андрей Александрович-III.jpg', 'Иванов Андрей Александрович-III', '12', 'Goalkeeper', 'Tall and agile');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Иминжанов Анвар Акмалжанович.jpg', 'Иминжанов Анвар Акмалжанович', '13', 'Defender', 'Strong in defense');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Иноземцев Кирилл Алексеевич.jpg', 'Иноземцев Кирилл Алексеевич', '14', 'Midfielder', 'Skilled midfielder');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Карев Александр Викторович.jpg', 'Карев Александр Викторович', '15', 'Forward', 'Quick attacker');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Кашкаров Дмитрий Валерьевич.png', 'Кашкаров Дмитрий Валерьевич', '16', 'Goalkeeper', 'Tall and agile');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Комягин Михаил Александрович.jpg', 'Комягин Михаил Александрович', '17', 'Defender', 'Strong in defense');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Комяжко Кирилл Евгеньевич.jpg', 'Комяжко Кирилл Евгеньевич', '18', 'Midfielder', 'Skilled midfielder');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Кондаков Антон Вячеславович.jpg', 'Кондаков Антон Вячеславович', '19', 'Forward', 'Quick attacker');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Кудьяров Владислав Сергеевич.jpg', 'Кудьяров Владислав Сергеевич', '20', 'Goalkeeper', 'Tall and agile');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Кукарин Павел Сергеевич.jpg', 'Кукарин Павел Сергеевич', '21', 'Defender', 'Strong in defense');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Леденёв Роман Владимирович.jpg', 'Леденёв Роман Владимирович', '22', 'Midfielder', 'Skilled midfielder');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Лидинёв Олег Васильевич.jpg', 'Лидинёв Олег Васильевич', '23', 'Forward', 'Quick attacker');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Максутов Марат Каюмович.jpg', 'Максутов Марат Каюмович', '24', 'Goalkeeper', 'Tall and agile');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Мареев Юрий Юрьевич.jpg', 'Мареев Юрий Юрьевич', '25', 'Defender', 'Strong in defense');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Марьяшин Павел Андреевич.jpg', 'Марьяшин Павел Андреевич', '26', 'Midfielder', 'Skilled midfielder');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Нестеров Александр Вадимович.jpg', 'Нестеров Александр Вадимович', '27', 'Forward', 'Quick attacker');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Папоян Вачаган Ервандович.jpg', 'Папоян Вачаган Ервандович', '28', 'Goalkeeper', 'Tall and agile');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Пиньков Юрий Юрьевич.jpg', 'Пиньков Юрий Юрьевич', '29', 'Defender', 'Strong in defense');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Погребняк Артём Павлович.jpg', 'Погребняк Артём Павлович', '30', 'Midfielder', 'Skilled midfielder');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Погребняк Кирилл Викторович.jpg', 'Погребняк Кирилл Викторович', '31', 'Forward', 'Quick attacker');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Погребняк Павел Викторович.jpg', 'Погребняк Павел Викторович', '32', 'Goalkeeper', 'Tall and agile');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Рыков Владимир Владимирович.jpg', 'Рыков Владимир Владимирович', '33', 'Defender', 'Strong in defense');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Сутормин Алексей Сергеевич.jpeg', 'Сутормин Алексей Сергеевич', '34', 'Midfielder', 'Skilled midfielder');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Терехов Антон Андреевич.jpg', 'Терехов Антон Андреевич', '35', 'Forward', 'Quick attacker');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Терещенко Павел Сергеевич.jpg', 'Терещенко Павел Сергеевич', '36', 'Goalkeeper', 'Tall and agile');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Фомин Николай Николаевич.jpg', 'Фомин Николай Николаевич', '37', 'Defender', 'Strong in defense');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Цыбиков Александр Александрович.jpg', 'Цыбиков Александр Александрович', '38', 'Midfielder', 'Skilled midfielder');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Черкашин Артём Дмитриевич.jpg', 'Черкашин Артём Дмитриевич', '39', 'Forward', 'Quick attacker');
+INSERT INTO team_members (picture_url, name, player_num, position, description) VALUES ('http://localhost:5001/assets/players/Шокуров Александр Викторович.jpg', 'Шокуров Александр Викторович', '40', 'Goalkeeper', 'Tall and agile');

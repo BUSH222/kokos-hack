@@ -572,7 +572,6 @@ def forum():
         Exception: If any error occurs during the database transaction or if invalid date format is provided.
     """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
-    
     if current_user.is_authenticated:
         cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
         user['logged_in'] = True
@@ -625,7 +624,7 @@ def forum():
         exec_string += " GROUP BY forum.id, users.name, users.profile_pic ORDER BY like_count DESC"
     else:
         exec_string += " GROUP BY forum.id, users.name, users.profile_pic ORDER BY forum.post_time DESC"
-    
+
     sql_params = []
     if search_query:
         sql_params.extend([f"%{search_query}%", f"%{search_query}%"])
@@ -641,7 +640,6 @@ def forum():
     items = [dict(zip(forum_fields, i)) for i in cur.fetchall()]
 
     return render_template("forum/forum.html", data=items, user=user)
-
 
 
 @app.route('/view-post', methods=['GET', 'POST'])
