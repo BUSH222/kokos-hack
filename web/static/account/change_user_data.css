@@ -1,0 +1,135 @@
+* {
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #ff4747;
+    background: url('/static/img/background.png') no-repeat center center fixed;
+    background-size: cover;
+    scrollbar-width: none;
+    height: 100%;
+    overflow-y: hidden;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+html::-webkit-scrollbar {
+    display: none;
+}
+
+.container {
+    max-width: 600px;
+    width: 90%;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+}
+
+h1 {
+    color: #ff4747;
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #ff4747;
+    font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="file"],
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #ff4747;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #f2f2f2;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="file"]:focus,
+.form-group textarea:focus {
+    border-color: #91e8b4;
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+#profile_pic_preview {
+    max-width: 100px;
+    border-radius: 50%;
+    display: block;
+    margin: 10px auto;
+}
+
+button[type="submit"] {
+    background-color: #ff4747;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    display: block;
+    margin: 0 auto;
+}
+
+button[type="submit"]:hover {
+    background-color: #d63b3b;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+
+@media (max-width: 768px) {
+    .container {
+        margin: 20px 10px;
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+    }
+
+    button[type="submit"] {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        max-width: 100%;
+    }
+}

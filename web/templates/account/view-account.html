@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Page</title>
+    <link rel="stylesheet" href="/static/account/account.css">
+</head>
+<body class="no-scroll">
+    <!-- navigation bar -->
+    <div class="navbar">
+        <ul>
+            <div class="left-side">
+                <li>
+                    <a href="/">
+                        <img src="/static/img/logo.png" alt="Website Logo" class="logo">
+                    </a>
+                </li>
+            </div>
+            
+            <div class="center">
+                <li><a href="/news">Новости</a></li>
+                <li><a href="/games">Игры</a></li>
+                <li><a href="/shop">Магазин</a></li>
+                <li><a href="/about">О клубе</a></li>
+                <li><a href="/forum">Форум</a></li>
+            </div>
+            
+            <div class="right-side">
+                {% if user_logged_in %}
+                    <li>
+                        <a href="/account">
+                            <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                        </a>
+                    </li>
+                {% else %}
+                    <li><a href="/login">Войти</a></li>
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+
+    <div class="account-container">
+        <div class="left-side">
+            <div class="profile-pic">
+                <img src="{{ user.profile_picture_url }}" alt="User Profile Picture">
+            </div>
+            <div class="username">{{ user.nickname }}</div>
+            <textarea class="about-user" readonly>{{ user.about }}</textarea>
+            <div class="social-links">
+                <a href="{{ user.telegram_url }}"><img src="/static/img/telegram_icon.png" alt="Telegram">@{{ user.telegram_handle }}</a>
+                <a href="{{ user.vk_url }}"><img src="/static/img/vk_icon.png" alt="VK">@{{ user.vk_handle }}</a>
+            </div>
+        </div>
+        
+        <div class="right-side">
+            <!-- fav player field -->
+            <div class="fav-player-field">
+                {% if fav_player_img %}
+                    <img src="{{ fav_player_img }}" alt="Favorite Player">
+                {% else %}
+                    <div class="fav-player-placeholder">Выберите любимого игрока</div>
+                {% endif %}
+            </div>
+
+        </div>
+        
+    </div>
+</body>
+</html>

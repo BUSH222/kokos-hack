@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модерация</title>
+    <link rel="stylesheet" href="/static/admin_panel_community.css">
+</head>
+<body>
+    <!-- admin navigation bar -->
+    <nav class="admin-navbar">
+        <ul>
+            <li><a href="/admin_panel">Домой</a></li>
+            <li><a href="/admin_panel/logs">Логи</a></li>
+            <li><a href="/admin_panel/community">Модерация</a></li>
+            <li><a href="/admin_panel/update_pages">Загрузка файлов</a></li>
+            <li><a href="/admin_panel/event_manager">Управление событиями</a></li>
+            <li><a href="/admin_panel/product_manager">Управление магазином</a></li>
+            <li><a href="/admin_panel/logout">Выйти</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Модерация</h1>
+        <div class="form-group">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" name="username" required>
+            <button onclick="findUserData()">Найти</button>
+        </div>
+
+        <div id="user-data-section" style="display: none;">
+            <div class="form-group">
+                <label for="user-id">ID:</label>
+                <input type="text" id="user-id" name="user-id" readonly>
+            </div>
+            <div class="form-group">
+                <label for="name">Имя:</label>
+                <input type="text" id="name" name="name" required oninput="limitInputLength(this, 32)">
+            </div>
+            <div class="form-group">
+                <label for="email">Почта:</label>
+                <input type="email" id="email" name="email" required oninput="limitInputLength(this, 32)">
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="text" id="password" name="password" required oninput="limitInputLength(this, 32)">
+            </div>
+            <div class="form-group">
+                <label for="points">Очки активности:</label>
+                <input type="number" id="points" name="points" required>
+            </div>
+
+
+            <!-- roles -->
+            <div class="form-group">
+                <label for="role">Роль:</label>
+                <div class="roles-container">
+                    <div class="role-item">
+                        <input type="checkbox" id="role-0" name="role" value="0">
+                        <label for="role-0">Пользователь</label>
+                    </div>
+                    <div class="role-item">
+                        <input type="checkbox" id="role-1" name="role" value="1">
+                        <label for="role-1">Фанат</label>
+                    </div>
+                    <div class="role-item">
+                        <input type="checkbox" id="role-2" name="role" value="2">
+                        <label for="role-2">Модератор</label>
+                    </div>
+                    <div class="role-item">
+                        <input type="checkbox" id="role-3" name="role" value="3">
+                        <label for="role-3">Сотрудник Кокос Группы</label>
+                    </div>
+                    <div class="role-item">
+                        <input type="checkbox" id="role-4" name="role" value="4">
+                        <label for="role-4">Игрок</label>
+                    </div>
+                    <div class="role-item">
+                        <input type="checkbox" id="role-5" name="role" value="5">
+                        <label for="role-5">Администратор</label>
+                    </div>
+                </div>
+            </div>
+            <div class="button-container">
+                <button onclick="updateUserData()">Обновить данные</button>
+                <button onclick="deleteUser()">Удалить пользователя</button>
+                <button onclick="pruneUser()">Очистить контент</button>
+            </div>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function limitInputLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.value = input.value.substring(0, maxLength);
+            }
+        }
+        </script>        
+    
+    <script src="/static/admin_panel_community.js"></script>
+</body>
+</html>

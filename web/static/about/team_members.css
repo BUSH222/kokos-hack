@@ -1,0 +1,247 @@
+* {
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #ff4747;
+    background: url('/static/img/background.png') no-repeat center center fixed;
+    background-size: cover;
+    scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+html, body {
+    height: 100%;
+}
+
+/* navbar */
+.navbar {
+    background-color: #ff4747;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 999;
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.navbar .left-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .right-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar li {
+    margin: 0 20px;
+    padding: 10px 0;
+}
+
+.navbar a {
+    color: #f2f2f2;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.navbar a:hover {
+    color: #91e8b4;
+}
+
+.navbar .center {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.navbar .center li {
+    margin: 0 30px;
+}
+
+.logo {
+    height: 40px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.profile-pic-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* pictures */
+.team-pictures {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    overflow: visible;
+}
+
+/* Team Members Page */
+.team-members-container {
+    padding: 100px 10%;
+    min-height: 100%;
+}
+
+.members-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.team-header {
+    text-align: center;
+    font-size: 24px;
+    color: #ff4747;
+    margin-bottom: 20px;
+}
+
+.members-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.member-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border: 2px solid #ff4747;
+    border-radius: 15px;
+    background-color: #f2f2f2;
+    transition: all 0.3s ease;
+    width: 95%;
+    max-width: 1200px;
+    margin: 10px auto;
+}
+
+.member-row > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.member-row:hover {
+    transform: scale(1.01);
+}
+
+.member-row::after {
+    content: '';
+    background-color: #ff4747;
+    height: 40px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 50%;
+}
+
+.member-picture {
+    flex: 1;
+    text-align: center;
+}
+
+.member-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.member-name {
+    flex: 2;
+    font-size: 18px;
+    text-align: center;
+    color: #ff4747;
+}
+
+.member-number {
+    flex: 1;
+    font-size: 18px;
+    text-align: center;
+    color: #ff4747;
+}
+
+/* Bottom bar (footer) */
+.bottom-bar {
+    background-color: #ff4747;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    position: relative;
+}
+
+/* Flexbox layout for footer content */
+.bottom-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    max-width: 1200px;
+}
+
+/* KOKOS logo styling */
+.kokos-logo {
+    height: 40px;
+}
+
+/* Footer links */
+.footer-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 20px;
+    font-size: 16px;
+}
+
+.footer-text {
+    color: #ffffff;
+    font-size: 14px;
+    margin-left: 30px;
+}
+
+.footer-link:hover {
+    color: #91e8b4;
+}
+
+/* Footer sections */
+.bottom-left,
+.bottom-center,
+.bottom-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Social media icons */
+.social-logo {
+    height: 30px;
+    margin-left: 15px;
+}

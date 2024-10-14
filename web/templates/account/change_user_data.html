@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/account/change_user_data.css">
+    <title>Изменение данных пользователя</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Изменение данных пользователя</h1>
+        <form id="userForm" onsubmit="event.preventDefault();">
+            <div class="form-group">
+                <label for="profile_pic">Фото профиля</label>
+                <img id="profile_pic_preview" src="{{ profile_pic }}" alt="Фото профиля">
+                <input type="file" id="profile_pic" name="profile_pic" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="name">Имя</label>
+                <input type="text" id="name" name="name" value="{{ name }}">
+            </div>
+            <div class="form-group">
+                <label for="fav_player">Любимый игрок</label>
+                <input type="text" id="fav_player" name="fav_player" value="{{ fav_player }}">
+            </div>
+            <div class="form-group">
+                <label for="about_me">Обо мне</label>
+                <textarea id="about_me" name="about_me">{{ about_me }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="vk_acc">VK аккаунт</label>
+                <input type="text" id="vk_acc" name="vk_acc" value="{{ vk_acc }}">
+            </div>
+            <div class="form-group">
+                <label for="telegram_acc">Telegram аккаунт</label>
+                <input type="text" id="telegram_acc" name="telegram_acc" value="{{ telegram_acc }}">
+            </div>
+            <div class="form-group error" id="error">{{ error }}</div>
+            <button type="submit" onclick="send_to_server('submit')">Сохранить</button>
+        </form>
+        <p id="response"></p>
+    </div>
+</body>
+<script src="/static/account/change_user_data.js"></script>
+</html>
+

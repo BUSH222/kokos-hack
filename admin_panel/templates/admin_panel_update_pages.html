@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/admin_panel_update_pages.css">
+    <title>Загрузка файлов</title>
+</head>
+<body>
+    <!-- admin navigation bar -->
+    <nav class="admin-navbar">
+        <ul>
+            <li><a href="/admin_panel">Домой</a></li>
+            <li><a href="/admin_panel/logs">Логи</a></li>
+            <li><a href="/admin_panel/community">Модерация</a></li>
+            <li><a href="/admin_panel/update_pages">Загрузка файлов</a></li>
+            <li><a href="/admin_panel/event_manager">Управление событиями</a></li>
+            <li><a href="/admin_panel/product_manager">Управление магазином</a></li>
+            <li><a href="/admin_panel/logout">Выйти</a></li>
+        </ul>
+    </nav>
+    
+    <!-- File upload form -->
+    <div class="login-container">
+        <div class="form-wrapper">
+            <h1>Выбрать или заменить файл:</h1>
+            <div class="input-group">
+                <label for="image_name">Путь и название на сервере:</label>
+                <input placeholder="e.g., test/uni.png" type="text" id="image_name" name="image_name" required>
+            </div>
+            <div class="input-group">
+                <label for="img">Выбрать файл:</label>
+                <input type="file" id="img" name="img" accept="image/*" required>
+            </div>
+            <div class="button-container">
+                <button onclick="submitForm()" class="submit">Загрузить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/admin_panel_update_pages.js"></script>
+</body>
+</html>

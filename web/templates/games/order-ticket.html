@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Записаться на матч</title>
+    <link rel="stylesheet" href="/static/games/order-ticket.css">
+</head>
+<body>
+    <!-- Navigation bar -->
+    <div class="main_wrapper">
+        <div class="navbar">
+            <ul>
+                <div class="left-side">
+                    <li>
+                        <a href="/">
+                            <img src="/static/img/logo.png" alt="Website Logo" class="logo">
+                        </a>
+                    </li>
+                </div>
+
+                <div class="center">
+                    <li><a href="/news">Новости</a></li>
+                    <li><a href="/games">Игры</a></li>
+                    <li><a href="/shop">Магазин</a></li>
+                    <li><a href="/about">О клубе</a></li>
+                    <li><a href="/forum">Форум</a></li>
+                </div>
+
+                <div class="right-side">
+                    {% if user_logged_in %}
+                        <li>
+                            <a href="/account">
+                                <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                            </a>
+                        </li>
+                    {% else %}
+                        <li><a href="/login">Войти</a></li>
+                    {% endif %}
+                </div>
+            </ul>
+        </div>
+
+        <!-- Main container for creating a post -->
+        <div class="post-container">
+            <h1>Записаться на матч</h1>
+            <form action="/submit_post" method="post" enctype="multipart/form-data">
+                <!-- Post Title -->
+                <div class="form-group">
+                    <label for="post-title">Имя:</label>
+                    <input type="text" id="name" name="post-title" placeholder="Введите имя" required 
+                        oninput="limitInputLength(this, 100)">
+                </div>
+
+                <div class="form-group">
+                    <label for="post-title">Фамилия:</label>
+                    <input type="text" id="surname" name="post-title" placeholder="Введите фамилию" required 
+                        oninput="limitInputLength(this, 100)">
+                </div>
+
+                <div class="form-group">
+                    <label for="post-title">Отчество:</label>
+                    <input type="text" id="patronymic" name="post-title" placeholder="Введите отчество" required 
+                        oninput="limitInputLength(this, 100)">
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <button type="submit" class="submit-button">Отправить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Function to limit input length for title
+        function limitInputLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
+            }
+        }
+
+        // Tag input handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const tagInput = document.getElementById('tagInput');
+            const tagContainer = document.getElementById('tagContainer');
+
+            tagInput.addEventListener('keydown', function(event) {
+                if (event.key === ' ') {
+                    event.preventDefault(); // Prevent space from being added to input
+                    const tagValue = tagInput.value.trim(); // Get input value and remove extra spaces
+
+                    const tagCount = document.getElementsByClassName('tag').length;
+                    if (tagValue && tagValue.length <= 10 && tagCount < 3) {
+                        // Create tag element
+                        const tag = document.createElement('span');
+                        tag.classList.add('tag');
+                        tag.innerHTML = `${tagValue} <span class="remove-tag">&times;</span>`;
+
+                        // Append tag to the container
+                        tagContainer.insertBefore(tag, tagInput);
+
+                        // Clear the input field
+                        tagInput.value = '';
+
+                        // Add remove functionality to the tag
+                        tag.querySelector('.remove-tag').addEventListener('click', function() {
+                            tag.remove();
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

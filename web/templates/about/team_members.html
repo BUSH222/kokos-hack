@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Состав клуба</title>
+    <link rel="stylesheet" href="/static/about/team_members.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <ul>
+            <div class="left-side">
+                <li>
+                    <a href="/">
+                        <img src="/static/img/logo.png" alt="Website Logo" class="logo">
+                    </a>
+                </li>
+            </div>
+            <div class="center">
+                <li><a href="/news">Новости</a></li>
+                <li><a href="/games">Игры</a></li>
+                <li><a href="/shop">Магазин</a></li>
+                <li><a href="/about">О клубе</a></li>
+                <li><a href="/forum">Форум</a></li>
+            </div>
+            <div class="right-side">
+                {% if user.logged_in %}
+                    <li>
+                        <a href="/account">
+                            <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                        </a>
+                    </li>
+                {% else %}
+                    <li><a href="/login">Войти</a></li>
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+
+    <!-- Team Members Container -->
+    <div class="team-members-container">
+        <h1 class="team-header">Состав клуба</h1>
+
+        <!-- Members Table -->
+        <div class="members-table">
+            {% for member in data %}
+            <div class="member-row">
+                <div class="member-picture">
+                    <img src="{{ member.picture_url }}" alt="{{ member.name }}" class="member-img">
+                </div>
+                <div class="member-name">
+                    {{ member.name }}
+                </div>
+                <div class="member-number">
+                    {{ member.num }}
+                </div>
+                <div class="member-position">
+                    {{ member.position }}
+                </div>
+                <div class="member-description">
+                    {{ member.description }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="bottom-bar">
+        <div class="bottom-bar-content">
+            <div class="bottom-left">
+                <img src="/static/img/kokos_icon.png" alt="Kokos Group Logo" class="kokos-logo">
+            </div>
+            <div class="bottom-center">
+                <a href="/help" class="footer-link">help</a>
+                <a href="/privacy" class="footer-link">privacy policy, legal</a>
+                <span class="footer-text">Developed by "MISIS Leaf Lovers" for "KOKOC hackathon"</span>
+            </div>
+            <div class="bottom-right">
+                <a href="https://vk.com/kokocgroup_ru" target="_blank">
+                    <img src="/static/img/vk_icon.png" alt="VK" class="social-logo">
+                </a>
+                <a href="https://t.me/kokocgroupru" target="_blank">
+                    <img src="/static/img/telegram_icon.png" alt="Telegram" class="social-logo">
+                </a>
+                <a href="https://www.youtube.com/@TVKokoc" target="_blank">
+                    <img src="/static/img/youtube_icon.png" alt="YouTube" class="social-logo">
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

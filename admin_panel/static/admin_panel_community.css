@@ -1,0 +1,209 @@
+body {
+    padding-top: 180px;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.admin-navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #1e1e1e;
+    padding: 10px 20px; /* Added horizontal padding for better spacing */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid #ff4c4c;
+}
+
+.admin-navbar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center; /* Center items on larger screens */
+    flex-wrap: wrap; /* Allow items to wrap */
+}
+
+.admin-navbar li {
+    overflow: hidden;
+    margin: 10px 15px; /* Increased margin for better touch targets */
+}
+
+.admin-navbar a {
+    text-decoration: none;
+    color: #FFFFFF;
+    font-weight: bold;
+    transition: color 0.3s, transform 0.3s; /* Added transform for hover effect */
+    padding: 8px 12px; /* Added padding for a button-like effect */
+    border-radius: 5px; /* Rounded corners for links */
+}
+
+/* Hover effects */
+.admin-navbar a:hover {
+    color: #ff4c4c;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1150px) {
+    body{
+        padding-top: 240px;
+    }
+    .admin-navbar ul {
+        flex-direction: column; /* Stack items vertically on small screens */
+        align-items: stretch; /* Stretch items to fill the container */
+        
+    }
+
+    .admin-navbar li {
+        margin: 0px 0; /* Reduced margin for vertical spacing */
+        border-top: 1px solid #f5f5f5;
+        border-bottom: 1px solid #f5f5f5; /* Added border to distinguish items */
+        background-color: rgba(30, 30, 30, 0.8); /* Slightly lighter background */
+    }
+
+    .admin-navbar a {
+        padding: 10px; /* Increased padding for better touch targets */
+        display: block; /* Make links block-level to fill list item */
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-navbar {
+        padding: 10px; /* Reduce padding on smaller screens */
+    }
+
+    .admin-navbar a {
+        padding: 10px; /* Increased padding for better touch targets */
+        font-size: 14px; /* Slightly smaller font size */
+    }
+}
+
+.container {
+    
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    margin-top: 80px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #ff4c4c;
+}
+
+input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+}
+
+input::placeholder {
+    color: #ccc;
+}
+
+input[readonly] {
+    background-color: #2e2e2e;
+}
+
+button {
+    width:100%;
+    display: inline-block;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #ff4c4c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #b30000;
+}
+
+.form-group button {
+    width: 100%; /* Make the button fill the full width */
+    padding: 10px;
+    background-color: #ff4c4c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px; /* To add spacing like other elements */
+}
+
+.form-group button:hover {
+    background-color: #b30000;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.button-container button {
+    padding: 10px;
+    margin: 0 5px; /* Adds a bit of space between the buttons */
+    flex: 1; /* Makes all buttons share equal width */
+}
+
+.button-container .stretch {
+    flex-grow: 2; /* This will make the middle button stretch */
+}
+
+.roles-container {
+    margin-top: 10px;
+}
+
+.role-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    white-space: nowrap;
+}
+
+.role-item input[type="checkbox"] {
+    width: 14px;
+    margin-right: 10px;
+}
+
+.role-item label {
+    margin: 0;
+    font-size: 14px;
+    color: #ff4c4c;
+    flex-shrink: 0;
+    width: 550px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#result {
+    margin-top: 20px;
+    color: #ff4c4c;
+}

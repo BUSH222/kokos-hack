@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора</title>
+    <link rel="stylesheet" href="/static/admin_panel.css">
+</head>
+<body>
+    <!-- admin navigation bar -->
+    <nav class="admin-navbar">
+        <ul>
+            <li><a href="/admin_panel">Домой</a></li>
+            <li><a href="/admin_panel/logs">Логи</a></li>
+            <li><a href="/admin_panel/community">Модерация</a></li>
+            <li><a href="/admin_panel/update_pages">Загрузка файлов</a></li>
+            <li><a href="/admin_panel/event_manager">Управление событиями</a></li>
+            <li><a href="/admin_panel/product_manager">Управление магазином</a></li>
+            <li><a href="/admin_panel/logout">Выйти</a></li>
+        </ul>
+    </nav>
+
+    <!-- container for content -->
+    <div class="container">
+        <h1>Производительность сервера</h1>
+        <div class="chart-container">
+            <h2>Запросы в минуту</h2>
+            <canvas id="rpmChart" width="400" height="200"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Нагрузка ЦП</h2>
+            <canvas id="cpuLoadChart" width="400" height="200"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Оперативная память</h2>
+            <canvas id="ramUsageChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Floating Help Button -->
+    <a href="/admin_panel/help" class="help-widget" aria-label="Help">
+        ?
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/admin_panel.js"></script>
+</body>
+</html>

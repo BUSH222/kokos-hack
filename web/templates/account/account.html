@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Page</title>
+    <link rel="stylesheet" href="/static/account/account.css">
+</head>
+<body>
+    <!-- navigation bar -->
+    <div class="navbar">
+        <ul>
+            <div class="left-side">
+                <li>
+                    <a href="/">
+                        <img src="/static/img/logo.png" alt="Website Logo" class="logo">
+                    </a>
+                </li>
+            </div>
+
+            <div class="center">
+                <li><a href="/news">Новости</a></li>
+                <li><a href="/games">Игры</a></li>
+                <li><a href="/shop">Магазин</a></li>
+                <li><a href="/about">О клубе</a></li>
+                <li><a href="/forum">Форум</a></li>
+            </div>
+
+            <div class="right-side">
+                {% if user.logged_in %}
+                    <li>
+                        <a href="/account">
+                            <img src="{{ user.profile_picture_url }}" alt="User Profile Picture" class="profile-pic-small">
+                        </a>
+                    </li>
+                {% else %}
+                    <li><a href="/login">Войти</a></li>
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+
+    <div class="account-container">
+        <div class="left-side">
+            <div class="profile-pic">
+                <img src="{{ user.profile_picture_url }}" alt="User Profile Picture">
+            </div>
+
+            <div class="username">{{ user.nickname }}</div>
+            <textarea class="about-user" readonly>{{ user.about }}</textarea>
+
+            <div class="user-role">{{ user.role }}</div>
+
+            <div class="social-links">
+                <a href="{{ user.telegram_url }}"><img src="/static/img/telegram_icon.png" alt="Telegram">{{ user.telegram_url }}</a>
+                <a href="{{ user.vk_url }}"><img src="/static/img/vk_icon.png" alt="VK">{{ user.vk_url }}</a>
+            </div>
+                <a href="/account/change_account_data">
+                    <button class="edit-profile-btn" onclick='send_to_server("change_user_data")'>Редактировать профиль</button>
+                </a>
+        </div>
+        
+        <div class="right-side">
+            <!-- fav player field -->
+            <h3 class="fav-player-header">Любимый игрок</h3>
+            <div class="fav-player-field">
+                {% if user.fav_player_img %}
+                    <img src="{{ user.fav_player_img }}" alt="Favorite Player">
+                {% else %}
+                    <div class="fav-player-placeholder">Выберите любимого игрока</div>
+                {% endif %}
+            </div>
+
+            <!-- Points section -->
+            <div class="points-section">
+                <img src="/static/img/points_icon.png" alt="Points Icon" class="points-icon">
+                <span class="points-text">{{ user.points or 0 }} очков</span>
+            </div>
+        </div>
+        
+    </div>
+</body>
+<script src="/static/account/account.js"></script>
+</html>

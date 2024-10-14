@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Логи сервера</title>
+    <link rel="stylesheet" href="/static/admin_panel_logs.css">
+    <script src="/static/admin_panel_logs.js"></script>
+</head>
+<body>
+    <!-- admin navigation bar -->
+    <nav class="admin-navbar">
+        <ul>
+            <li><a href="/admin_panel">Домой</a></li>
+            <li><a href="/admin_panel/logs">Логи</a></li>
+            <li><a href="/admin_panel/community">Модерация</a></li>
+            <li><a href="/admin_panel/update_pages">Загрузка файлов</a></li>
+            <li><a href="/admin_panel/event_manager">Управление событиями</a></li>
+            <li><a href="/admin_panel/product_manager">Управление магазином</a></li>
+            <li><a href="/admin_panel/logout">Выйти</a></li>
+        </ul>
+    </nav>
+    <div class="logs-container">
+        <h1>Логи сервера:</h1>
+        <div id="logs" name="logs" readonly></div>
+    </div>
+</body>
+</html>

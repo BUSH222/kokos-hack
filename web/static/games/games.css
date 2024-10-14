@@ -1,0 +1,317 @@
+* {
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #ff4747;
+    background: url('/static/img/background.png') no-repeat center center fixed;
+    background-size: cover;
+    scrollbar-width: none;
+    height: 100%;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #ff4747;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.navbar .left-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .right-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar li {
+    margin: 0 20px;
+    padding: 10px 0;
+}
+
+.navbar a {
+    color: #f2f2f2;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.navbar a:hover {
+    color: #91e8b4;
+}
+
+.navbar .center {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.navbar .center li {
+    margin: 0 30px;
+}
+
+.logo {
+    height: 40px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.profile-pic-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Games Page */
+.games-container {
+    padding: 100px 10%;
+    min-height: 100%;
+    margin: 0 auto;
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.search-bar input[type="text"],
+.search-bar input[type="date"],
+.search-bar button {
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.search-bar input#searchInput {
+    flex: 2;
+    margin-right: 10px;
+}
+
+.search-bar input[type="date"] {
+    flex: 1;
+    width: 150px;
+    margin-right: 10px;
+}
+
+.search-bar button {
+    padding: 10px 20px;
+    background-color: #ff4747;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+.search-bar button:hover {
+    background-color: #d63b3b;
+}
+
+.search-bar input[type="text"]:focus,
+.search-bar input[type="date"]:focus {
+    outline: none;
+    border-color: #91e8b4;
+}
+
+/* Games Table */
+.games-table {
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.table-container {
+    overflow: hidden;
+}
+
+.live-indicator {
+    color: #ff4747;
+    font-size: 24px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.next-game-row {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.past-games-heading {
+    text-align: center;
+    color: #ff4747;
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+.game-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border: 2px solid #ff4747;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    width: 95%;
+    max-width: 1200px;
+    box-sizing: border-box;
+    margin: 10px auto;
+    background-color: #f2f2f2;
+}
+
+.game-row:hover {
+    transform: scale(1.01);
+}
+
+.game-row-container {
+    overflow: hidden;
+    padding: 10px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.teams, .datetime, .view-stats {
+    font-size: 18px;
+    color: #ff4747;
+    flex: 1; /* this */
+    text-align: center;
+}
+
+.view-stats a {
+    text-decoration: none;
+    color: #ff4747;
+    font-weight: bold;
+}
+
+.view-stats a:hover {
+    color: #91e8b4;
+}
+
+/* Team logos and names */
+.team1, .team2 {
+    margin: 10px;
+    flex-direction: row;
+    align-items: center;
+    flex: 0 1 auto;
+}
+
+.team-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ff4747;
+}
+
+.vs {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff4747;
+    margin: 0 20px;
+}
+
+
+/* Bottom bar (footer) */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Main wrapper that ensures the footer stays at the bottom */
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures content + footer fills at least the height of the viewport */
+}
+
+/* Content area takes the remaining space, pushing footer to the bottom if necessary */
+.content {
+    flex: 1; /* Fills the remaining space in the viewport */
+    padding: 20px;
+}
+
+/* Bottom bar (footer) */
+.bottom-bar {
+    background-color: #ff4747;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    position: relative;
+}
+
+/* Flexbox layout for footer content */
+.bottom-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    max-width: 1200px;
+}
+
+/* KOKOS logo styling */
+.kokos-logo {
+    height: 40px;
+}
+
+/* Footer links */
+.footer-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 20px;
+    font-size: 16px;
+}
+
+.footer-text {
+    color: #ffffff;
+    font-size: 14px;
+    margin-left: 30px;
+}
+
+.footer-link:hover {
+    color: #91e8b4;
+}
+
+/* Footer sections */
+.bottom-left,
+.bottom-center,
+.bottom-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Social media icons */
+.social-logo {
+    height: 30px;
+    margin-left: 15px;
+}

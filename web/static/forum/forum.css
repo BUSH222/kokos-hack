@@ -1,0 +1,457 @@
+* {
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #ff4747;
+    background: url('/static/img/background.png') no-repeat center center fixed;
+    background-size: cover;
+    scrollbar-width: none;
+    height:100%;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* navbar */
+.navbar {
+    background-color: #ff4747;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 999;
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.navbar .left-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .right-side {
+    display: flex;
+    align-items: center;
+}
+
+.navbar li {
+    margin: 0 20px;
+    padding: 10px 0;
+}
+
+.navbar a {
+    color: #f2f2f2;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.navbar a:hover {
+    color: #91e8b4;
+}
+
+.navbar .center {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.navbar .center li {
+    margin: 0 30px;
+}
+
+.logo {
+    height: 40px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.profile-pic-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* news page */
+/* General news container */
+.news-container {
+    padding: 100px 10%;
+    min-height: 100%;
+    margin: 0 auto;
+}
+
+.like-button {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: auto;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.like-animation {
+    transform: scale(0.9);
+    filter: brightness(1.2);
+}
+
+.comment-button {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.like-section, .comment-section {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    flex-direction: column;
+}
+
+.like-count, .comment-count {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #777;
+    align-items: center;
+}
+
+.social-interaction {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.like-button,
+.comment-button {
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+/* Input fields (Search, Tag, Date Picker) */
+.search-bar input[type="text"],
+.search-bar input[type="date"],
+.search-bar select,
+.search-bar button {
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+/* Search Input */
+.search-bar input#searchInput {
+    flex: 2;
+    margin-right: 10px;
+}
+
+/* Tag Input Container */
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    flex: 2;
+    margin-right: 10px;
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    box-sizing: border-box;
+    min-height: 35px;
+}
+
+/* Tag Input */
+.tag-container input[type="text"] {
+    border: none;
+    flex: 1;
+    outline: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Individual Tags */
+.tag {
+    display: inline-block;
+    background-color: #ff4747;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.tag .remove-tag {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* Smaller Date Picker */
+.search-bar input[type="date"] {
+    flex: 1;
+    width: 150px;
+    margin-right: 10px;
+}
+
+/* Smaller Dropdown */
+.search-bar select {
+    flex: 1;
+    width: 120px;
+    margin-right: 10px;
+}
+
+/* Search Button */
+.search-bar button {
+    padding: 10px 20px;
+    background-color: #ff4747;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+.search-bar button:hover {
+    background-color: #d63b3b;
+}
+
+/* Focus state for input fields */
+.search-bar input[type="text"]:focus,
+.search-bar input[type="date"]:focus,
+.search-bar select:focus {
+    outline: none;
+    border-color: #91e8b4;
+}
+
+
+
+.nav-link {
+    margin: 0 30px;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff4747;
+}
+
+.nav-link:hover {
+    color: #91e8b4;
+    text-decoration: none;
+}
+
+/* news field */
+.news-field {
+    position: relative;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    border: 2px solid #ff4747;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    border-radius: 25px;
+    overflow: hidden;
+    min-height: 150px;
+}
+
+.news-field:hover {
+    transform: scale(1.02);
+}
+
+.news-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.news-tags {
+    font-size: 14px;
+    color: #777777;
+    margin-bottom: 20px;
+}
+
+.tag {
+    text-transform: lowercase;
+    margin-right: 5px;
+}
+
+.user-pfp {
+    object-fit: contain;
+    height: 20px;
+    width: 20px;
+}
+
+.user-nickname {
+    padding-right:20px;
+    padding-left: 20px;
+}
+
+.comment-user {
+    display: flex;
+    align-items: center;
+}
+
+.news-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.news-photo {
+    margin-right: 20px;
+    flex: 0 0 35%;
+    height: auto;
+    border-radius: 30px;
+    overflow: hidden;
+}
+
+.news-photo img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.news-text {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 100%;
+    word-wrap: break-word;
+    box-sizing: border-box;
+}
+
+
+.news-text::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Bottom bar (footer) */
+.bottom-bar {
+    background-color: #ff4747;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    position: relative;
+}
+
+/* Flexbox layout for footer content */
+.bottom-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    max-width: 1200px;
+}
+
+/* KOKOS logo styling */
+.kokos-logo {
+    height: 40px;
+}
+
+/* Footer links */
+.footer-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 20px;
+    font-size: 16px;
+}
+
+.footer-text {
+    color: #ffffff;
+    font-size: 14px;
+    margin-left: 30px;
+}
+
+.footer-link:hover {
+    color: #91e8b4;
+}
+
+/* Footer sections */
+.bottom-left,
+.bottom-center,
+.bottom-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Social media icons */
+.social-logo {
+    height: 30px;
+    margin-left: 15px;
+}
+
+.floating-help-plus {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #ff4747;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.floating-help-plus a {
+    text-decoration: none;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.floating-help-plus:hover {
+    background-color: #d93b3b;
+}

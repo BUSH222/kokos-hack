@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление магазином</title>
+    <link rel="stylesheet" href="/static/admin_panel_product_manager.css">
+</head>
+<body>
+    <nav class="admin-navbar">
+        <ul>
+            <li><a href="/admin_panel">Домой</a></li>
+            <li><a href="/admin_panel/logs">Логи</a></li>
+            <li><a href="/admin_panel/community">Модерация</a></li>
+            <li><a href="/admin_panel/update_pages">Загрузка файлов</a></li>
+            <li><a href="/admin_panel/event_manager">Управление событиями</a></li>
+            <li><a href="/admin_panel/product_manager">Управление магазином</a></li>
+            <li><a href="/admin_panel/logout">Выйти</a></li>
+        </ul>
+    </nav>
+
+    <div class="form-container">
+        <h1>Управление магазином</h1>
+        <form id="product-form">
+            <input type="text" id="product_id" placeholder="ID Товара">
+            <button type="button" onclick="findProduct()">Найти товар</button>
+            <input type="text" id="product_name" placeholder="Название товара">
+            <input type="text" id="product_price" placeholder="Цена">
+            <input type="text" id="product_description" placeholder="Описание">
+            <input type="text" id="picture_url" placeholder="URL изображения">
+            
+            <div class="button-container">
+                <button type="button" onclick="clearInputs()">Очистить</button>
+                <button type="button" class="stretch" onclick="createProduct()">Создать/Сохранить</button>
+                <button type="button" onclick="deleteProduct()">Удалить товар</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="/static/admin_panel_product_manager.js"></script>
+</body>
+</html>
