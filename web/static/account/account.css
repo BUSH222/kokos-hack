@@ -40,16 +40,20 @@ html, body {
     margin: 0;
     padding: 0;
     width: 100%;
+    flex-wrap: wrap;
 }
 
 .navbar .left-side {
     display: flex;
     align-items: center;
+    flex: 1;
 }
 
 .navbar .right-side {
     display: flex;
     align-items: center;
+    flex: 1;
+    justify-content: flex-end;
 }
 
 .navbar li {
@@ -73,6 +77,7 @@ html, body {
     display: flex;
     justify-content: center;
     flex-grow: 1;
+    flex-wrap: wrap;
 }
 
 .navbar .center li {
@@ -223,4 +228,29 @@ html, body {
 
 .edit-profile-btn:hover {
     background-color: #d93b3b;
+}
+
+.points-section {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    background-color: #f2f2f2;
+    padding: 10px;
+    border: 2px solid #ff4747;
+    border-radius: 10px;
+    max-width: 200px;
+    width: 100%;
+    justify-content: center;
+}
+
+.points-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.points-text {
+    font-size: 18px;
+    color: #ff4747;
+    font-weight: bold;
 }

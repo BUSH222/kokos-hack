@@ -184,25 +184,53 @@ def account():
     name, fav_player, about, vk_acc, telegram_acc, points = '', '', '', '', '', 0
     if request.method == 'GET':
         usr_id = current_user.id
-        cur.execute("""SELECT name, fav_player, about_me, vk_acc, telegram_acc, points, profile_pic
+        cur.execute("""SELECT name, fav_player, about_me, vk_acc, telegram_acc, role, profile_pic
                     FROM users WHERE id = %s""",
                     (usr_id,))
-        name, fav_player, about, vk_acc, telegram_acc, points, profile_pic = cur.fetchone()
+        name, fav_player, about, vk_acc, telegram_acc, role, profile_pic = cur.fetchone()
         if vk_acc is None:
             vk_acc = "Не привязан"
         if telegram_acc is None:
             telegram_acc = "Не привязан"
 
+        roles = {0: 'user', 1: 'super_fan', 2: 'moderator', 3: 'kokos_staff', 4: 'player', 5: 'admin'}
+
+        if role is not None:
+            role = roles[list(map(int, list(role)))]
+        else:
+            role = 'Нет роли'
+
+        points_query = """
+        WITH user_forum_likes AS (
+            SELECT COUNT(*) AS like_count
+            FROM forum_likes
+            WHERE post_id IN (SELECT id FROM forum WHERE author = %s)
+        ),
+        user_forum_comments AS (
+            SELECT COUNT(*) * 5 AS comment_count
+            FROM forum_comments
+            WHERE post_id IN (SELECT id FROM forum WHERE author = %s)
+        )
+        SELECT
+            COALESCE(SUM(user_forum_likes.like_count), 0) + COALESCE(SUM(user_forum_comments.comment_count), 0)
+            AS total_points
+        FROM user_forum_likes
+        FULL OUTER JOIN user_forum_comments ON TRUE;
+        """
+
+        cur.execute(points_query, (current_user.id, current_user.id))
+        points = int(cur.fetchone()[0])
+
         user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png',
                 'nickname': name, 'about': about, 'fav_player_img': fav_player,
-                'telegram_url': telegram_acc, 'vk_url': vk_acc}
+                'telegram_url': telegram_acc, 'vk_url': vk_acc, 'role': role, 'points': points}
         if current_user.is_authenticated:
             user['logged_in'] = True
             if profile_pic:
                 user['profile_picture_url'] = profile_pic  # '/static/img/default_pfp.png'
             else:
                 user['profile_picture_url'] = '/static/img/default_pfp.png'
-        print(points)  # TODO
+
         return render_template('account/account.html', user=user)
     if request.method == 'POST':
         usr_input = request.json
@@ -757,7 +785,6 @@ def new_post():
                         (current_user.id, usr_input["tags"],
                          usr_input["post-title"], usr_input["post-content"], picurl))
             conn.commit()
-
             return 'OK'
         except Exception as e:
             conn.rollback()
