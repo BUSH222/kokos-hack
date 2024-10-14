@@ -132,22 +132,22 @@ body::-webkit-scrollbar {
 
 .social-interaction {
     position: absolute;
-    top: 10px;  /* Adjust the distance from the top of the post field */
-    right: 10px;  /* Adjust the distance from the right edge */
-    display: flex;              /* Align items in a row */
-    flex-direction: row;        /* Change to row layout */
-    align-items: center;        /* Center align items vertically */
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     z-index: 10;
-    gap: 10px;                  /* Add space between like and comment sections */
+    gap: 10px;
 }
 
 /* Search Bar */
 .news-newcomment {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Distribute the elements evenly */
-    width: 100%; /* Full width of the container */
-    box-sizing: border-box; /* Include padding/border in width calculations */
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
     margin-bottom: 20px;
 }
 
@@ -171,13 +171,13 @@ body::-webkit-scrollbar {
 /* Smaller Dropdown */
 .news-newcomment select {
     flex: 1;
-    width: 120px; /* Smaller width */
+    width: 120px;
     margin-right: 10px;
 }
 
 /* Search Button */
 .news-newcomment button {
-    padding: 10px 20px; /* Add more padding to the button */
+    padding: 10px 20px;
     background-color: #ff4747;
     color: white;
     cursor: pointer;
@@ -215,7 +215,7 @@ body::-webkit-scrollbar {
     background-color: #ffffff;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 20px auto; /* Centering the field */
+    margin: 20px auto;
     border: 2px solid #ff4747;
     display: flex;
     flex-direction: column;
@@ -260,34 +260,34 @@ body::-webkit-scrollbar {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    align-items: stretch; /* Ensures both the image and text divs are the same height */
+    align-items: stretch;
     box-sizing: border-box;
     padding: 10px;
 }
 
 .news-photo {
     margin-right: 20px;
-    flex: 0 0 35%; /* Fixed width for the photo */
-    height: auto; /* Let the image height adapt to its container */
+    flex: 0 0 35%;
+    height: auto;
     border-radius: 30px;
-    overflow: hidden; /* Ensures the image won't overflow */
+    overflow: hidden;
 }
 
 .news-photo img {
-    width: 100%; /* Makes the image fill its container */
-    object-fit: cover; /* Ensures the image covers the entire space */
+    width: 100%;
+    object-fit: cover;
 }
 
 .news-text {
-    flex: 1; /* Makes the text div fill the remaining width */
+    flex: 1;
     padding: 10px;
     border: 2px solid #ff4747;
     border-radius: 10px;
-    overflow-y: auto; /* Allows vertical scrolling if content is larger */
-    overflow-x: hidden; /* Prevents horizontal scrolling */
-    max-height: 100%; /* Limits height to ensure it's equal to the image */
-    word-wrap: break-word; /* Breaks long words to prevent overflow */
-    box-sizing: border-box; /* Ensures padding and border are included in width */
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 100%;
+    word-wrap: break-word;
+    box-sizing: border-box;
 }
 
 
@@ -302,16 +302,14 @@ html, body {
     padding: 0;
 }
 
-/* Main wrapper that ensures the footer stays at the bottom */
 .main-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensures content + footer fills at least the height of the viewport */
+    min-height: 100vh;
 }
 
-/* Content area takes the remaining space, pushing footer to the bottom if necessary */
 .content {
-    flex: 1; /* Fills the remaining space in the viewport */
+    flex: 1;
     padding: 20px;
 }
 
@@ -324,7 +322,6 @@ html, body {
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    /* Make sure it's pushed to the bottom when content is short */
     position: relative;
 }
 
@@ -380,7 +377,7 @@ html, body {
     margin-top: 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Space between each comment */
+    gap: 20px;
 }
 
 /* Individual comment */

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     register_date DATE,
     points INTEGER,
     role VARCHAR(6), -- role numbers a user has, ascending. user-0; super_fan-1; moderator-2; kokos_staff-3; player-4; admin-5;
-    fav_player VARCHAR(32),
+    fav_player TEXT,
     about_me TEXT,
     telegram_acc VARCHAR(32),
     vk_acc VARCHAR(32)

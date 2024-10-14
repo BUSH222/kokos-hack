@@ -294,19 +294,19 @@ def change_user_data():
     if request.method == 'POST':
         usr_id = current_user.id
         usr_input = request.form.to_dict()
-
-        file = request.files.get('profile_pic')
-        try:
-            file_name = 'account/' + token_urlsafe(16) + '.' + file.filename.split('.')[-1]
-            target_url = 'http://localhost:5001/upload_assets'
-            files = {'file': (file_name, file.stream, file.content_type)}
-            data = {'img_name': file_name}
-            full_file_name = 'http://localhost:5001/assets/'+file_name
-            requests.post(target_url, files=files, data=data)
-            cur.execute('UPDATE users SET profile_pic = %s WHERE id = %s', (full_file_name, usr_id))
-        except Exception as e:
-            print(e)
-            abort(500)
+        if request.files:
+            file = request.files.get('profile_pic')
+            try:
+                file_name = 'account/' + token_urlsafe(16) + '.' + file.filename.split('.')[-1]
+                target_url = 'http://localhost:5001/upload_assets'
+                files = {'file': (file_name, file.stream, file.content_type)}
+                data = {'img_name': file_name}
+                full_file_name = 'http://localhost:5001/assets/'+file_name
+                requests.post(target_url, files=files, data=data)
+                cur.execute('UPDATE users SET profile_pic = %s WHERE id = %s', (full_file_name, usr_id))
+            except Exception as e:
+                print(e)
+                abort(500)
 
         usr_input["telegram_acc"] = usr_input["telegram_acc"].replace(' ', '')
         if "@" not in usr_input["telegram_acc"]:
@@ -319,7 +319,8 @@ def change_user_data():
                         cur.execute(query, (usr_input[key], usr_id,))
             conn.commit()
             return jsonify({"change_data": "Success!"})
-        except Exception:
+        except Exception as e:
+            print(e)
             conn.rollback()
             print("БАЗЫ ДАЛИ ЗАЗЫ " * 5)
             abort(500)

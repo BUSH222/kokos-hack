@@ -24,8 +24,8 @@ html::-webkit-scrollbar {
 }
 
 .container {
-    max-width: 600px; /* Keep this for larger screens */
-    width: 90%; /* Use percentage for smaller screens */
+    max-width: 600px;
+    width: 90%;
     margin: 40px auto;
     background-color: #fff;
     padding: 15px;

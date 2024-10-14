@@ -100,9 +100,9 @@ body::-webkit-scrollbar {
 .search-bar {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Distribute the elements evenly */
-    width: 100%; /* Full width of the container */
-    box-sizing: border-box; /* Include padding/border in width calculations */
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
     margin-bottom: 20px;
 }
 
@@ -127,14 +127,14 @@ body::-webkit-scrollbar {
 .tag-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px; /* Gap between tags */
-    flex: 2; /* Takes up similar width to search input */
+    gap: 5px;
+    flex: 2;
     margin-right: 10px;
     padding: 10px;
     border: 2px solid #ff4747;
     border-radius: 10px;
     box-sizing: border-box;
-    min-height: 35px; /* Ensures container size stays consistent */
+    min-height: 35px;
 }
 
 /* Tag Input */
@@ -149,7 +149,7 @@ body::-webkit-scrollbar {
 /* Individual Tags */
 .tag {
     display: inline-flex;
-    align-items: center; /* This vertically centers the content */
+    align-items: center;
     background-color: #f0f0f0;
     border-radius: 5px;
     padding: 5px 10px;
@@ -160,9 +160,9 @@ body::-webkit-scrollbar {
 
 
 #tagInput {
-    border: none; /* Removes the input border */
-    outline: none; /* Ensures no outline appears on focus */
-    flex-grow: 1; /* Allows it to grow and take up remaining space */
+    border: none;
+    outline: none;
+    flex-grow: 1;
     padding: 5px;
     font-size: 14px;
 }
@@ -175,20 +175,20 @@ body::-webkit-scrollbar {
 /* Smaller Date Picker */
 .search-bar input[type="date"] {
     flex: 1;
-    width: 150px; /* Smaller width */
+    width: 150px;
     margin-right: 10px;
 }
 
 /* Smaller Dropdown */
 .search-bar select {
     flex: 1;
-    width: 120px; /* Smaller width */
+    width: 120px;
     margin-right: 10px;
 }
 
 /* Search Button */
 .search-bar button {
-    padding: 10px 20px; /* Add more padding to the button */
+    padding: 10px 20px;
     background-color: #ff4747;
     color: white;
     cursor: pointer;
@@ -226,7 +226,7 @@ body::-webkit-scrollbar {
 .post-container {
     max-width: 800px;
     width: 60%;
-    margin: 100px auto; /* Adds space for the fixed navbar */
+    margin: 100px auto;
     background-color: #fff;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -288,16 +288,14 @@ html, body {
     background-size: cover;
 }
 
-/* Wrapper that ensures footer stays at the bottom */
 .main-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* this */
+    min-height: 100vh;
 }
 
 .content {
-    flex: 1; /* Fills the remaining space, pushing footer to the bottom */
-    /* padding: 20px; */ /* this */
+    flex: 1;
 }
 
 /* Navbar remains fixed */
@@ -327,7 +325,7 @@ html, body {
 /* Main post container */
 .post-container {
     max-width: 800px;
-    margin: 100px auto; /* Adds space for the fixed navbar */
+    margin: 100px auto;
     background-color: #fff;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

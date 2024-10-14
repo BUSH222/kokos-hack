@@ -343,9 +343,11 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 999;
     position: relative;
 }
 
+/* Flexbox layout for footer content */
 .bottom-bar-content {
     display: flex;
     justify-content: space-between;
@@ -354,10 +356,12 @@ html, body {
     max-width: 1200px;
 }
 
+/* KOKOS logo styling */
 .kokos-logo {
     height: 40px;
 }
 
+/* Footer links */
 .footer-link {
     color: #ffffff;
     text-decoration: none;
@@ -369,9 +373,50 @@ html, body {
 .footer-text {
     color: #ffffff;
     font-size: 14px;
+    margin-left: 30px;
 }
 
+.footer-link:hover {
+    color: #91e8b4;
+}
+
+/* Footer sections */
+.bottom-left,
+.bottom-center,
+.bottom-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Social media icons */
 .social-logo {
     height: 30px;
     margin-left: 15px;
+}
+
+.floating-help-plus {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #ff4747;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.floating-help-plus a {
+    text-decoration: none;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.floating-help-plus:hover {
+    background-color: #d93b3b;
 }

@@ -183,7 +183,6 @@ html, body {
     text-align: center;
     color: #ff4747;
     font-size: 18px;
-    margin-top: 20px;
     overflow: hidden;
 }
 
@@ -257,8 +256,14 @@ html, body {
 
 .user-role {
     margin-top: 20px;
-    font-size: 30px;
+    font-size: 25px;
     color: #ff4747;
     font-weight: bold;
+    text-align: center;
+}
+
+.fav-player-header {
+    font-size: 20px;
+    color: #ff4747;
     text-align: center;
 }
