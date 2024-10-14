@@ -1,4 +1,5 @@
 import json
+import os
 
 
 def load_json(file_name):
@@ -12,7 +13,7 @@ def load_json(file_name):
 
 
 def get_processor_settings():
-    settings = load_json('settings.json')
+    settings = load_json(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'settings.json'))
     return settings
 
 

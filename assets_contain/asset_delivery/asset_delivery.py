@@ -1,7 +1,7 @@
 from flask import Flask, render_template_string, send_from_directory, request, jsonify, abort
 import os
 import psutil
-from web.settings_loader import get_processor_settings
+from settings_loader import get_processor_settings
 from logger import log_event
 from collections import deque
 import time
