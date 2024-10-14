@@ -12,7 +12,7 @@ import psutil
 import requests
 from secrets import token_urlsafe
 from dbloader import connect_to_db
-from settings_loader import get_processor_settings
+from web.settings_loader import get_processor_settings
 from helper import GOOGLE_CLIENT_ID
 
 conn, cur = connect_to_db()

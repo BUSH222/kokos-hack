@@ -1,5 +1,5 @@
 import smtplib
-from settings_loader import get_processor_settings
+from web.settings_loader import get_processor_settings
 from logger import log_event
 import requests
 
