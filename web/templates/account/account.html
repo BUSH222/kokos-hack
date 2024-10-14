@@ -45,8 +45,12 @@
             <div class="profile-pic">
                 <img src="{{ user.profile_picture_url }}" alt="User Profile Picture">
             </div>
+
             <div class="username">{{ user.nickname }}</div>
             <textarea class="about-user" readonly>{{ user.about }}</textarea>
+
+            <div class="user-role">{{ user.role }}</div>
+
             <div class="social-links">
                 <a href="{{ user.telegram_url }}"><img src="/static/img/telegram_icon.png" alt="Telegram">{{ user.telegram_url }}</a>
                 <a href="{{ user.vk_url }}"><img src="/static/img/vk_icon.png" alt="VK">{{ user.vk_url }}</a>
@@ -69,7 +73,7 @@
             <!-- Points section -->
             <div class="points-section">
                 <img src="/static/img/points_icon.png" alt="Points Icon" class="points-icon">
-                <span class="points-text">{{ user.points }} очков</span>
+                <span class="points-text">{{ user.points or 0 }} очков</span>
             </div>
         </div>
         

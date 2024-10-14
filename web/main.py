@@ -195,10 +195,13 @@ def account():
 
         roles = {0: 'user', 1: 'super_fan', 2: 'moderator', 3: 'kokos_staff', 4: 'player', 5: 'admin'}
 
-        if role is not None:
-            role = roles[list(map(int, list(role)))]
-        else:
+        print(role)
+        if role is not None and len(role) != 0:
+            role = roles[max(map(int, list(role)))]
+        elif role is None:
             role = 'Нет роли'
+        elif len(role) == 0:
+            role = roles[int(role)]
 
         points_query = """
         WITH user_forum_likes AS (
@@ -675,7 +678,7 @@ def view_post():
         Exception: If any error occurs during the database transaction when inserting a comment.
     """
     user = {'logged_in': False, 'profile_picture_url': '/static/img/default_pfp.png'}
-    if current_user.is_authenticated:
+    if request.method == 'GET':
         cur.execute('SELECT profile_pic FROM users WHERE id = %s', (current_user.id, ))
         user['logged_in'] = True
         profile_pic = cur.fetchone()[0]
