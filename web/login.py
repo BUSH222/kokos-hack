@@ -136,7 +136,7 @@ def yandex_callback():
         return redirect(url_for('account'))
     else:
         cur.execute('INSERT INTO users(name, password, email, profile_pic) \
-                    VALUES (%s, %s, %s, %s) RETURNING id, name, password, email, profile_pic',
+                    VALUES (%s, %s, %s, %s) RETURNING id, name, password, email',
                     (user_name, unique_id, user_email, user_pic_url))
         conn.commit()
         new_user_data = cur.fetchone()

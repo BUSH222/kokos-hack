@@ -93,7 +93,7 @@ def create_tables(populate=False, db_name='kokos', postgres_pwd='12345678', host
     conn.commit()
     if populate:
         logging.info('Populating tables')
-        with open('populate.sql', 'r') as populate_obj:
+        with open('populate.sql', 'r', encoding='utf-8') as populate_obj:
             populate_query = populate_obj.read()
             cursor.execute(populate_query)
     conn.commit()
