@@ -3,25 +3,35 @@ version: '3.8'
 services:
   web:
     build: ./web
-    command: flask run --host=0.0.0.0
+    container_name: web
     ports:
       - "5000:5000"
     depends_on:
       - db
-    environment:
-      FLASK_ENV: development
-      DATABASE_URL: postgresql://postgres:password@db:5432/mydatabase
+    # environment:
+    #   DATABASE_URL: postgresql://postgres:password@db:5432/mydatabase
+    command: python main.py
 
   db:
     image: postgres:16.4
+    container_name: db
     # restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: 12345678
+      POSTGRES_DB: kokos
     ports:
       - "5432:5432"
     volumes:
       - ./pg_data:/var/lib/postgresql/data
 
-volumes:
-  pgdata:
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
