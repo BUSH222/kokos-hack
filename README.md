@@ -1,10 +1,13 @@
-# template_py
-Template repository for python projects
+# Кокос хакатон, кейс 1; решение команды MISIS LEAF LOVERS
 
-Includes:
-- Licence
-- README
-- main.py
-- github actions - lint with flake8
-- flake8 config
-- .gitignore
+## см презентацию в репозитории
+
+# КАК ЗАПУСТИТЬ
+
+> Запустите докер контейнеры используя docker-compose up 
+
+(Чтобы запустить тестовый сервер запустите файл run.sh)
+
+# КАК РАБОТАЕТ
+
+Мы использовали микросервисную архитекруру чтобы 
