@@ -10,19 +10,27 @@
 - Великанов Вадим(frontend, планировка проекта, js, html, css))
 - Панов Никита(devops, разработка: бд, docker-compose и эндпоинты регистрации и логина)
 
+## Демонстрация продукта
+- Юзер часть
+![image](https://github.com/user-attachments/assets/471f1b11-be70-407b-8ae6-4717e7c6a661)
+![image](https://github.com/user-attachments/assets/2e006560-cc5e-4dc1-ad08-b74d5c8082b0)
+- Адимн часть
+![image](https://github.com/user-attachments/assets/1f1bc6ec-23c1-4339-a5f6-cfa66023202c)
+
+
 # КАК ЗАПУСТИТЬ
 
 > Склонировать репозиторий
 
-> Запустите докер контейнеры используя docker-compose up 
+> (НЕ РАБОТАЕТ) Запустите докер контейнеры используя docker-compose up
 
 ! ЕСЛИ НЕ РАБОТАЕТ, ЗАПУСТИТЕ ТЕСТОВЫЙ СЕРВЕР 
 
 1. Чтобы настроить дб поставьте пароль администратора postgres 12345678
 2. установите все библиотеки в requirements.txt
 3. cd в web и запустите dbloader.py
-4. Запустите файл run.sh
-5. Зайдите на https://localhost:5000
+4. Запустите файл run.sh или main.py и admin_app.py по отдельности
+5. Зайдите на https://localhost:5000 для юзер части и https://localhost:5002/admin_panel для админ части
 6. Зайти на юзера: 'admin':'admin' либо 'Bob Brown':'password321'
 
 # КАК РАБОТАЕТ
