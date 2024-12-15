@@ -23,6 +23,7 @@
 3. cd в web и запустите dbloader.py
 4. Запустите файл run.sh
 5. Зайдите на https://localhost:5000
+6. Зайти на юзера: 'admin':'admin' либо 'Bob Brown':'password321'
 
 # КАК РАБОТАЕТ
 ### Технологии и инструменты
